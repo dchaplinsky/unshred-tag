@@ -5,3 +5,5 @@ Werkzeug==0.9.6
 gunicorn==19.0.0
 itsdangerous==0.24
 wsgiref==0.1.2
+boto==2.15.0
+requests==2.2.1
