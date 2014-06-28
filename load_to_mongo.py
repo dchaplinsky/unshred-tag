@@ -1,7 +1,8 @@
 import sys
 import os
 import os.path
-from app import shreds
+import json
+from app import shreds, base_tags
 import split
 import fnmatch
 from pymongo import ASCENDING
@@ -25,36 +26,46 @@ def upload_file(fname):
     return "https://s3.amazonaws.com/%s/%s" % (dst_bucket_name, fname)
 
 if __name__ == '__main__':
-    dst_bucket.delete_keys(dst_bucket.get_all_keys())
+    # dst_bucket.delete_keys(dst_bucket.get_all_keys())
 
-    shreds.drop()
-    flt = sys.argv[1]
+    # shreds.drop()
+    # flt = sys.argv[1]
 
-    for src_key in src_bucket.get_all_keys():
-        if not fnmatch.fnmatch(src_key.key, flt):
-            continue
+    # for src_key in src_bucket.get_all_keys():
+    #     if not fnmatch.fnmatch(src_key.key, flt):
+    #         continue
 
-        fname = "/tmp/%s" % os.path.basename(src_key.key)
-        src_key.get_contents_to_filename(fname)
+    #     fname = "/tmp/%s" % os.path.basename(src_key.key)
+    #     src_key.get_contents_to_filename(fname)
 
-        split.out_dir_name = os.path.splitext(os.path.basename(fname))[0]
+    #     split.out_dir_name = os.path.splitext(os.path.basename(fname))[0]
 
-        print("Processing file %s from %s" % (fname, split.out_dir_name))
-        orig_img, resulting_contours = split.process_file(fname)
+    #     print("\n\nProcessing file %s from %s" % (fname, split.out_dir_name))
+    #     orig_img, resulting_contours = split.process_file(fname)
 
-        for c in resulting_contours:
-            c["_id"] = "%s_%s" % (c["sheet"], c["name"])
-            del(c["simplified_contour"])
-            c["contour"] = c["contour"].tolist()
+    #     for c in resulting_contours:
+    #         c["_id"] = "%s_%s" % (c["sheet"], c["name"])
+    #         c["order"] = 0
 
-            imgs = "piece_fname", "features_fname", "piece_in_context_fname"
+    #         del(c["simplified_contour"])
+    #         c["contour"] = c["contour"].tolist()
 
-            for k in imgs:
-                if k in c:
-                    res = upload_file(c[k])
-                    os.remove(c[k])
-                    c[k] = res
+    #         imgs = "piece_fname", "features_fname", "piece_in_context_fname"
 
-            shreds.insert(c)
+    #         for k in imgs:
+    #             if k in c:
+    #                 res = upload_file(c[k])
+    #                 os.remove(c[k])
+    #                 c[k] = res
 
-shreds.ensure_index([("name", ASCENDING), ("sheet", ASCENDING)])
+    #         shreds.insert(c)
+
+    # shreds.ensure_index([("name", ASCENDING), ("sheet", ASCENDING)])
+    shreds.ensure_index([("tags", ASCENDING)])
+
+    base_tags.drop()
+
+    with open("base_tags.json", "r") as f:
+        tags = json.load(f)
+        for tag in tags:
+            base_tags.insert(tag)

@@ -1,0 +1,260 @@
+/*
+ * Globals
+ */
+
+/* Links */
+a,
+a:focus,
+a:hover {
+    color: #fff;
+}
+
+/* Custom default button */
+.btn-default,
+.btn-default:hover,
+.btn-default:focus {
+    color: #333;
+    text-shadow: none; /* Prevent inheritence from `body` */
+    background-color: #fff;
+    border: 1px solid #fff;
+}
+
+
+/*
+ * Base structure
+ */
+
+html,
+body {
+    height: 100%;
+    background-color: #333;
+}
+body {
+    color: #fff;
+    text-align: center;
+    /*text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
+    box-shadow: inset 0 0 100px rgba(0,0,0,.5);
+}
+
+.row {
+	margin-top: 60px;
+}
+
+em.list-group-item-text {
+	display: block;
+	margin-bottom: 10px;
+	font-size: x-small;
+}
+
+p.lead {
+	text-align: right;
+}
+
+li.list-group-item.active,
+li.list-group-item.active a {
+	color: white;
+}
+
+/* Extra markup and styles for table-esque vertical and horizontal centering */
+.site-wrapper {
+    display: table;
+    width: 100%;
+    height: 100%; /* For at least Firefox */
+    min-height: 100%;
+}
+.site-wrapper-inner {
+    display: table-cell;
+    vertical-align: top;
+}
+.cover-container {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Padding for spacing */
+.inner {
+    padding: 30px;
+}
+
+h3 a,
+h5 a,
+.list-group a {
+	color: #428BCA;
+}
+
+.list-group-item {
+	cursor: pointer;
+}
+
+.list-group-item:hover {
+    	box-shadow: inset 0 0 100px rgba(0,0,0,.15);
+}
+
+/*
+ * Header
+ */
+.masthead {
+	color: #999;
+}
+
+.masthead-brand {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.masthead-nav > li {
+    display: inline-block;
+}
+.masthead-nav > li + li {
+    margin-left: 20px;
+}
+.masthead-nav > li > a {
+    padding-right: 0;
+    padding-left: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff; /* IE8 proofing */
+    color: rgba(255,255,255,.75);
+    border-bottom: 2px solid transparent;
+}
+.masthead-nav > li > a:hover,
+.masthead-nav > li > a:focus {
+    background-color: transparent;
+    border-bottom-color: rgba(255,255,255,.25);
+}
+.masthead-nav > .active > a,
+.masthead-nav > .active > a:hover,
+.masthead-nav > .active > a:focus {
+    color: #999;
+    border-bottom-color: #999;
+}
+
+@media (min-width: 768px) {
+    .masthead-brand {
+        float: left;
+    }
+    .masthead-nav {
+        float: right;
+    }
+}
+
+
+/*
+ * Cover
+ */
+
+.cover {
+    padding: 120px 20px 0;
+    text-align: left;
+}
+.cover .btn-lg {
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+
+/*
+ * Footer
+ */
+
+.mastfoot {
+    color: #999; /* IE8 proofing */
+    color: rgba(255,255,255,.5);
+}
+
+
+/*
+ * Affix and center
+ */
+
+@media (min-width: 768px) {
+    /* Pull out the header and footer */
+    .masthead {
+        position: fixed;
+        top: 0;
+    }
+    .mastfoot {
+        position: fixed;
+        bottom: 0;
+    }
+    /* Start the vertical centering */
+    .site-wrapper-inner {
+        vertical-align: top;
+    }
+    /* Handle the widths */
+    .masthead,
+    .mastfoot,
+    .cover-container {
+        width: 100%; /* Must be percentage or pixels for horizontal alignment */
+    }
+}
+
+@media (min-width: 992px) {
+    .masthead,
+    .mastfoot,
+    .cover-container {
+        width: 900px;
+    }
+}
+
+.shed-img {
+    float: left;
+    padding: 20px 0;
+    margin-right: 40px;
+}
+
+.shed-img.transparent-bg {
+    padding: 20px;
+    background: url(checkerboard.png);    
+}
+
+.shed-features {
+    float: right;
+    color: gray;
+}
+
+.shed-features h3 {
+	margin-top: 0;
+}
+
+.textarea-tags {
+	color: black;
+	width: 700px;
+	font-size: 20px;
+}
+
+.text-dropdown {
+	color: black;
+}
+
+.text-core {
+    float: left;
+}
+
+#save-button {
+    float: right;
+}
+
+/* Styles for dialog window */
+.small-dialog {
+    background: white;
+    padding: 20px;
+    text-align: left;
+    max-width: 700px;
+    margin: 30px auto;
+    position: relative;
+    color: #333;
+}
+
+.dialog-content {
+    overflow: scroll;
+    max-height: 600px;
+}
+
+.dialog-content h3 {
+    margin-top: 0;
+}
+
+dl {
+    margin-bottom: 7px;
+}

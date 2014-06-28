@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Unshred tagging workplace</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='textext.core.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='textext.plugin.tags.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='textext.plugin.prompt.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='textext.plugin.arrow.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='textext.plugin.autocomplete.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='jquery.magnific-popup.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="site-wrapper">
+            <div class="site-wrapper-inner">
+                <div class="cover-container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='textext.core.js') }}"></script>
+        <script src="{{ url_for('static', filename='textext.plugin.tags.js') }}"></script>
+        <script src="{{ url_for('static', filename='textext.plugin.autocomplete.js') }}"></script>
+        <script src="{{ url_for('static', filename='textext.plugin.prompt.js') }}"></script>
+        <script src="{{ url_for('static', filename='textext.plugin.arrow.js') }}"></script>
+        <script src="{{ url_for('static', filename='textext.plugin.suggestions.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery.magnific-popup.min.js') }}"></script>
+        <script type="text/javascript">
+            $.ajaxSetup({
+                traditional: true
+            });
+            
+            var current_shred = $("#current_shred").load("/next");
+
+            function collect_data() {
+                var data = $(".textarea-tags").textext()[0].hiddenInput().val();
+
+                data = JSON.parse(data);
+                return {
+                    "_id": $("#shred_id").val(),
+                    "tags": data
+                }
+            }
+
+            $(document.body).on("click", "a#save-button", function(e) {
+                e.preventDefault();
+                form = collect_data();
+
+                if (form["tags"].length === 0) {
+                    if (window.confirm("Вы не ввели тэгов для этого фрагмента. Пропустить его?")) {
+                        current_shred.css("visibility", "hidden");
+
+                        $.post("{{ url_for("skip") }}", form, function(data) {
+                            current_shred.css("visibility", "visible").html(data);
+                        });
+                    }
+                } else {
+                    current_shred.css("visibility", "hidden");
+
+                    $.post("{{ url_for("next") }}", form, function(data) {
+                        current_shred.css("visibility", "visible").html(data);
+                    });
+                }
+            });
+
+            $(document.body).on("click", "a.skip", function(e) {
+                e.preventDefault();
+                var form = collect_data();
+
+                current_shred.css("visibility", "hidden");
+                $.post("{{ url_for("skip") }}", form, function(data) {
+                    current_shred.css("visibility", "visible").html(data);
+                });
+            });
+
+            $('.popup-with-zoom-anim').magnificPopup({
+                type: 'inline',
+
+                fixedContentPos: false,
+                fixedBgPos: true,
+                overflowY: 'auto',
+                closeBtnInside: true,
+                preloader: false,
+             
+                midClick: true,
+                removalDelay: 100,
+                mainClass: 'my-mfp-zoom-in'
+            });
+    </script>
+    </body>
+</html>
