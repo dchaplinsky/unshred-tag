@@ -36,6 +36,8 @@
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <!-- Latest compiled and minified JavaScript -->
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="{{ url_for('static', filename='string_score.js') }}"></script>
+        <script src="{{ url_for('static', filename='jquery.hotkeys.js') }}"></script>
         <script src="{{ url_for('static', filename='textext.core.js') }}"></script>
         <script src="{{ url_for('static', filename='textext.plugin.tags.js') }}"></script>
         <script src="{{ url_for('static', filename='textext.plugin.autocomplete.js') }}"></script>
@@ -79,9 +81,7 @@
                         current_shred.css("visibility", "visible").html(data);
                     });
                 }
-            });
-
-            $(document.body).on("click", "a.skip", function(e) {
+            }).on("click", "a.skip", function(e) {
                 e.preventDefault();
                 var form = collect_data();
 
@@ -89,6 +89,10 @@
                 $.post("{{ url_for("skip") }}", form, function(data) {
                     current_shred.css("visibility", "visible").html(data);
                 });
+            }).bind('keydown', 'alt+return', function(e){
+                $("a#save-button").click();
+            }).bind('keydown', 'f1', function(e){
+                $('.popup-with-zoom-anim').click();
             });
 
             $('.popup-with-zoom-anim').magnificPopup({

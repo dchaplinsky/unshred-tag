@@ -1,6 +1,7 @@
 import os
 import pymongo
 from flask import Flask, render_template, request, redirect, url_for
+from utils import requires_auth
 
 app = Flask(__name__)
 
@@ -30,12 +31,14 @@ def get_tags():
 
 
 @app.route('/')
+@requires_auth
 def index():
     return render_template("index.html",
                            base_tags=base_tags.find())
 
 
 @app.route('/next', methods=["GET", "POST"])
+@requires_auth
 def next():
     if request.method == "POST":
         shreds.update({"_id": request.form["_id"]},

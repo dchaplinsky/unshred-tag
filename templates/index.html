@@ -4,7 +4,7 @@
         <div class="inner">
             <h3 class="masthead-brand">Собери 10 мешков и получи Курченко в подарок!</h3>
             <ul class="nav masthead-nav">
-                <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция</a></li>
+                <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция (F1)</a></li>
             </ul>
         </div>
     </div>
@@ -24,8 +24,8 @@
             <h4>Краткое описание тэгов</h4>
             {% for t in base_tags %}
             <dl>
-                    <dt>{{ t.title|capitalize }}</dt>
-                    <dd>{{ t.description }}</dd>
+                <dt>{{ t.title|capitalize }}</dt>
+                <dd>{{ t.description }}</dd>
             </dl>
             {% endfor %}
         </div>

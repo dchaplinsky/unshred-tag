@@ -1614,4 +1614,3 @@
 		input.val(val);
 	};
 })(jQuery);
-
