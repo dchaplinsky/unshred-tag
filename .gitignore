@@ -55,3 +55,6 @@ docs/_build/
 # Project related stuff
 venv
 .DS_Store
+packed.css
+packed.js
+.webassets-cache

@@ -1,9 +1,28 @@
 import os
 import pymongo
 from flask import Flask, render_template, request, redirect, url_for
-from utils import requires_auth
+from flask.ext.assets import Environment, Bundle
 
+from utils import requires_auth
 app = Flask(__name__)
+
+assets = Environment(app)
+js = Bundle(
+    'jquery.js', 'bootstrap.js', 'string_score.js',
+    'jquery.hotkeys.js', 'textext.core.js', 'textext.plugin.tags.js',
+    'textext.plugin.autocomplete.js', 'textext.plugin.prompt.js',
+    'textext.plugin.arrow.js', 'textext.plugin.suggestions.js',
+    'jquery.magnific-popup.min.js', 'base.js', output='packed.js',
+    filters='yui_js')
+
+css = Bundle(
+    'bootstrap.css', 'textext.core.css', 'textext.plugin.tags.css',
+    'textext.plugin.prompt.css', 'textext.plugin.arrow.css',
+    'textext.plugin.autocomplete.css', 'jquery.magnific-popup.css',
+    'style.css', output='packed.css', filters='yui_css')
+
+assets.register('js_all', js)
+assets.register('css_all', css)
 
 MONGODB_DB = "unshred"
 MONGO_URL = os.environ.get('MONGOHQ_URL')

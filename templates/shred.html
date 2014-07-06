@@ -41,34 +41,8 @@
         </table>
     </div>
     <div class="clearfix"></div>
-    <textarea class="textarea-tags" rows="1"></textarea>
+    <textarea class="textarea-tags" rows="1" data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape}}"></textarea>
     <input type="hidden" name="shred_id" id="shred_id" value="{{ shred._id }}"/>
     <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
     <div class="clearfix"></div>
 </div>
-
-<script type="text/javascript">
-    var tags = $('.textarea-tags').textext({
-        plugins: 'tags autocomplete suggestions prompt arrow',
-        tagsItems: [],
-        autocomplete: {
-            dropdown: {
-                maxHeight : '200px'
-            }
-        },
-
-        prompt: 'Укажите тэги',
-        suggestions: [
-            {% for tag in all_tags %}
-                '{{ tag|capitalize }}',
-            {% endfor %}
-        ]
-    }).textext()[0].focusInput();
-
-
-    $("textarea.textarea-tags").bind('keydown', 'alt+return', function(e) {
-        $("a#save-button").click();
-    }).bind('keydown', 'f1', function(e){
-        $('.popup-with-zoom-anim').click();
-    });
-</script>

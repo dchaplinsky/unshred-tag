@@ -175,21 +175,25 @@
 		Quicksilver search has been integrated here.
 		*/
 
-		$.each(suggestions, function(i){
-        	var score = this.score(data.query);
-        	
-        	if (score > 0) {
-        		scores.push([score, i]);
-        	}
-      	});
+		if (data.query.length > 0) {
+			$.each(suggestions, function(i) {
+				var score = this.score(data.query);
+				
+				if (score > 0) {
+					scores.push([score, i]);
+				}
+			});
+	
+			$.each(scores.sort(function(a, b) {
+				return b[0] - a[0];
+				}), function(){
+					filtered.push(suggestions[this[1]]);
+				}
+			)
 
-		$.each(scores.sort(function(a, b) {
-			return b[0] - a[0];
-			}), function(){
-        		filtered.push(suggestions[this[1]]);
-      		}
-      	);
+			suggestions = filtered;
+		}
 
-		self.setSuggestions(filtered);
+		self.setSuggestions(suggestions);
 	};
 })(jQuery);
