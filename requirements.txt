@@ -11,3 +11,4 @@ pymongo==2.6.3
 webassets==0.10.1
 Flask-Assets==0.10
 yuicompressor==2.4.8
+git+https://github.com/dchaplinsky/unshred.git

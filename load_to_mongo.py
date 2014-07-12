@@ -2,8 +2,10 @@ import sys
 import os
 import os.path
 import json
+import bson
 from app import shreds, base_tags
-import split
+from unshred import Sheet
+from unshred.features.base import GeometryFeatures
 import fnmatch
 from pymongo import ASCENDING
 from boto.s3.connection import S3Connection
@@ -38,12 +40,13 @@ if __name__ == '__main__':
         fname = "/tmp/%s" % os.path.basename(src_key.key)
         src_key.get_contents_to_filename(fname)
 
-        split.out_dir_name = os.path.splitext(os.path.basename(fname))[0]
+        sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
-        print("\n\nProcessing file %s from %s" % (fname, split.out_dir_name))
-        orig_img, resulting_contours = split.process_file(fname)
+        print("\n\nProcessing file %s from %s" % (fname, sheet_name))
+        sheet = Sheet(fname, sheet_name, [GeometryFeatures], "png")
+        # orig_img, resulting_contours = split.process_file(fname)
 
-        for c in resulting_contours:
+        for c in sheet.resulting_contours:
             c["_id"] = "%s_%s" % (c["sheet"], c["name"])
             c["order"] = 0
 
@@ -58,7 +61,11 @@ if __name__ == '__main__':
                     os.remove(c[k])
                     c[k] = res
 
-            shreds.insert(c)
+            try:
+                shreds.insert(c)
+            except bson.errors.InvalidDocument:
+                print(c)
+                raise
 
     shreds.ensure_index([("name", ASCENDING), ("sheet", ASCENDING)])
     shreds.ensure_index([("tags", ASCENDING)])
