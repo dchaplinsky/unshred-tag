@@ -5,17 +5,20 @@
             <h3 class="masthead-brand">Собери 10 мешков и получи Курченко в подарок!</h3>
             <ul class="nav masthead-nav">
                 <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция (F1)</a></li>
+                {% if user.is_authenticated() %}
+                <li><form action="{{ url_for('logout') }}" method="post"><input type="submit" value="Logout"></form></li>
+                {% endif %}
             </ul>
         </div>
     </div>
     <div class="inner cover" id="current_shred">
-        
+
     </div>
 
     <div class="zoom-anim-dialog mfp-hide small-dialog" id="tag_hints">
         <div class="dialog-content">
             <h3>Инструкция</h3>
-            <p>Добро пожаловать в АРМ по ручной классификации фрагментов. 
+            <p>Добро пожаловать в АРМ по ручной классификации фрагментов.
             Задача АРМ — дать возможность быстро и удобно присвоить каждому фрагменту один или несколько тэгов (свойств).
             Помимо уже существующих тэгов вы также можете добавить свои собственные.
             Для того, чтобы пропустить текущий фрагмент достаточно нажать “сохранить” оставив поле ввода тэгов пустым.

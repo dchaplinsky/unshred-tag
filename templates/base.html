@@ -17,6 +17,14 @@
         <![endif]-->
     </head>
     <body>
+        {% if user.is_anonymous() %}
+        <ul id="signin">
+            <li><a class="googleplus" href="{{ url_for("social.auth", backend="google-oauth2") }}">Google OAuth2</a></li>
+            <li><a class="twitter" href="{{ url_for("social.auth", backend="twitter") }}">Twitter OAuth</a></li>
+            <li><a class="facebook" href="{{ url_for("social.auth", backend="facebook") }}">Facebook OAuth2</a></li>
+            <!-- <li><a class="vkontakte" href="{{ url_for("social.auth", backend="vk-oauth2") }}">VK.com OAuth2</a></li> -->
+        </ul>
+        {% else %}
         <div class="site-wrapper">
             <div class="site-wrapper-inner">
                 <div class="cover-container">
@@ -31,6 +39,7 @@
                 "next": "{{ url_for("next") }}"
             }
         </script>
+        {% endif %}
 
         {% assets "js_all" %}
             <script type="text/javascript" src="{{ ASSET_URL }}"></script>
