@@ -8,7 +8,7 @@ from social.apps.flask_me_app.template_filters import backends
 
 from assets import init as assets_init
 
-from models.user import User
+from models import *
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -20,7 +20,9 @@ except ImportError:
 
 
 db = MongoEngine(app)
-mongo = db.connection
+
+shreds = Shreds._get_collection()
+base_tags = Tags._get_collection()
 
 app.register_blueprint(social_auth)
 init_social(app, db)
@@ -54,15 +56,15 @@ def inject_user():
 app.context_processor(backends)
 
 def get_next_shred():
-    return mongo.db.shreds.find({"tags": None}).sort("order").limit(1)[0]
+    return shreds.find({"tags": None}).sort("order").limit(1)[0]
 
 
 def get_tags():
     all_tags = set()
-    for t in mongo.db.tags.find():
+    for t in base_tags.find():
         all_tags.add(t["title"].lower())
 
-    for t in mongo.db.shreds.distinct("tags"):
+    for t in shreds.distinct("tags"):
         if t is not None:
             all_tags.add(t.lower())
 
@@ -77,13 +79,13 @@ def logout():
 @app.route('/')
 def index():
     return render_template("index.html",
-                           base_tags=mongo.db.tags.find())
+                           base_tags=base_tags.find())
 
 
 @app.route('/next', methods=["GET", "POST"])
 def next():
     if request.method == "POST":
-        mongo.db.shreds.update({"_id": request.form["_id"]},
+        shreds.update({"_id": request.form["_id"]},
                       {"$set": {"tags": map(unicode.lower,
                                             request.form.getlist("tags"))}})
 
@@ -95,9 +97,9 @@ def next():
 
 @app.route("/skip", methods=["POST"])
 def skip():
-    shred = mongo.db.shreds.find_one({"_id": request.form["_id"]})
+    shred = shreds.find_one({"_id": request.form["_id"]})
 
-    mongo.db.shreds.update({"_id": request.form["_id"]},
+    shreds.update({"_id": request.form["_id"]},
                   {"$set": {"order": shred.get("order", 0) + 1}})
 
     return redirect(url_for("next"))

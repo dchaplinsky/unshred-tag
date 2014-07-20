@@ -1,2 +1,2 @@
-from models import user
-from social.apps.flask_me_app import models
+from models.user import *
+from models.stripes import *
