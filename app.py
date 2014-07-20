@@ -8,6 +8,8 @@ from social.apps.flask_me_app.template_filters import backends
 
 from assets import init as assets_init
 
+from models.user import User
+
 app = Flask(__name__)
 app.config.from_object('settings')
 
@@ -18,7 +20,7 @@ except ImportError:
 
 
 db = MongoEngine(app)
-mongo = db.connection #.get_connection()
+mongo = db.connection
 
 app.register_blueprint(social_auth)
 init_social(app, db)
@@ -28,12 +30,10 @@ login_manager.login_view = 'main'
 login_manager.login_message = ''
 login_manager.init_app(app)
 
-import models
-
 @login_manager.user_loader
 def load_user(userid):
     try:
-        return models.user.User.objects.get(id=userid)
+        return User.objects.get(id=userid)
     except (TypeError, ValueError):
         pass
 

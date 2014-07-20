@@ -58,3 +58,4 @@ venv
 packed.css
 packed.js
 .webassets-cache
+local_settings.py
