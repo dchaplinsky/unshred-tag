@@ -1,36 +1,26 @@
-import os
-import pymongo
 from flask import Flask, render_template, request, redirect, url_for
-from flask.ext.assets import Environment, Bundle
 
-from utils import requires_auth
+from flask.ext.mongoengine import MongoEngine
+from flask.ext import login
+
+from users import init_social_login
+from assets import init as assets_init
+from models import Shreds, Tags
+
 app = Flask(__name__)
+app.config.from_object('settings')
 
-assets = Environment(app)
-js = Bundle(
-    'jquery.js', 'bootstrap.js', 'string_score.js',
-    'jquery.hotkeys.js', 'textext.core.js', 'textext.plugin.tags.js',
-    'textext.plugin.autocomplete.js', 'textext.plugin.prompt.js',
-    'textext.plugin.arrow.js', 'textext.plugin.suggestions.js',
-    'jquery.magnific-popup.min.js', 'base.js', output='packed.js',
-    filters='yui_js')
+try:
+    app.config.from_object('local_settings')
+except ImportError:
+    pass
 
-css = Bundle(
-    'bootstrap.css', 'textext.core.css', 'textext.plugin.tags.css',
-    'textext.plugin.prompt.css', 'textext.plugin.arrow.css',
-    'textext.plugin.autocomplete.css', 'jquery.magnific-popup.css',
-    'style.css', output='packed.css', filters='yui_css')
+db = MongoEngine(app)
 
-assets.register('js_all', js)
-assets.register('css_all', css)
+init_social_login(app, db)
 
-MONGODB_DB = "unshred"
-MONGO_URL = os.environ.get('MONGOHQ_URL')
-connection = pymongo.MongoClient(
-    MONGO_URL if MONGO_URL else "mongodb://localhost/" + MONGODB_DB)
-
-shreds = connection.get_default_database().shreds
-base_tags = connection.get_default_database().tags
+shreds = Shreds._get_collection()
+base_tags = Tags._get_collection()
 
 
 def get_next_shred():
@@ -49,15 +39,19 @@ def get_tags():
     return all_tags
 
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    login.logout_user()
+    return redirect(url_for('index'))
+
+
 @app.route('/')
-@requires_auth
 def index():
     return render_template("index.html",
                            base_tags=base_tags.find())
 
 
 @app.route('/next', methods=["GET", "POST"])
-@requires_auth
 def next():
     if request.method == "POST":
         shreds.update({"_id": request.form["_id"]},
@@ -80,4 +74,5 @@ def skip():
     return redirect(url_for("next"))
 
 if __name__ == "__main__":
+    assets_init(app)
     app.run(debug=True)

@@ -2,7 +2,7 @@ $(function(){
     $.ajaxSetup({
         traditional: true
     });
-    
+
     var current_shred = $("#current_shred");
 
     function collect_data() {
@@ -12,7 +12,7 @@ $(function(){
         return {
             "_id": $("#shred_id").val(),
             "tags": data
-        }
+        };
     }
 
     function load_next(data) {
@@ -36,7 +36,7 @@ $(function(){
 
 
         current_shred.find("textarea.textarea-tags").bind(
-            'keydown', 'alt+return', 
+            'keydown', 'alt+return',
             function(e) {
                 $("a#save-button").click();
             }).bind('keydown', 'f1', function(e){
@@ -64,6 +64,7 @@ $(function(){
     }).bind('keydown', 'alt+return', function(e){
         $("a#save-button").click();
     }).bind('keydown', 'f1', function(e){
+        e.preventDefault();
         $('.popup-with-zoom-anim').click();
     });
 
@@ -75,7 +76,7 @@ $(function(){
         overflowY: 'auto',
         closeBtnInside: true,
         preloader: false,
-     
+
         midClick: true,
         removalDelay: 100,
         mainClass: 'my-mfp-zoom-in'
