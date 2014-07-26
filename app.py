@@ -56,7 +56,11 @@ def inject_user():
 app.context_processor(backends)
 
 def get_next_shred():
-    return shreds.find({"tags": None}).sort("order").limit(1)[0]
+    shred = shreds.find({str(g.user.id): None}).sort("usersCount").limit(1)[0]
+    if shred:
+        return shred
+    return shreds.find({str(g.user.id): "skipped"})\
+                        .sort("usersCount").limit(1)[0]
 
 
 def get_tags():
@@ -70,14 +74,18 @@ def get_tags():
 
     return all_tags
 
+def progress_per_user(id):
+    return shreds.find({str(id): {"$exists": True, "$ne": "skipped"}}).count()
 
 @app.route('/logout', methods=['POST'])
 def logout():
     login.logout_user()
     return redirect(url_for('index'))
 
+
 @app.route('/')
 def index():
+    print progress_per_user(g.user.id)
     return render_template("index.html",
                            base_tags=base_tags.find())
 
@@ -86,8 +94,11 @@ def index():
 def next():
     if request.method == "POST":
         shreds.update({"_id": request.form["_id"]},
-                      {"$set": {"tags": map(unicode.lower,
-                                            request.form.getlist("tags"))}})
+                      {"$set": {str(g.user.id): map(unicode.lower,
+                                            request.form.getlist("tags"))},
+                       "$push": {"users": str(g.user.id)},
+                       "$inc": {"usersCount": 1}
+                       })
 
     return render_template("shred.html",
                            shred=get_next_shred(),
@@ -100,7 +111,7 @@ def skip():
     shred = shreds.find_one({"_id": request.form["_id"]})
 
     shreds.update({"_id": request.form["_id"]},
-                  {"$set": {"order": shred.get("order", 0) + 1}})
+                  {"$set": {str(g.user.id): "skipped"}})
 
     return redirect(url_for("next"))
 
