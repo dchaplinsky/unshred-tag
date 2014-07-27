@@ -51,11 +51,12 @@ CSS_ASSETS = ['bootstrap.css', 'textext.core.css', 'textext.plugin.tags.css',
 CSS_ASSETS_OUTPUT = 'packed.css'
 CSS_ASSETS_FILTERS = 'yui_css'
 
-S3_ENABLED = True
+S3_ENABLED = False
 S3_ACCESS_KEY_ID = os.environ.get("aws_access_key_id")
 S3_SECRET_ACCESS_KEY = os.environ.get("aws_secret_access_key")
 S3_SRC_BUCKET_NAME = 'kurchenko_pink'
 S3_DST_BUCKET_NAME = 'kurchenko'
 
-LOCAL_FS_SRC_DIR = ''
-LOCAL_FS_URL = ''
+LOCAL_FS_SRC_DIR = '../cv/pink/'
+LOCAL_FS_URL = 'http://localhost:5000/'
+SPLIT_OUT_DIR = "static/out"

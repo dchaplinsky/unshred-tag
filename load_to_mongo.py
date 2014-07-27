@@ -3,13 +3,19 @@ import os
 import os.path
 import json
 import bson
-from app import shreds, base_tags, app
-from unshred import Sheet
-from unshred.features.base import GeometryFeatures
 import fnmatch
+import urlparse
+from glob import glob
+
 from pymongo import ASCENDING
+
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+
+from unshred import Sheet
+from unshred.features import GeometryFeatures
+
+from app import shreds, base_tags, app
 
 
 class AbstractStorage(object):
@@ -47,7 +53,6 @@ class S3Storage(AbstractStorage):
 
     def clear(self):
         keys = self.dst_bucket.list()
-        print(list(keys))
         self.dst_bucket.delete_keys(keys)
 
     def get_file(self, fname_src):
@@ -65,9 +70,25 @@ class LocalFSStorage(AbstractStorage):
         self.src_dir = config["LOCAL_FS_SRC_DIR"]
         self.url = config["LOCAL_FS_URL"]
 
+    def list(self, mask):
+        return glob(os.path.join(self.src_dir, mask))
+
+    def put_file(self, fname_src):
+        return urlparse.urljoin(self.url, fname_src)
+
+    def clear(self):
+        pass
+
+    def get_file(self, fname_src):
+        return fname_src
+
 
 if __name__ == '__main__':
-    strg = S3Storage(app.config)
+    if app.config["S3_ENABLED"]:
+        strg = S3Storage(app.config)
+    else:
+        strg = LocalFSStorage(app.config)
+
     strg.clear()
 
     shreds.drop()
@@ -78,7 +99,8 @@ if __name__ == '__main__':
         sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
         print("\n\nProcessing file %s from %s" % (fname, sheet_name))
-        sheet = Sheet(fname, sheet_name, [GeometryFeatures], "png")
+        sheet = Sheet(fname, sheet_name, [GeometryFeatures],
+                      app.config["SPLIT_OUT_DIR"], "png")
 
         for c in sheet.resulting_contours:
             c["_id"] = "%s_%s" % (c["sheet"], c["name"])
