@@ -5,6 +5,7 @@ import json
 import bson
 import fnmatch
 import urlparse
+import random
 from glob import glob
 
 from pymongo import ASCENDING
@@ -16,6 +17,10 @@ from unshred import Sheet
 from unshred.features import GeometryFeatures
 
 from app import shreds, base_tags, app
+
+
+users = ["user_%s" % (i + 1) for i in xrange(5)]
+tags = ["tag_%s" % (i + 1) for i in xrange(30)]
 
 
 class AbstractStorage(object):
@@ -115,6 +120,10 @@ if __name__ == '__main__':
                 if k in c:
                     res = strg.put_file(c[k])
                     c[k] = res
+
+            c["tags"] = {}
+            for usr in random.sample(users, random.randint(1, 3)):
+                c["tags"][usr] = random.sample(tags, random.randint(0, 5))
 
             try:
                 shreds.insert(c)
