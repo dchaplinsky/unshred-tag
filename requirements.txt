@@ -15,3 +15,4 @@ git+https://github.com/dchaplinsky/unshred.git
 Flask-Login==0.2.11
 python-social-auth==0.1.26
 flask-mongoengine==0.7.0
+click==2.4
