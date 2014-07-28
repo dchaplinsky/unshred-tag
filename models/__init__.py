@@ -1,2 +1,2 @@
 from models.user import *
-from models.stripes import *
+from models.shreds import *

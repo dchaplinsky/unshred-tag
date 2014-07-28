@@ -1,14 +1,11 @@
-from flask import Flask, g, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
+
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
 
-from social.apps.flask_me_app.routes import social_auth
-from social.apps.flask_me_app.models import init_social
-from social.apps.flask_me_app.template_filters import backends
-
+from users import init_social_login
 from assets import init as assets_init
-
-from models import *
+from models import Shreds, Tags
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -18,42 +15,13 @@ try:
 except ImportError:
     pass
 
-
 db = MongoEngine(app)
+
+init_social_login(app, db)
 
 shreds = Shreds._get_collection()
 base_tags = Tags._get_collection()
 
-app.register_blueprint(social_auth)
-init_social(app, db)
-
-login_manager = login.LoginManager()
-login_manager.login_view = 'main'
-login_manager.login_message = ''
-login_manager.init_app(app)
-
-@login_manager.user_loader
-def load_user(userid):
-    try:
-        return User.objects.get(id=userid)
-    except (TypeError, ValueError):
-        pass
-
-
-@app.before_request
-def global_user():
-    g.user = login.current_user
-
-
-@app.context_processor
-def inject_user():
-    try:
-        return {'user': g.user}
-    except AttributeError:
-        return {'user': None}
-
-
-app.context_processor(backends)
 
 def get_next_shred():
     shred = shreds.find({str(g.user.id): None}).sort("usersCount").limit(1)[0]
