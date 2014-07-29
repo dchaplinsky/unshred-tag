@@ -60,3 +60,5 @@ S3_DST_BUCKET_NAME = 'kurchenko'
 LOCAL_FS_SRC_DIR = '../cv/pink/'
 LOCAL_FS_URL = 'http://localhost:5000/'
 SPLIT_OUT_DIR = "static/out"
+
+USERS_PER_SHRED = 2

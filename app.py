@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, g, render_template, request, redirect, url_for
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
@@ -24,11 +24,29 @@ base_tags = Tags._get_collection()
 
 
 def get_next_shred():
-    shred = shreds.find({str(g.user.id): None}).sort("usersCount").limit(1)[0]
-    if shred:
+    # UC 1: (Not User) and (usersCount < 3)
+    try:
+        return shreds.find({"tags.user": {"$ne": str(g.user.id)}, \
+            "$or": [{"usersCount": {"$exists": False}}, \
+                    {"usersCount": {"$lt": app.config["USERS_PER_SHRED"] + 1}}
+                    ]}).sort("usersCount").limit(1)[0]
+    except IndexError, e:
+        pass
+
+    # UC 2: (User) and (tags.tags == skipped)
+    # in this case we should delete record marked as 'skipped'
+    try:
+        shred = shreds.find({"tags.user": str(g.user.id), \
+            "tags.tags": "skipped"}).sort("usersCount").limit(1)[0]
+        shreds.update({"_id": shred["_id"]}, {"$pull": {'tags': \
+            {"user": str(g.user.id), "tags": "skipped"}}})
         return shred
-    return shreds.find({str(g.user.id): "skipped"})\
-                        .sort("usersCount").limit(1)[0]
+    except IndexError, e:
+        pass
+
+    # UC 3: (Not User)
+    return shreds.find({"tags.user": {"$ne": str(g.user.id)}})\
+        .sort("usersCount").limit(1)[0]
 
 
 def get_tags():
@@ -36,14 +54,17 @@ def get_tags():
     for t in base_tags.find():
         all_tags.add(t["title"].lower())
 
-    for t in shreds.distinct("tags"):
+    for t in shreds.distinct("tags.tags"):
         if t is not None:
             all_tags.add(t.lower())
 
     return all_tags
 
+
 def progress_per_user(id):
-    return shreds.find({str(id): {"$exists": True, "$ne": "skipped"}}).count()
+    return shreds.find({"tags.user": str(id), "tags.tags": \
+        {"$exists": True, "$ne": "skipped"}}).count()
+
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -53,7 +74,6 @@ def logout():
 
 @app.route('/')
 def index():
-    print progress_per_user(g.user.id)
     return render_template("index.html",
                            base_tags=base_tags.find())
 
@@ -62,10 +82,11 @@ def index():
 def next():
     if request.method == "POST":
         shreds.update({"_id": request.form["_id"]},
-                      {"$set": {str(g.user.id): map(unicode.lower,
-                                            request.form.getlist("tags"))},
-                       "$push": {"users": str(g.user.id)},
-                       "$inc": {"usersCount": 1}
+                      {"$push": {"tags": {"user": str(g.user.id),
+                       "tags": map(unicode.lower, request.form.getlist("tags"))}},
+                       "$inc": {"usersCount": 1},
+                       "$addToSet": {"summarizedTags": {"$each": \
+                                map(unicode.lower, request.form.getlist("tags"))}}
                        })
 
     return render_template("shred.html",
@@ -79,7 +100,8 @@ def skip():
     shred = shreds.find_one({"_id": request.form["_id"]})
 
     shreds.update({"_id": request.form["_id"]},
-                  {"$set": {str(g.user.id): "skipped"}})
+                  {"$push": {"tags":
+                    {"user": str(g.user.id), "tags": "skipped"}}})
 
     return redirect(url_for("next"))
 

@@ -18,12 +18,13 @@ $(function(){
     function load_next(data) {
         current_shred.css("visibility", "visible").html(data);
 
-        var suggs = current_shred.find('.textarea-tags').data(
-            "suggestions");
+        var textarea_tags = current_shred.find('.textarea-tags'),
+            suggs = textarea_tags.data("suggestions"),
+            summarizedTags = textarea_tags.data("summarized");
 
         current_shred.find('.textarea-tags').textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
-            tagsItems: [],
+            tagsItems: summarizedTags,
             autocomplete: {
                 dropdown: {
                     maxHeight : '200px'
