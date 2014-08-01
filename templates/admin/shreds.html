@@ -1,0 +1,21 @@
+{% extends 'admin/model/list.html' %}
+
+{% block model_list_table %}
+    <table class="table table-striped table-bordered table-hover model-list">
+        <thead>
+            <tr>
+                {% block list_header scoped %}
+                    {{ super() }}
+                {% endblock %}
+            </tr>
+        </thead>
+        {% for row in data %}
+        <tr>
+            {% block list_row scoped %}
+                <td>{{ row }}</td>
+            {% endblock %}
+        </tr>
+        {% endfor %}
+    </table>
+    {{ lib.pager(page, num_pages, pager_url) }}
+{% endblock %}

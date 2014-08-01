@@ -1,6 +1,8 @@
 
-from mongoengine import StringField, EmailField, BooleanField, Document
+from mongoengine import StringField, EmailField, BooleanField, \
+    Document, DateTimeField
 from flask.ext.login import UserMixin
+import datetime
 
 class User(Document, UserMixin):
     username = StringField(max_length=200)
@@ -9,6 +11,7 @@ class User(Document, UserMixin):
     email = EmailField()
     active = BooleanField(default=True)
     admin = BooleanField(default=False)
+    last_login = DateTimeField(default=datetime.datetime.now)
 
     def is_active(self):
         return self.active

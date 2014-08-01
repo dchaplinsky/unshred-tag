@@ -1,8 +1,9 @@
-from mongoengine import Document
+from mongoengine import StringField, IntField, SequenceField, ListField, Document
 
 class Shreds(Document):
     pass
 
 class Tags(Document):
-    pass
+    description = StringField(max_length=200, default='')
+    title = StringField(max_length=200, default='')
 

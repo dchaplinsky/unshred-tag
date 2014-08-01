@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, g, render_template, request, redirect, url_for
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
+from flask.ext import admin
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags
+from models import Shreds, Tags, User
+from admin import UserView, TagsView, ShredsView, BaseAdminIndexView, UsersView
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -107,4 +110,13 @@ def skip():
 
 if __name__ == "__main__":
     assets_init(app)
+
+    admin = admin.Admin(app, 'Unshred')
+    # Use next string instead above to protect your admin panel with password
+    # admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
+    admin.add_view(UserView(User))
+    admin.add_view(TagsView(Tags))
+    admin.add_view(ShredsView(name='Custom Shreds'))
+    admin.add_view(UsersView(name='Custom Users'))
+
     app.run(debug=True)
