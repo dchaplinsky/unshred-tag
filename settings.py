@@ -4,8 +4,11 @@ SESSION_COOKIE_NAME = 'unshred_session'
 DEBUG = False
 
 MONGODB_SETTINGS = {
-    'DB': 'unshred',
-    'HOST': 'localhost'
+    'DB': os.environ.get("mongodb_db", "unshred"),
+    'HOST': os.environ.get("mongodb_host", "localhost"),
+    'USERNAME': os.environ.get("mongodb_username", None),
+    'PASSWORD': os.environ.get("mongodb_password", None),
+    'PORT': os.environ.get("mongodb_port", None),
 }
 
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -22,7 +25,6 @@ SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
     'social.backends.twitter.TwitterOAuth',
     'social.backends.facebook.FacebookOAuth2',
-    # 'social.backends.vk.VKOAuth2',
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
