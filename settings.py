@@ -1,7 +1,7 @@
 import os
 SECRET_KEY = 'random-secret-key'
 SESSION_COOKIE_NAME = 'unshred_session'
-DEBUG = False
+DEBUG = True
 
 MONGODB_SETTINGS = {
     'DB': os.environ.get("mongodb_db", "unshred"),
