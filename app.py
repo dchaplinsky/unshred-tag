@@ -32,8 +32,10 @@ def get_next_shred():
     if shred:
         return shred
 
-    shred = shreds.find({"$query": {"usersSkipped": str(g.user.id)}, \
-                         "$orderby": {"usersCount": 1}})
+    shred = shreds.find_one({"$query": {"usersSkipped": str(g.user.id),
+                "$or": [{"usersCount": {"$exists": False}}, \
+                    {"usersCount": {"$lte": app.config["USERS_PER_SHRED"]}}
+                    ]}, "$orderby": {"usersCount": 1}})
     if shred:
         shreds.update({"_id": shred["_id"]}, {"$pull": {'usersSkipped': \
             str(g.user.id)}})

@@ -105,6 +105,7 @@ if __name__ == '__main__':
         for c in sheet.resulting_contours:
             c["_id"] = "%s_%s" % (c["sheet"], c["name"])
             c["order"] = 0
+            c["usersCount"] = 0
 
             del(c["simplified_contour"])
             c["contour"] = c["contour"].tolist()
