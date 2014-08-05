@@ -1,3 +1,4 @@
+import os
 from flask import Flask, g, render_template, request, redirect, url_for
 
 from flask.ext.mongoengine import MongoEngine
@@ -108,4 +109,4 @@ def skip():
     return redirect(url_for("next"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
