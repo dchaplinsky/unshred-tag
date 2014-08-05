@@ -25,21 +25,18 @@ users = User._get_collection()
 
 
 def get_next_shred():
-    # UC 1: (Not User) and (usersCount < 3)
-    shred = shreds.find_one({"$query": {"tags.user": {"$ne": str(g.user.id)}, \
+    shred = shreds.find_one({"$query": {"usersProcessed": {"$ne": str(g.user.id)}, \
             "$or": [{"usersCount": {"$exists": False}}, \
                     {"usersCount": {"$lte": app.config["USERS_PER_SHRED"]}}
                     ]}, "$orderby": {"usersCount": 1}})
     if shred:
         return shred
 
-    # UC 2: (User) and (tags.tags == skipped)
-    # in this case we should delete record marked as 'skipped'
-    shred = shreds.find({"$query": {"tags.user": str(g.user.id), \
-        "tags.tags": "skipped"}, "$orderby": {"usersCount": 1}})
+    shred = shreds.find({"$query": {"usersSkipped": str(g.user.id)}, \
+                         "$orderby": {"usersCount": 1}})
     if shred:
-        shreds.update({"_id": shred["_id"]}, {"$pull": {'tags': \
-            {"user": str(g.user.id), "tags": "skipped"}}})
+        shreds.update({"_id": shred["_id"]}, {"$pull": {'usersSkipped': \
+            str(g.user.id)}})
     return shred
 
 
@@ -74,9 +71,10 @@ def next():
         tags = set(map(unicode.lower, request.form.getlist("tags")))
         shreds.update({"_id": request.form["_id"]},
                       {"$push": {"tags": {"user": str(g.user.id),
-                       "tags": map(unicode.lower, request.form.getlist("tags"))}},
+                       "tags": list(tags)}},
                        "$inc": {"usersCount": 1},
-                       "$addToSet": {"summarizedTags": {"$each": list(tags)}}
+                       "$addToSet": {"summarizedTags": {"$each": list(tags)},
+                                     "usersProcessed": str(g.user.id)}
                        })
 
         users.update({"_id": g.user.id},
@@ -98,8 +96,7 @@ def skip():
     shred = shreds.find_one({"_id": request.form["_id"]})
 
     shreds.update({"_id": request.form["_id"]},
-                  {"$push": {"tags":
-                    {"user": str(g.user.id), "tags": "skipped"}}})
+                  {"$addToSet": {"usersSkipped": str(g.user.id)}})
 
     users.update({"_id": g.user.id}, {"$inc": {"skipped": 1}})
 

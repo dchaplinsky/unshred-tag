@@ -123,7 +123,9 @@ if __name__ == '__main__':
                 raise
 
     shreds.ensure_index([("name", ASCENDING), ("sheet", ASCENDING)])
-    shreds.ensure_index([("tags", ASCENDING), ("usersCount", ASCENDING)])
+    shreds.ensure_index([("usersProcessed", ASCENDING),
+                         ("usersSkipped", ASCENDING),
+                         ("usersCount", ASCENDING)])
 
     base_tags.drop()
 
