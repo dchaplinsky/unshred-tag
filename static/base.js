@@ -44,7 +44,9 @@ $(function(){
             });
     }
 
-    $.get(window.urls.next, load_next);
+    if (window.urls != undefined) {
+        $.get(window.urls.next, load_next);
+    }
 
     $(document.body).on("click", "a#save-button", function(e) {
         e.preventDefault();

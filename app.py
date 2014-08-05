@@ -15,6 +15,8 @@ try:
 except ImportError:
     pass
 
+assets_init(app)
+
 db = MongoEngine(app)
 
 init_social_login(app, db)
@@ -25,18 +27,20 @@ users = User._get_collection()
 
 
 def get_next_shred():
-    shred = shreds.find_one({"$query": {"usersProcessed": {"$ne": str(g.user.id)},
-                            "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                            }, "$orderby": {"usersCount": 1}})
+    shred = shreds.find_one(
+        {"$query": {"usersProcessed": {"$ne": str(g.user.id)},
+                    "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
+                    }, "$orderby": {"usersCount": 1}})
     if shred:
         return shred
 
-    shred = shreds.find_one({"$query": {"usersSkipped": str(g.user.id),
-                "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                }, "$orderby": {"usersCount": 1}})
+    shred = shreds.find_one(
+        {"$query": {"usersSkipped": str(g.user.id),
+                    "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
+                    }, "$orderby": {"usersCount": 1}})
     if shred:
-        shreds.update({"_id": shred["_id"]}, {"$pull": {'usersSkipped': \
-            str(g.user.id)}})
+        shreds.update({"_id": shred["_id"]},
+                      {"$pull": {'usersSkipped': str(g.user.id)}})
     return shred
 
 
@@ -49,8 +53,9 @@ def get_tags():
 
 
 def progress_per_user(id):
-    return shreds.find({"tags.user": str(id), "tags.tags": \
-        {"$exists": True, "$ne": "skipped"}}).count()
+    return shreds.find(
+        {"tags.user": str(id),
+         "tags.tags": {"$exists": True, "$ne": "skipped"}}).count()
 
 
 @app.route('/logout', methods=['POST'])
@@ -82,8 +87,10 @@ def next():
                       "$addToSet": {"tags": {"$each": list(tags)}}})
 
         for tag in tags:
-            base_tags.update({"title": tag.capitalize()}, {"$inc": {"usages": 1},
-                    "$addToSet": {"shreds": request.form["_id"]}}, True)
+            base_tags.update(
+                {"title": tag.capitalize()},
+                {"$inc": {"usages": 1}, "$addToSet":
+                 {"shreds": request.form["_id"]}}, True)
 
     return render_template("shred.html",
                            shred=get_next_shred(),
@@ -93,8 +100,6 @@ def next():
 
 @app.route("/skip", methods=["POST"])
 def skip():
-    shred = shreds.find_one({"_id": request.form["_id"]})
-
     shreds.update({"_id": request.form["_id"]},
                   {"$addToSet": {"usersSkipped": str(g.user.id)}})
 
@@ -103,5 +108,4 @@ def skip():
     return redirect(url_for("next"))
 
 if __name__ == "__main__":
-    assets_init(app)
     app.run(debug=True)
