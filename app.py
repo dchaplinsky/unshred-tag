@@ -25,17 +25,15 @@ users = User._get_collection()
 
 
 def get_next_shred():
-    shred = shreds.find_one({"$query": {"usersProcessed": {"$ne": str(g.user.id)}, \
-            "$or": [{"usersCount": {"$exists": False}}, \
-                    {"usersCount": {"$lte": app.config["USERS_PER_SHRED"]}}
-                    ]}, "$orderby": {"usersCount": 1}})
+    shred = shreds.find_one({"$query": {"usersProcessed": {"$ne": str(g.user.id)},
+                            "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
+                            }, "$orderby": {"usersCount": 1}})
     if shred:
         return shred
 
     shred = shreds.find_one({"$query": {"usersSkipped": str(g.user.id),
-                "$or": [{"usersCount": {"$exists": False}}, \
-                    {"usersCount": {"$lte": app.config["USERS_PER_SHRED"]}}
-                    ]}, "$orderby": {"usersCount": 1}})
+                "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
+                }, "$orderby": {"usersCount": 1}})
     if shred:
         shreds.update({"_id": shred["_id"]}, {"$pull": {'usersSkipped': \
             str(g.user.id)}})
