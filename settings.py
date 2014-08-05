@@ -8,7 +8,8 @@ MONGODB_SETTINGS = {
     'HOST': os.environ.get("mongodb_host", "localhost"),
     'USERNAME': os.environ.get("mongodb_username", None),
     'PASSWORD': os.environ.get("mongodb_password", None),
-    'PORT': os.environ.get("mongodb_port", None),
+    'PORT': (int(os.environ.get("mongodb_port"))
+             if os.environ.get("mongodb_port") else None)
 }
 
 DEBUG_TB_INTERCEPT_REDIRECTS = False
