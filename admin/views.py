@@ -25,7 +25,7 @@ class BaseAdminIndexView(admin.AdminIndexView):
         return login.current_user.is_admin()
 
 
-class CustomeShredsView(BaseModelView):
+class CustomShredsView(BaseModelView):
 
     @expose('/')
     def index_view(self):
@@ -140,5 +140,5 @@ def admin_init(app):
     admin.add_view(UserView(User))
     admin.add_view(TagsView(Tags))
     admin.add_view(ShredsView(Shreds))
-    admin.add_view(CustomeShredsView(name='Custom Shreds'))
+    admin.add_view(CustomShredsView(name='Custom Shreds'))
     admin.add_view(UsersView(name='Custom Users'))
