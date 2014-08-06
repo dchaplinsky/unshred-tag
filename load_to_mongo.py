@@ -13,7 +13,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from unshred import Sheet
-from unshred.features import GeometryFeatures
+from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import shreds, base_tags, app
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
         sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
         print("\n\nProcessing file %s from %s" % (fname, sheet_name))
-        sheet = Sheet(fname, sheet_name, [GeometryFeatures],
+        sheet = Sheet(fname, sheet_name, [GeometryFeatures, ColourFeatures],
                       app.config["SPLIT_OUT_DIR"], "png")
 
         for c in sheet.resulting_contours:
