@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from flask import Flask, g, render_template, request, redirect, url_for
 
@@ -7,6 +8,7 @@ from flask.ext import login
 from users import init_social_login
 from assets import init as assets_init
 from models import Shreds, Tags, User
+from admin import admin_init
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -17,6 +19,7 @@ except ImportError:
     pass
 
 assets_init(app)
+admin_init(app)
 
 db = MongoEngine(app)
 
