@@ -4,6 +4,7 @@ from flask.ext.admin import Admin, BaseView, expose
 from flask.ext.admin._backwards import ObsoleteAttr
 from jinja2 import contextfunction
 
+
 class BaseModelView(BaseView):
     column_sortable_list = ObsoleteAttr('column_sortable_list',
                                         'sortable_columns',

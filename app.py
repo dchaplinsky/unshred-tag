@@ -8,7 +8,7 @@ from flask.ext import admin
 from users import init_social_login
 from assets import init as assets_init
 from models import Shreds, Tags, User
-from admin import UserView, TagsView, ShredsView, BaseAdminIndexView, UsersView
+from admin import admin_init
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -111,13 +111,5 @@ def skip():
     return redirect(url_for("next"))
 
 if __name__ == "__main__":
-
-    admin = admin.Admin(app, 'Unshred')
-    # Use next string instead above to protect your admin panel with password
-    # admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
-    admin.add_view(UserView(User))
-    admin.add_view(TagsView(Tags))
-    admin.add_view(ShredsView(name='Custom Shreds'))
-    admin.add_view(UsersView(name='Custom Users'))
-
+    admin_init(app)
     app.run(debug=True)

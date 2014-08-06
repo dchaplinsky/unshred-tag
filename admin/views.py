@@ -1,19 +1,23 @@
 # coding: utf-8
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext import admin, login
-from flask import request, url_for
-from flask.ext.admin import Admin, BaseView, expose
+from flask.ext.admin import expose
 from models import Shreds, Tags, User
 from base import BaseModelView
 
 class UserView(ModelView):
     column_filters = ['username']
     column_searchable_list = ('username',)
-    column_exclude_list = ('password',)
+    column_exclude_list = ('password', 'name',)
 
 
 class TagsView(ModelView):
     column_filters = ['title']
+    column_exclude_list = ('description',)
+
+
+class ShredsView(ModelView):
+    pass
 
 
 class BaseAdminIndexView(admin.AdminIndexView):
@@ -21,7 +25,7 @@ class BaseAdminIndexView(admin.AdminIndexView):
         return login.current_user.is_admin()
 
 
-class ShredsView(BaseModelView):
+class CustomeShredsView(BaseModelView):
 
     @expose('/')
     def index_view(self):
@@ -48,6 +52,7 @@ class ShredsView(BaseModelView):
                                pager_url=pager_url,
                                num_pages=num_pages,
                                page=page,)
+
 
 class UsersView(BaseModelView):
     column_sortable_list = ('username', 'used_tags', 'tags_count', \
@@ -125,3 +130,15 @@ class UsersView(BaseModelView):
                                list_columns=self.column_labels,
                                sort_url=sort_url,
                                get_value=self.get_list_value)
+
+
+def admin_init(app):
+    from flask.ext import admin
+    admin = admin.Admin(app, 'Unshred')
+    # Use next string instead above to protect your admin panel with password
+    # admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
+    admin.add_view(UserView(User))
+    admin.add_view(TagsView(Tags))
+    admin.add_view(ShredsView(Shreds))
+    admin.add_view(CustomeShredsView(name='Custom Shreds'))
+    admin.add_view(UsersView(name='Custom Users'))
