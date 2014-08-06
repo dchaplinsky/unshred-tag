@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
 from flask import Flask, g, render_template, request, redirect, url_for
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
+from flask.ext import admin
 
 from users import init_social_login
 from assets import init as assets_init
 from models import Shreds, Tags, User
+from admin import admin_init
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -108,4 +111,5 @@ def skip():
     return redirect(url_for("next"))
 
 if __name__ == "__main__":
+    admin_init(app)
     app.run(debug=True)
