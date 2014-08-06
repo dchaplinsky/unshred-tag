@@ -1,3 +1,4 @@
+{% if shred %}
 <div>
     <div class="shed-img transparent-bg"><img src="{{ shred.piece_fname }}"/></div>
     <div class="shed-img"><img src="{{ shred.piece_in_context_fname }}" /></div>
@@ -41,10 +42,12 @@
         </table>
     </div>
     <div class="clearfix"></div>
-    <textarea class="textarea-tags" rows="1"
-        data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape}}"
-        data-summarized="{{ shred.summarizedTags|map('capitalize')|list|tojson|forceescape }}"></textarea>
+    <textarea class="textarea-tags" rows="1" data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape}}"></textarea>
     <input type="hidden" name="shred_id" id="shred_id" value="{{ shred._id }}"/>
     <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
     <div class="clearfix"></div>
 </div>
+{% else %}
+<div><h2>Спасибо за помощь, сознательный гражданин! Работа завершена и теперь
+подарочный Курченко будет выслан Вам укрпочтой в течении 7 рабочих дней.</h2></div>
+{% endif %}

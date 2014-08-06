@@ -4,8 +4,11 @@ SESSION_COOKIE_NAME = 'unshred_session'
 DEBUG = False
 
 MONGODB_SETTINGS = {
-    'DB': 'unshred',
-    'HOST': 'localhost'
+    'DB': os.environ.get("mongodb_db", "unshred"),
+    'HOST': os.environ.get("mongodb_host", "localhost"),
+    'USERNAME': os.environ.get("mongodb_username", None),
+    'PASSWORD': os.environ.get("mongodb_password", None),
+    'PORT': os.environ.get("mongodb_port", None),
 }
 
 DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -22,7 +25,6 @@ SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
     'social.backends.twitter.TwitterOAuth',
     'social.backends.facebook.FacebookOAuth2',
-    # 'social.backends.vk.VKOAuth2',
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
@@ -51,7 +53,7 @@ CSS_ASSETS = ['bootstrap.css', 'textext.core.css', 'textext.plugin.tags.css',
 CSS_ASSETS_OUTPUT = 'packed.css'
 CSS_ASSETS_FILTERS = 'yui_css'
 
-S3_ENABLED = False
+S3_ENABLED = bool(os.environ.get("s3_enabled"))
 S3_ACCESS_KEY_ID = os.environ.get("aws_access_key_id")
 S3_SECRET_ACCESS_KEY = os.environ.get("aws_secret_access_key")
 S3_SRC_BUCKET_NAME = 'kurchenko_pink'
