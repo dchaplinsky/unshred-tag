@@ -24,10 +24,9 @@ class BaseAdminIndexView(admin.AdminIndexView):
     def is_accessible(self):
         try:
             return login.current_user.is_admin()
-        except AttributeError, e:
-            return False
-        else:
-            return False
+        except AttributeError:
+            pass
+        return False
 
 
 class CustomShredsView(BaseModelView):
