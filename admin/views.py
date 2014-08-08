@@ -22,7 +22,12 @@ class ShredsView(ModelView):
 
 class BaseAdminIndexView(admin.AdminIndexView):
     def is_accessible(self):
-        return login.current_user.is_admin()
+        try:
+            return login.current_user.is_admin()
+        except AttributeError, e:
+            return False
+        else:
+            return False
 
 
 class CustomShredsView(BaseModelView):
@@ -134,9 +139,7 @@ class UsersView(BaseModelView):
 
 def admin_init(app):
     from flask.ext import admin
-    admin = admin.Admin(app, 'Unshred')
-    # Use next string instead above to protect your admin panel with password
-    # admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
+    admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
     admin.add_view(UserView(User))
     admin.add_view(TagsView(Tags))
     admin.add_view(ShredsView(Shreds))
