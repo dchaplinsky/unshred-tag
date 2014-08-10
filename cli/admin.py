@@ -1,6 +1,7 @@
-from app import db #required for init db
+from app import db  # required for init db
 from models import User
 from click import echo
+
 
 def list_admin():
     users = list(User.objects(admin=True).scalar("email"))
@@ -11,6 +12,7 @@ def list_admin():
     echo("Allowed admins are")
     for email in users:
         echo("- %s" % email)
+
 
 def toggle_admin(email, state):
     try:

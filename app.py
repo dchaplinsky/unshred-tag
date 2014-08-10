@@ -26,34 +26,53 @@ db = MongoEngine(app)
 init_social_login(app, db)
 
 shreds = Shreds._get_collection()
-base_tags = Tags._get_collection()
 users = User._get_collection()
 
 
 def get_next_shred():
     shred = shreds.find_one(
         {"$query": {"usersProcessed": {"$ne": str(g.user.id)},
+                    "usersSkipped": {"$ne": str(g.user.id)},
                     "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                    }, "$orderby": {"usersCount": 1}})
+                    }}, sort=[("batch", 1),
+                              ("usersCount", 1)])
+
     if shred:
         return shred
 
     shred = shreds.find_one(
         {"$query": {"usersSkipped": str(g.user.id),
                     "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                    }, "$orderby": {"usersCount": 1}})
+                    }}, sort=[("batch", 1),
+                              ("usersCount", 1)])
+
     if shred:
         shreds.update({"_id": shred["_id"]},
                       {"$pull": {'usersSkipped': str(g.user.id)}})
+
     return shred
 
 
 def get_tags():
-    all_tags = set()
-    for t in base_tags.find():
-        all_tags.add(t["title"].lower())
+    return [unicode(t["title"]).lower()
+            for t in Tags.objects.order_by("-usages")]
 
-    return all_tags
+
+def get_tag_synonyms():
+    mapping = {}
+    for t in Tags.objects(synonyms__exists=True):
+        for s in t["synonyms"]:
+            mapping[s] = t["title"]
+
+    return mapping
+
+
+def get_auto_tags(shred):
+    mapping = get_tag_synonyms()
+    auto = [mapping.get(suggestion)
+            for suggestion in shred.get("tags_suggestions", [])]
+
+    return filter(None, set(auto))
 
 
 def progress_per_user(id):
@@ -71,7 +90,7 @@ def logout():
 @app.route('/')
 def index():
     return render_template("index.html",
-                           base_tags=base_tags.find())
+                           base_tags=Tags.objects.all())
 
 
 @app.route('/next', methods=["GET", "POST"])
@@ -91,13 +110,14 @@ def next():
                       "$addToSet": {"tags": {"$each": list(tags)}}})
 
         for tag in tags:
-            base_tags.update(
-                {"title": tag.capitalize()},
-                {"$inc": {"usages": 1}, "$addToSet":
-                 {"shreds": request.form["_id"]}}, True)
+            db_tag, _ = Tags.objects.get_or_create(title=tag.capitalize())
+            db_tag.update(inc__usages=1,
+                          add_to_set__shreds=request.form["_id"])
 
+    shred = get_next_shred()
     return render_template("shred.html",
-                           shred=get_next_shred(),
+                           shred=shred,
+                           auto_tags=get_auto_tags(shred),
                            all_tags=get_tags()
                            )
 

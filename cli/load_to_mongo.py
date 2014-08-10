@@ -1,11 +1,13 @@
-import sys
 import os
 import os.path
 import json
 import bson
 import fnmatch
 import urlparse
+import shutil
+import time
 from glob import glob
+from click import echo
 
 from pymongo import ASCENDING
 
@@ -15,11 +17,15 @@ from boto.s3.key import Key
 from unshred import Sheet
 from unshred.features import GeometryFeatures, ColourFeatures
 
-from app import shreds, base_tags, app
+from app import shreds, app
+from models import Batches, Tags
 
 
 class AbstractStorage(object):
-    def clear(self, config):
+    def __init__(self, config):
+        raise NotImplementedError
+
+    def clear(self, dirname):
         raise NotImplementedError
 
     def get_file(self, fname_src):
@@ -51,8 +57,8 @@ class S3Storage(AbstractStorage):
         return "https://s3.amazonaws.com/%s/%s" % (self.dst_bucket_name,
                                                    fname_src)
 
-    def clear(self):
-        keys = self.dst_bucket.list()
+    def clear(self, dirname):
+        keys = self.dst_bucket.list(dirname)
         self.dst_bucket.delete_keys(keys)
 
     def get_file(self, fname_src):
@@ -76,36 +82,42 @@ class LocalFSStorage(AbstractStorage):
     def put_file(self, fname_src):
         return urlparse.urljoin(self.url, fname_src)
 
-    def clear(self):
-        pass
+    def clear(self, dirname):
+        shutil.rmtree(dirname, ignore_errors=True)
 
     def get_file(self, fname_src):
         return fname_src
 
 
-if __name__ == '__main__':
+def load_new_batch(flt, batch):
     if app.config["S3_ENABLED"]:
         strg = S3Storage(app.config)
     else:
         strg = LocalFSStorage(app.config)
 
-    strg.clear()
+    pages_processed = 0
+    shreds_created = 0
+    import_took = time.time()
 
-    shreds.drop()
-    flt = sys.argv[1]
+    out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
+    strg.clear(out_dir)
+    shreds.remove({"batch": batch})
 
     for src_key in strg.list(flt):
         fname = strg.get_file(src_key)
         sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
-        print("\n\nProcessing file %s from %s" % (fname, sheet_name))
+        echo("\n\nProcessing file %s from %s" % (fname, sheet_name))
         sheet = Sheet(fname, sheet_name, [GeometryFeatures, ColourFeatures],
-                      app.config["SPLIT_OUT_DIR"], "png")
+                      out_dir, "png")
+
+        pages_processed += 1
 
         for c in sheet.resulting_contours:
-            c["_id"] = "%s_%s" % (c["sheet"], c["name"])
-            c["order"] = 0
+            c["_id"] = "%s:%s_%s" % (batch, c["sheet"], c["name"])
             c["usersCount"] = 0
+            c["batch"] = batch
+            shreds_created += 1
 
             del(c["simplified_contour"])
             c["contour"] = c["contour"].tolist()
@@ -120,17 +132,31 @@ if __name__ == '__main__':
             try:
                 shreds.insert(c)
             except bson.errors.InvalidDocument:
-                print(c)
+                echo(c)
                 raise
 
-    shreds.ensure_index([("name", ASCENDING), ("sheet", ASCENDING)])
+    Batches(
+        _id=batch,
+        name=batch,
+        shreds_created=shreds_created,
+        pages_processed=pages_processed,
+        import_took=int((time.time() - import_took) * 1000)
+    ).save()
+
+    shreds.ensure_index([("name", ASCENDING),
+                         ("sheet", ASCENDING),
+                         ("batch", ASCENDING)])
+
     shreds.ensure_index([("usersProcessed", ASCENDING),
                          ("usersSkipped", ASCENDING),
-                         ("usersCount", ASCENDING)])
-
-    base_tags.drop()
+                         ("usersCount", ASCENDING),
+                         ("batch", ASCENDING)])
 
     with open("base_tags.json", "r") as f:
         tags = json.load(f)
         for tag in tags:
-            base_tags.insert(tag)
+            Tags.objects.get_or_create(title=tag["title"], defaults=tag)
+
+
+def list():
+    return Batches.objects.order_by("created")
