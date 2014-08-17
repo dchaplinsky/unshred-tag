@@ -26,6 +26,7 @@ SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
     'social.backends.twitter.TwitterOAuth',
     'social.backends.facebook.FacebookOAuth2',
+    'social.backends.vk.VKOAuth2',
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
@@ -36,6 +37,9 @@ SOCIAL_AUTH_TWITTER_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_KEY = ''
 SOCIAL_AUTH_FACEBOOK_SECRET = ''
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = ''
+SOCIAL_AUTH_VK_APP_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 

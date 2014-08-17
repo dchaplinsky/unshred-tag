@@ -64,7 +64,7 @@ $(function(){
 
             $.post(window.urls.next, form, load_next);
         }
-    }).bind('keydown', 'alt+return', function(e){
+    }).bind('keydown', 'alt+return', function(e) {
         $("a#save-button").click();
     }).bind('keydown', 'f1', function(e){
         e.preventDefault();
