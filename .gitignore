@@ -60,3 +60,4 @@ packed.js
 .webassets-cache
 local_settings.py
 static/out
+devrequirements.txt
