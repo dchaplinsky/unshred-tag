@@ -11,9 +11,13 @@
             </ul>
         </div>
     </div>
-    <div class="inner cover" id="current_shred">
+    {% if config.SITE_IS_CLOSED and not user.is_admin() %}
+        {% include 'holding_page.html' %}
+    {% else %}
+        <div class="inner cover" id="current_shred">
 
-    </div>
+        </div>
+    {% endif %}
 
     <div class="zoom-anim-dialog mfp-hide small-dialog" id="tag_hints">
         <div class="dialog-content">

@@ -69,3 +69,5 @@ LOCAL_FS_URL = 'http://localhost:5000/'
 SPLIT_OUT_DIR = "static/out"
 
 USERS_PER_SHRED = 2
+
+SITE_IS_CLOSED = False
