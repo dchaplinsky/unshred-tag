@@ -4,6 +4,7 @@ from mongoengine import StringField, EmailField, BooleanField, \
 from flask.ext.login import UserMixin
 import datetime
 
+
 class User(Document, UserMixin):
     username = StringField(max_length=200)
     password = StringField(max_length=200, default='')
@@ -21,4 +22,3 @@ class User(Document, UserMixin):
 
     def is_admin(self):
         return self.admin or False
-

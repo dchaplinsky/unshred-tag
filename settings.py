@@ -43,18 +43,23 @@ SOCIAL_AUTH_VK_APP_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
-JS_ASSETS = ['vendor/jquery/jquery.js', 'vendor/bootstrap/bootstrap.js',
-             'vendor/string_score/string_score.js', 'vendor/jquery.hotkeys/jquery.hotkeys.js',
-             'vendor/textext/js/textext.core.js', 'vendor/textext/js/textext.plugin.tags.js',
+JS_ASSETS = ['vendor/jquery/jquery.js',
+             'vendor/bootstrap/bootstrap.js',
+             'vendor/string_score/string_score.js',
+             'vendor/jquery.hotkeys/jquery.hotkeys.js',
+             'vendor/textext/js/textext.core.js',
+             'vendor/textext/js/textext.plugin.tags.js',
              'vendor/textext/js/textext.plugin.autocomplete.js',
              'vendor/textext/js/textext.plugin.prompt.js',
              'vendor/textext/js/textext.plugin.arrow.js',
              'scripts/textext.plugin.suggestions.js',  # patched
-             'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js', 'scripts/base.js']
+             'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js',
+             'scripts/base.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 JS_ASSETS_FILTERS = 'yui_js'
 
-CSS_ASSETS = ['vendor/bootstrap/bootstrap.css', 'vendor/textext/css/textext.core.css',
+CSS_ASSETS = ['vendor/bootstrap/bootstrap.css',
+              'vendor/textext/css/textext.core.css',
               'vendor/textext/css/textext.plugin.tags.css',
               'vendor/textext/css/textext.plugin.prompt.css',
               'vendor/textext/css/textext.plugin.arrow.css',

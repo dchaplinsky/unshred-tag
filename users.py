@@ -6,6 +6,7 @@ from social.apps.flask_me_app.template_filters import backends
 from models import User
 import datetime
 
+
 def init_social_login(app, db):
     app.register_blueprint(social_auth)
     init_social(app, db)

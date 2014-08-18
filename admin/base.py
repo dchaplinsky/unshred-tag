@@ -1,6 +1,5 @@
-from flask.ext import admin, login
 from flask import request, url_for
-from flask.ext.admin import Admin, BaseView, expose
+from flask.ext.admin import BaseView, expose
 from flask.ext.admin._backwards import ObsoleteAttr
 from jinja2 import contextfunction
 
@@ -41,7 +40,6 @@ class BaseModelView(BaseView):
     def is_sortable(self, name):
         return name in self.get_sortable_columns()
 
-
     def get_sortable_columns(self):
         if self.column_sortable_list is None:
             return dict()
@@ -55,7 +53,6 @@ class BaseModelView(BaseView):
                     result[c] = c
 
             return result
-
 
     @contextfunction
     def get_list_value(self, context, model, name):
