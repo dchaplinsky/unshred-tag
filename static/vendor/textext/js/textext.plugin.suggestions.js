@@ -159,7 +159,7 @@
 	 * @param e {Object} jQuery event.
 	 * @param data {Object} Payload from the `getSuggestions` event with the user query, eg `{ query: {String} }`.
 	 *
-	 * @author agorbatchev, dchaplinsky
+	 * @author agorbatchev
 	 * @date 2011/08/19
 	 * @id TextExtSuggestions.onGetSuggestions
 	 */
@@ -167,33 +167,9 @@
 	{
 		var self        = this,
 			suggestions = self.opts(OPT_SUGGESTIONS)
-			scores = [],
-			filtered = [];
+			;
 
-		/*
-		WARNING, WARNING, this method differs from original version.
-		Quicksilver search has been integrated here.
-		*/
-
-		if (data.query.length > 0) {
-			$.each(suggestions, function(i) {
-				var score = this.score(data.query);
-				
-				if (score > 0) {
-					scores.push([score, i]);
-				}
-			});
-	
-			$.each(scores.sort(function(a, b) {
-				return b[0] - a[0];
-				}), function(){
-					filtered.push(suggestions[this[1]]);
-				}
-			)
-
-			suggestions = filtered;
-		}
-
-		self.setSuggestions(suggestions);
+		suggestions.sort();
+		self.setSuggestions(self.itemManager().filter(suggestions, data.query));
 	};
 })(jQuery);

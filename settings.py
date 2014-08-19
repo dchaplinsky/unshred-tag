@@ -52,7 +52,9 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'vendor/textext/js/textext.plugin.autocomplete.js',
              'vendor/textext/js/textext.plugin.prompt.js',
              'vendor/textext/js/textext.plugin.arrow.js',
-             'scripts/textext.plugin.suggestions.js',  # patched
+             'vendor/textext/js/textext.plugin.suggestions.js',
+             # patch to add quicksilver search to textext suggestions
+             'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js',
              'scripts/base.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
