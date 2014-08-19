@@ -110,7 +110,13 @@ def next():
                       "$addToSet": {"tags": {"$each": list(tags)}}})
 
         for tag in tags:
-            db_tag, _ = Tags.objects.get_or_create(title=tag.capitalize())
+            db_tag, _ = Tags.objects.get_or_create(
+                title=tag.capitalize(),
+                defaults={
+                    "is_base": False,
+                    "created_by": g.user.id
+                }
+            )
             db_tag.update(inc__usages=1,
                           add_to_set__shreds=request.form["_id"])
 

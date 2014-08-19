@@ -1,6 +1,9 @@
 import datetime
 from mongoengine import (
-    StringField, IntField, SequenceField, Document, DateTimeField, ListField)
+    StringField, IntField, SequenceField, Document, DateTimeField, ListField,
+    BooleanField, ReferenceField, CASCADE)
+
+from .user import User
 
 
 class Shreds(Document):
@@ -10,6 +13,9 @@ class Shreds(Document):
     usersProcessed = SequenceField(default=[])
     summarizedTags = SequenceField(default=[])
 
+    def __unicode__(self):
+        return self.name
+
 
 class Tags(Document):
     description = StringField(max_length=200, default='')
@@ -17,6 +23,12 @@ class Tags(Document):
     usages = IntField(default=0)
     shreds = SequenceField(default=[])
     synonyms = ListField(StringField(max_length=200))
+    is_base = BooleanField(default=True)
+    category = StringField(max_length=200, default='')
+    created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
+
+    def __unicode__(self):
+        return self.title
 
 
 class Batches(Document):
@@ -25,3 +37,6 @@ class Batches(Document):
     import_took = IntField(default=0)
     pages_processed = IntField(default=0)
     shreds_created = IntField(default=0)
+
+    def __unicode__(self):
+        return self.name

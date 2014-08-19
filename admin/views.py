@@ -13,7 +13,7 @@ class UserView(ModelView):
 
 
 class TagsView(ModelView):
-    column_filters = ['title']
+    column_filters = ['title', 'is_base', 'category']
     column_exclude_list = ('description',)
 
 
