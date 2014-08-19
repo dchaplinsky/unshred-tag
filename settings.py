@@ -47,7 +47,7 @@ JS_ASSETS = ['jquery.js', 'bootstrap.js', 'string_score.js',
              'jquery.hotkeys.js', 'textext.core.js', 'textext.plugin.tags.js',
              'textext.plugin.autocomplete.js', 'textext.plugin.prompt.js',
              'textext.plugin.arrow.js', 'textext.plugin.suggestions.js',
-             'jquery.magnific-popup.min.js', 'base.js']
+             'jquery.magnific-popup.min.js', 'jquery.rotate.js', 'base.js']
 JS_ASSETS_OUTPUT = 'packed.js'
 JS_ASSETS_FILTERS = 'yui_js'
 

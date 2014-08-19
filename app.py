@@ -131,5 +131,13 @@ def skip():
 
     return redirect(url_for("next"))
 
+
+@app.route("/rotate", methods=["POST"])
+def rotate():
+    shreds.update({"_id": request.form["_id"]},
+                  {"$set": {"degree": request.form["degree"]}})
+    return "success"
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))

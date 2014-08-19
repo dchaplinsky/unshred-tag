@@ -22,6 +22,9 @@ $(function(){
             suggs = tags_area.data("suggestions"),
             auto_tags = tags_area.data("auto_tags");
 
+        var degree = $('.btn-group input:checked').val();
+        if (degree) rotate(degree);
+
         tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
             tagsItems: auto_tags,
@@ -84,4 +87,25 @@ $(function(){
         removalDelay: 100,
         mainClass: 'my-mfp-zoom-in'
     });
+
+
+    function rotate(val) {
+        $(".shed-img").rotate({angle: parseInt(val)});
+        if (val == '90' || val == '270') {
+            $(".shed-img").addClass('vertical');
+        } else {
+            $(".shed-img").removeClass('vertical');
+        }
+    }
+
+    $(document.body).on("click", ".btn-group .btn", function() {
+        var val = $(this).find('input').val();
+        rotate(val);
+
+        $.post(window.urls.rotate,
+               {'degree': val, '_id': $("#shred_id").val()}, function(res) {
+            console.log(res);
+        });
+    });
+
 });

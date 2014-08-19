@@ -203,6 +203,15 @@ h5 a,
     margin-right: 40px;
 }
 
+div.shed-img.vertical {
+    position: relative;
+}
+
+div.shed-img.transparent-bg.vertical {
+    position: absolute;
+    top: 0;
+}
+
 .shed-img.transparent-bg {
     padding: 20px;
     background: url(checkerboard.png);
