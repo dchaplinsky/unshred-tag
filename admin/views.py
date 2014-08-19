@@ -5,6 +5,7 @@ from flask.ext.admin import expose
 from models import Shreds, Tags, User
 from base import BaseModelView
 
+
 class UserView(ModelView):
     column_filters = ['username']
     column_searchable_list = ('username',)
@@ -12,7 +13,7 @@ class UserView(ModelView):
 
 
 class TagsView(ModelView):
-    column_filters = ['title']
+    column_filters = ['title', 'is_base', 'category']
     column_exclude_list = ('description',)
 
 
@@ -24,7 +25,7 @@ class BaseAdminIndexView(admin.AdminIndexView):
     def is_accessible(self):
         try:
             return login.current_user.is_admin()
-        except AttributeError, e:
+        except AttributeError:
             return False
         else:
             return False
@@ -43,7 +44,10 @@ class CustomShredsView(BaseModelView):
         if count % page_size != 0:
             num_pages += 1
 
-        data = Shreds._get_collection().find({}, {'contour': 0}).skip(page*page_size).limit(page_size)
+        data = Shreds._get_collection().find(
+            {},
+            {'contour': 0}).skip(page * page_size).limit(page_size)
+
         # Various URL generation helpers
         def pager_url(p):
             # Do not add page number if it is first page
@@ -54,15 +58,16 @@ class CustomShredsView(BaseModelView):
                                  search)
 
         return self.render('admin/shreds.html', data=data, count=count,
-                               pager_url=pager_url,
-                               num_pages=num_pages,
-                               page=page,)
+                           pager_url=pager_url,
+                           num_pages=num_pages,
+                           page=page,)
 
 
 class UsersView(BaseModelView):
-    column_sortable_list = ('username', 'used_tags', 'tags_count', \
-        'shreds_count', 'skipped_count', 'last_login')
-    column_labels = [('username','username'),
+    column_sortable_list = ('username', 'used_tags', 'tags_count',
+                            'shreds_count', 'skipped_count', 'last_login')
+    column_labels = [
+        ('username', 'username'),
         ('used_tags', 'used_tags'),
         ('tags_count', 'tags_count'),
         ('shreds_count', 'shreds_count'),
@@ -70,9 +75,8 @@ class UsersView(BaseModelView):
         ('last_login', 'last_login')]
 
     column_descriptions = dict(
-                    username='', used_tags='', tags_count='',
-                    shreds_count='', skipped_count='', last_login=''
-                )
+        username='', used_tags='', tags_count='', shreds_count='',
+        skipped_count='', last_login='')
 
     @expose('/')
     def index_view(self):
@@ -85,7 +89,6 @@ class UsersView(BaseModelView):
         if count % page_size != 0:
             num_pages += 1
 
-        # data = User._get_collection().find({}, {'password': 0}).skip(page*page_size).limit(page_size)
         data = User._get_collection().find({}, {'password': 0})
         result = []
         for d in data:
@@ -97,7 +100,9 @@ class UsersView(BaseModelView):
             temp_dict['shreds_count'] = 0
             temp_dict['skipped_count'] = 0
 
-            shreds = Shreds._get_collection().find({"tags.user": str(d["_id"])})
+            shreds = Shreds._get_collection().find(
+                {"tags.user": str(d["_id"])})
+
             for s in shreds:
                 for tag in s['tags']:
                     if tag['user'] == str(d["_id"]):
@@ -110,6 +115,7 @@ class UsersView(BaseModelView):
 
             temp_dict['used_tags'] = list(set(temp_dict['used_tags']))
             result.append(temp_dict)
+
         # Various URL generation helpers
         def pager_url(p):
             # Do not add page number if it is first page
@@ -129,12 +135,12 @@ class UsersView(BaseModelView):
                                  search)
 
         return self.render('admin/users.html', data=result, count=count,
-                               pager_url=pager_url,
-                               num_pages=num_pages,
-                               page=page,
-                               list_columns=self.column_labels,
-                               sort_url=sort_url,
-                               get_value=self.get_list_value)
+                           pager_url=pager_url,
+                           num_pages=num_pages,
+                           page=page,
+                           list_columns=self.column_labels,
+                           sort_url=sort_url,
+                           get_value=self.get_list_value)
 
 
 def admin_init(app):

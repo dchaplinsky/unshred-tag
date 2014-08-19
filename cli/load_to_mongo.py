@@ -14,7 +14,7 @@ from pymongo import ASCENDING
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from unshred import Sheet
+from unshred.split import Sheet
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import shreds, app

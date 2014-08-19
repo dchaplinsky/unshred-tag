@@ -2,7 +2,6 @@
 
 import click
 from cli import admin as _admin
-from cli import load_to_mongo
 from prettytable import PrettyTable
 
 
@@ -48,12 +47,14 @@ def batch():
 @click.argument('batch')
 def batch_process(wildcard_filter, batch):
     """Process input files and upload processed batch to mongo"""
+    from cli import load_to_mongo
     load_to_mongo.load_new_batch(wildcard_filter, batch)
 
 
 @batch.command("list")
 def batch_list():
     """Show all batches and stats"""
+    from cli import load_to_mongo
     batches = load_to_mongo.list()
     x = PrettyTable(["Batch name", "Created", "Pages", "Shreds"])
 

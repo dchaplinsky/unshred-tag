@@ -214,7 +214,7 @@ div.shed-img.transparent-bg.vertical {
 
 .shed-img.transparent-bg {
     padding: 20px;
-    background: url(checkerboard.png);
+    background: url(../images/checkerboard.png);
 }
 
 .shed-features {
@@ -280,7 +280,7 @@ dl {
 }
 
 #signin a {
-    background: transparent url(/static/signin.png) left top no-repeat;
+    background: transparent url(../images/signin.png) left top no-repeat;
     display: block;
     width: 188px;
     height: 34px;
