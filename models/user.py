@@ -22,3 +22,6 @@ class User(Document, UserMixin):
 
     def is_admin(self):
         return self.admin or False
+
+    def __unicode__(self):
+        return self.username
