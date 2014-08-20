@@ -4,11 +4,13 @@ $(function(){
     });
 
     var current_shred = $("#current_shred");
+    var degree = 0;
 
     function collect_data() {
         var data = $(".textarea-tags").textext()[0].hiddenInput().val();
 
         data = JSON.parse(data);
+        if (data.length && !!degree) data.push(degree);
         return {
             "_id": $("#shred_id").val(),
             "tags": data
@@ -21,9 +23,6 @@ $(function(){
         var tags_area = current_shred.find('.textarea-tags'),
             suggs = tags_area.data("suggestions"),
             auto_tags = tags_area.data("auto_tags");
-
-        var degree = $('.btn-group input:checked').val();
-        if (degree) rotate(degree);
 
         tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
@@ -90,8 +89,8 @@ $(function(){
 
 
     function rotate(val) {
-        $(".shred-img").rotate({angle: parseInt(val)});
-        if (val == '90' || val == '270') {
+        $(".shred-img").rotate({angle: val});
+        if (val == 90 || val == 270) {
             $(".shred-img").addClass('vertical');
         } else {
             $(".shred-img").removeClass('vertical');
@@ -99,10 +98,24 @@ $(function(){
     }
 
     $(document.body).on("click", ".btn-group .btn", function() {
-        var val = $(this).find('input').val();
+        var val = parseInt($(this).find('input').val());
         rotate(val);
-
-        $.post(window.urls.rotate, {'degree': val, '_id': $("#shred_id").val()}, {});
+        degree = val;
     });
+
+    function rotate_ccw() {
+        degree = (degree == 0) ? 270 : degree - 90;
+        rotate(degree);
+    }
+
+    function rotate_cw() {
+        degree = (degree == 360) ? 90 : degree + 90;
+        rotate(degree);
+    }
+
+    $(document.body).bind('keydown', 'ctrl+z', rotate_ccw
+        ).bind('keydown', 'cmd+z', rotate_cw
+        ).bind('keydown', 'ctrl+x', rotate_cw
+        ).bind('keydown', 'cmd+x', rotate_cw);
 
 });

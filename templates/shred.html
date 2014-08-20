@@ -46,8 +46,8 @@
 
     <div class="btn-group" data-toggle="buttons">
         {% for d in ['0', '90', '180', '270'] %}
-        <label class="btn btn-warning {% if d==shred.degree %}active{% endif %}">
-            <input type="radio" name="options" value="{{ d }}" {% if d==shred.degree %}checked{% endif %}> {{ d }}&deg;
+        <label class="btn btn-warning">
+            <input type="radio" name="options" value="{{ d }}"> {{ d }}&deg;
         </label>
         {% endfor %}
     </div>
