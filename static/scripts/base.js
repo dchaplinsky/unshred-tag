@@ -18,12 +18,13 @@ $(function(){
     function load_next(data) {
         current_shred.css("visibility", "visible").html(data);
 
-        var suggs = current_shred.find('.textarea-tags').data(
-            "suggestions");
+        var tags_area = current_shred.find('.textarea-tags'),
+            suggs = tags_area.data("suggestions"),
+            auto_tags = tags_area.data("auto_tags");
 
-        current_shred.find('.textarea-tags').textext({
+        tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
-            tagsItems: [],
+            tagsItems: auto_tags,
             autocomplete: {
                 dropdown: {
                     maxHeight : '200px'
@@ -59,7 +60,7 @@ $(function(){
 
             $.post(window.urls.next, form, load_next);
         }
-    }).bind('keydown', 'alt+return', function(e){
+    }).bind('keydown', 'alt+return', function(e) {
         $("a#save-button").click();
     }).bind('keydown', 'f1', function(e){
         e.preventDefault();

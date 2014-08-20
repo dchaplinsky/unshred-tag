@@ -1,4 +1,5 @@
 Flask==0.10.1
+-e git://github.com/mrjoes/flask-admin.git#egg=flask_admin
 Jinja2==2.7.3
 MarkupSafe==0.23
 Werkzeug==0.9.6
@@ -11,8 +12,9 @@ pymongo==2.6.3
 webassets==0.10.1
 Flask-Assets==0.10
 yuicompressor==2.4.8
-git+https://github.com/dchaplinsky/unshred.git
+unshred==0.0.8
 Flask-Login==0.2.11
 python-social-auth==0.1.26
 flask-mongoengine==0.7.0
 click==2.4
+prettytable==0.7.2

@@ -1,7 +1,7 @@
 [
       {"title": "Прямые линии", "description": "На фрагменте отчетливо видны линии"},
       {"title": "Фрагменты строк таблицы", "description": ""},
-      {"title": "Цветной фон", "description": ""},
+      {"title": "Цветной фон", "description": "", "synonyms": ["Has yellow marks"]},
       {"title": "Рукописные буквы", "description": ""},
       {"title": "Печатные буквы", "description": ""},
       {"title": "Крупный шрифт", "description": ""},
@@ -14,16 +14,17 @@
       {"title": "Кириллица", "description": ""},
       {"title": "Украинский", "description": ""},
       {"title": "Ориентация текста", "description": ""},
+      {"title": "Пометки синей ручкой", "description": "Хорошо различимые пометки, сделаные синей или фиолетовой ручкой", "synonyms": ["Has blue ink"]},
       {"title": "Пометки маркером или карандашами", "description": ""},
       {"title": "Ксерокопия", "description": ""},
       {"title": "Ровный край по короткой стороне", "description": ""},
       {"title": "Ровный край по длинной стороне", "description": ""},
-      {"title": "Элементы картинок", "description": ""},
+      {"title": "Элементы картинок", "description": "", "synonyms": ["Part of a picture"]},
       {"title": "Печать", "description": ""},
       {"title": "Подпись", "description": ""},
       {"title": "Шапка документа", "description": ""},
       {"title": "Текстура бумаги", "description": ""},
       {"title": "Странности текста", "description": ""},
-      {"title": "Склееные фрагменты", "description": "Вместо одного фрагмента было предложено несколько фрагментов"},
+      {"title": "Склееные фрагменты", "description": "Вместо одного фрагмента было предложено несколько фрагментов", "synonyms": ["Suspicious shape", "Suspicious width"]},
       {"title": "Ошибка обтравки", "description": "С одной или нескольких сторон фрагмента виден цветной фон/тень"}
 ]

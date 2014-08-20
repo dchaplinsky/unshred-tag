@@ -4,6 +4,7 @@ from social.apps.flask_me_app.routes import social_auth
 from social.apps.flask_me_app.models import init_social
 from social.apps.flask_me_app.template_filters import backends
 from models import User
+import datetime
 
 
 def init_social_login(app, db):
@@ -18,7 +19,11 @@ def init_social_login(app, db):
     @login_manager.user_loader
     def load_user(userid):
         try:
-            return User.objects.get(id=userid)
+            user = User.objects.get(id=userid)
+            if user:
+                user.last_login = datetime.datetime.now()
+                user.save()
+            return user
         except (TypeError, ValueError):
             pass
 
