@@ -35,7 +35,7 @@ SOCIAL_AUTH_FACEBOOK_SECRET = ''
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
-JS_ASSETS = ['jquery.js', 'bootstrap.js', 'string_score.js',
+JS_ASSETS = ['jquery.js', 'jquery.cookie.js', 'bootstrap.js', 'string_score.js',
     'jquery.hotkeys.js', 'textext.core.js', 'textext.plugin.tags.js',
     'textext.plugin.autocomplete.js', 'textext.plugin.prompt.js',
     'textext.plugin.arrow.js', 'textext.plugin.suggestions.js',
