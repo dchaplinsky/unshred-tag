@@ -90,11 +90,11 @@ $(function(){
 
 
     function rotate(val) {
-        $(".shed-img").rotate({angle: parseInt(val)});
+        $(".shred-img").rotate({angle: parseInt(val)});
         if (val == '90' || val == '270') {
-            $(".shed-img").addClass('vertical');
+            $(".shred-img").addClass('vertical');
         } else {
-            $(".shed-img").removeClass('vertical');
+            $(".shred-img").removeClass('vertical');
         }
     }
 
@@ -102,10 +102,7 @@ $(function(){
         var val = $(this).find('input').val();
         rotate(val);
 
-        $.post(window.urls.rotate,
-               {'degree': val, '_id': $("#shred_id").val()}, function(res) {
-            console.log(res);
-        });
+        $.post(window.urls.rotate, {'degree': val, '_id': $("#shred_id").val()}, {});
     });
 
 });
