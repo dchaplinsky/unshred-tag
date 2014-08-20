@@ -11,6 +11,7 @@ $(function(){
         data = JSON.parse(data);
         return {
             "_id": $("#shred_id").val(),
+            "tagging_start": $("#tagging_start").val(),
             "tags": data
         };
     }
