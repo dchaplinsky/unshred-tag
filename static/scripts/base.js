@@ -46,10 +46,6 @@ $(function(){
             });
     }
 
-    if (window.urls != undefined) {
-        $.get(window.urls.next, load_next);
-    }
-
     $(document.body).on("click", "a#save-button", function(e) {
         e.preventDefault();
         form = collect_data();
@@ -85,4 +81,16 @@ $(function(){
         removalDelay: 100,
         mainClass: 'my-mfp-zoom-in'
     });
+
+    if (window.user) {
+        $.get(window.urls.next, load_next);
+
+        if (!$.cookie('help')) {
+            $.cookie('help', '1', {
+                expires: 365,
+                path: '/'
+            });
+            $('.popup-with-zoom-anim').click();
+        }
+    }
 });
