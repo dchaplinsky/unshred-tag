@@ -26,6 +26,7 @@ class Tags(Document):
     is_base = BooleanField(default=True)
     category = StringField(max_length=200, default='')
     created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
+    created_at = DateTimeField(default=datetime.datetime.now)
 
     def __unicode__(self):
         return self.title

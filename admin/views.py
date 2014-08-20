@@ -2,6 +2,7 @@
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext import admin, login
 from flask.ext.admin import expose
+from flask.ext.admin.actions import ActionsMixin, action
 from models import Shreds, Tags, User
 from base import BaseModelView
 
@@ -12,9 +13,20 @@ class UserView(ModelView):
     column_exclude_list = ('password', 'name',)
 
 
-class TagsView(ModelView):
+class TagsView(ModelView, ActionsMixin):
     column_filters = ['title', 'is_base', 'category']
     column_exclude_list = ('description',)
+    column_default_sort = ('created_at', True)
+
+    def __init__(self, *args, **kwargs):
+        super(TagsView, self).__init__(*args, **kwargs)
+        self.init_actions()
+
+    @action('toggle_base_state', 'Toggle Is Base')
+    def toggle_base_state(self, ids):
+        for tag in Tags.objects.filter(pk__in=ids).only('pk', 'is_base'):
+            tag.is_base = not tag.is_base
+            tag.save()
 
 
 class ShredsView(ModelView):
