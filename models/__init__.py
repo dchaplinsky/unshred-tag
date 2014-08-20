@@ -1,3 +1,4 @@
+from models.metrics import *
 from models.user import *
 from models.shreds import *
 
