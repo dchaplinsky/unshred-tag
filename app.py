@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 from datetime import datetime
-from flask import Flask, g, render_template, request, redirect, url_for
+from flask import Flask, g, render_template, request, redirect, \
+    url_for, session
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
@@ -109,6 +110,10 @@ def next():
         users.update({"_id": g.user.id},
                      {"$inc": {"processed": 1, "tagsCount": len(tags)},
                       "$addToSet": {"tags": {"$each": list(tags)}}})
+        try:
+            session["processed"] += 1
+        except KeyError:
+            session["processed"] = 1
 
         for tag in tags:
             db_tag, _ = Tags.objects.get_or_create(
@@ -135,7 +140,12 @@ def next():
                            shred=shred,
                            auto_tags=get_auto_tags(shred),
                            all_tags=get_tags(),
-                           tagging_start=datetime.utcnow()
+                           tagging_start=datetime.utcnow(),
+                           processed_per_session=session.get("processed", 0),
+                           processed_total=users.find_one({"_id": g.user.id}
+                                )["processed"],
+                           rating=list(User.objects.order_by("-processed")\
+                                .values_list("id")).index(g.user.id) + 1
                            )
 
 

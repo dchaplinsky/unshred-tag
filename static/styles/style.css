@@ -303,3 +303,7 @@ dl {
 #signin a.vkontakte {
     background-position: 0px -78px;
 }
+
+table th {
+    width: 270px;
+}
