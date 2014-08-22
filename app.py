@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import datetime
 from flask import Flask, g, render_template, request, redirect, url_for
 
 from flask.ext.mongoengine import MongoEngine
@@ -7,7 +8,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags, User
+from models import Shreds, Tags, TaggingSpeed, User
 from admin import admin_init
 
 app = Flask(__name__)
@@ -120,11 +121,21 @@ def next():
             db_tag.update(inc__usages=1,
                           add_to_set__shreds=request.form["_id"])
 
+        start = datetime.strptime(request.form["tagging_start"],
+                                  '%Y-%m-%d %H:%M:%S.%f')
+        end = datetime.utcnow()
+        TaggingSpeed.objects.create(
+            user=g.user.id,
+            shred=request.form["_id"],
+            tags_count=len(tags),
+            msec=(end - start).total_seconds() * 1000)
+
     shred = get_next_shred()
     return render_template("shred.html",
                            shred=shred,
                            auto_tags=get_auto_tags(shred),
-                           all_tags=get_tags()
+                           all_tags=get_tags(),
+                           tagging_start=datetime.utcnow()
                            )
 
 

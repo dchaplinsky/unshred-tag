@@ -13,6 +13,7 @@ $(function(){
         if (data.length && !!degree) data.push("Поворот на " + degree + " градусов");
         return {
             "_id": $("#shred_id").val(),
+            "tagging_start": $("#tagging_start").val(),
             "tags": data
         };
     }
@@ -45,10 +46,6 @@ $(function(){
             }).bind('keydown', 'f1', function(e){
                 $('.popup-with-zoom-anim').click();
             });
-    }
-
-    if (window.urls != undefined) {
-        $.get(window.urls.next, load_next);
     }
 
     $(document.body).on("click", "a#save-button", function(e) {
@@ -87,6 +84,17 @@ $(function(){
         mainClass: 'my-mfp-zoom-in'
     });
 
+    if (window.user) {
+        $.get(window.urls.next, load_next);
+
+        if (!$.cookie('help')) {
+            $.cookie('help', '1', {
+                expires: 365,
+                path: '/'
+            });
+            $('.popup-with-zoom-anim').click();
+        }
+    }
 
     function rotate(val) {
         $(".shred-img").rotate({angle: val});

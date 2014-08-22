@@ -44,6 +44,7 @@ SOCIAL_AUTH_VK_APP_SECRET = ''
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 JS_ASSETS = ['vendor/jquery/jquery.js',
+             'vendor/jquery.cookie/jquery.cookie.js',
              'vendor/bootstrap/bootstrap.js',
              'vendor/string_score/string_score.js',
              'vendor/jquery.hotkeys/jquery.hotkeys.js',
@@ -59,6 +60,7 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'vendor/jquery.rotate/jquery.rotate.js',
              'scripts/base.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
+
 JS_ASSETS_FILTERS = 'yui_js'
 
 CSS_ASSETS = ['vendor/bootstrap/bootstrap.css',
