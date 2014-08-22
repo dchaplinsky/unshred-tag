@@ -197,13 +197,22 @@ h5 a,
     }
 }
 
-.shed-img {
+.shred-img {
     float: left;
     padding: 20px 0;
     margin-right: 40px;
 }
 
-.shed-img.transparent-bg {
+div.shred-img.vertical {
+    position: relative;
+}
+
+div.shred-img.transparent-bg.vertical {
+    position: absolute;
+    top: 0;
+}
+
+.shred-img.transparent-bg {
     padding: 20px;
     background: url(../images/checkerboard.png);
 }

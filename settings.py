@@ -57,6 +57,7 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              # patch to add quicksilver search to textext suggestions
              'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js',
+             'vendor/jquery.rotate/jquery.rotate.js',
              'scripts/base.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 

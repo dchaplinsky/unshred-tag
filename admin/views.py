@@ -38,9 +38,8 @@ class BaseAdminIndexView(admin.AdminIndexView):
         try:
             return login.current_user.is_admin()
         except AttributeError:
-            return False
-        else:
-            return False
+            pass
+        return False
 
 
 class CustomShredsView(BaseModelView):

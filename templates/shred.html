@@ -1,7 +1,8 @@
 {% if shred %}
 <div>
-    <div class="shed-img transparent-bg"><img src="{{ shred.piece_fname }}"/></div>
-    <div class="shed-img"><img src="{{ shred.piece_in_context_fname }}" /></div>
+    <div class="shred-img transparent-bg"><img src="{{ shred.piece_fname }}"/></div>
+    <div class="shred-img"><img src="{{ shred.piece_in_context_fname }}" /></div>
+
     <div class="shed-features">
         <h3>Порция {{ shred.batch }} / Лист #{{ shred.sheet }} / фрагмент #{{ shred.name }}</h3>
         <table class="sTable" width="100%">
@@ -41,6 +42,16 @@
             </tbody>
         </table>
     </div>
+    <div class="clearfix"></div>
+
+    <div class="btn-group" data-toggle="buttons">
+        {% for d in ['0', '90', '180', '270'] %}
+        <label class="btn btn-warning">
+            <input type="radio" name="options" value="{{ d }}"> {{ d }}&deg;
+        </label>
+        {% endfor %}
+    </div>
+
     <div class="clearfix"></div>
     <textarea class="textarea-tags" rows="1" data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape}}"
     data-auto_tags="{{ auto_tags|map('capitalize')|list|tojson|forceescape}}"></textarea>

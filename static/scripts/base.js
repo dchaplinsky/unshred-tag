@@ -4,11 +4,13 @@ $(function(){
     });
 
     var current_shred = $("#current_shred");
+    var degree = 0;
 
     function collect_data() {
         var data = $(".textarea-tags").textext()[0].hiddenInput().val();
 
         data = JSON.parse(data);
+        if (data.length && !!degree) data.push("Поворот на " + degree + " градусов");
         return {
             "_id": $("#shred_id").val(),
             "tagging_start": $("#tagging_start").val(),
@@ -93,4 +95,35 @@ $(function(){
             $('.popup-with-zoom-anim').click();
         }
     }
+
+    function rotate(val) {
+        $(".shred-img").rotate({angle: val});
+        if (val == 90 || val == 270) {
+            $(".shred-img").addClass('vertical');
+        } else {
+            $(".shred-img").removeClass('vertical');
+        }
+    }
+
+    $(document.body).on("click", ".btn-group .btn", function() {
+        var val = parseInt($(this).find('input').val());
+        rotate(val);
+        degree = val;
+    });
+
+    function rotate_ccw() {
+        degree = (degree - 90 + 360) % 360;
+        rotate(degree);
+    }
+
+    function rotate_cw() {
+        degree = (degree + 90) % 360;
+        rotate(degree);
+    }
+
+    $(document.body).bind('keydown', 'ctrl+z', rotate_ccw
+        ).bind('keydown', 'cmd+z', rotate_cw
+        ).bind('keydown', 'ctrl+x', rotate_cw
+        ).bind('keydown', 'cmd+x', rotate_cw);
+
 });

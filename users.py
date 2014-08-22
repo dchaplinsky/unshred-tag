@@ -24,7 +24,7 @@ def init_social_login(app, db):
                 user.last_login = datetime.datetime.now()
                 user.save()
             return user
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, User.DoesNotExist):
             pass
 
     @app.before_request
