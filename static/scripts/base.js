@@ -104,12 +104,12 @@ $(function(){
     });
 
     function rotate_ccw() {
-        degree = (degree == 0) ? 270 : degree - 90;
+        degree = (degree - 90 + 360) % 360;
         rotate(degree);
     }
 
     function rotate_cw() {
-        degree = (degree == 360) ? 90 : degree + 90;
+        degree = (degree + 90) % 360;
         rotate(degree);
     }
 
