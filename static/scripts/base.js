@@ -10,7 +10,7 @@ $(function(){
         var data = $(".textarea-tags").textext()[0].hiddenInput().val();
 
         data = JSON.parse(data);
-        if (data.length && !!degree) data.push(degree);
+        if (data.length && !!degree) data.push("Поворот на " + degree + " градусов");
         return {
             "_id": $("#shred_id").val(),
             "tags": data
