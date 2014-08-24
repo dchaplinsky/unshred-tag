@@ -16,6 +16,7 @@ class User(Document, UserMixin):
     skipped = IntField(default=0)
     processed = IntField(default=0)
     tags = SequenceField(default=[])
+    tags_count = IntField(default=0, db_field='tagsCount')
 
     def is_active(self):
         return self.active

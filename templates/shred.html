@@ -55,7 +55,7 @@
     <div class="clearfix"></div>
     <textarea class="textarea-tags" rows="1" data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape}}"
     data-auto_tags="{{ auto_tags|map('capitalize')|list|tojson|forceescape}}"></textarea>
-    <input type="hidden" name="shred_id" id="shred_id" value="{{ shred._id }}"/>
+    <input type="hidden" name="shred_id" id="shred_id" value="{{ shred.pk }}"/>
     <input type="hidden" name="tagging_start" id="tagging_start" value="{{ tagging_start }}">
     <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
     <div class="clearfix"></div>

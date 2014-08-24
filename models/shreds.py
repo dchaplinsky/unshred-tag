@@ -1,27 +1,62 @@
 import datetime
 from mongoengine import (
-    StringField, IntField, SequenceField, Document, DateTimeField, ListField,
-    BooleanField, ReferenceField, CASCADE)
+    StringField, IntField, Document, DateTimeField, ListField, BooleanField,
+    ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
+    URLField, CASCADE)
 
 from .user import User
 
 
+class Features(EmbeddedDocument):
+    pos_x = IntField(default=0)
+    pos_y = IntField(default=0)
+    angle = FloatField(default=0.0)
+    histogram_clean = ListField(IntField())
+    height_mm = FloatField(default=0.0)
+    histogram_full = ListField(IntField())
+    width_mm = FloatField(default=0.0)
+    pos_height = IntField(default=0)
+    area = IntField(default=0)
+    dominant_colours = ListField(StringField())
+    topmost = ListField(IntField())
+    solidity = FloatField(default=0.0)
+    pos_width = IntField(default=0)
+    colour_names = ListField(StringField())
+    ratio = FloatField(default=0.0)
+    bottommost = ListField(IntField())
+
+
+class ShredTags(EmbeddedDocument):
+    user = ReferenceField(User)
+    tags = ListField(StringField())
+
+
 class Shreds(Document):
-    name = StringField(max_length=20, default='')
-    usersCount = IntField(default=0)
-    usersSkipped = SequenceField(default=[])
-    usersProcessed = SequenceField(default=[])
-    summarizedTags = SequenceField(default=[])
+    id = StringField(max_length=200, default='', primary_key=True)
+    name = IntField()
+    users_count = IntField(default=0, db_field='usersCount')
+    users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
+    users_processed = ListField(ReferenceField(User), db_field='usersProcessed')
+    summarized_tags = ListField(StringField(), db_field='summarizedTags')
+    features = EmbeddedDocumentField(Features)
+    tags_suggestions = ListField(StringField())
+    piece_in_context_fname = URLField()
+    features_fname = URLField()
+    contour = ListField(ListField(ListField(IntField())))
+    sheet = StringField()
+    piece_fname = URLField()
+    batch = ReferenceField('Batches')
+    tags = ListField(EmbeddedDocumentField(ShredTags))
 
     def __unicode__(self):
-        return self.name
+        return self.id
 
 
 class Tags(Document):
     description = StringField(max_length=200, default='')
     title = StringField(max_length=200, default='', primary_key=True)
     usages = IntField(default=0)
-    shreds = SequenceField(default=[])
+    shreds = ListField(ReferenceField(Shreds))
     synonyms = ListField(StringField(max_length=200))
     is_base = BooleanField(default=True)
     category = StringField(max_length=200, default='')

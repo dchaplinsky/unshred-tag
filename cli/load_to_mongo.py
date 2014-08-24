@@ -9,16 +9,14 @@ import time
 from glob import glob
 from click import echo
 
-from pymongo import ASCENDING
-
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
 from unshred.split import Sheet
 from unshred.features import GeometryFeatures, ColourFeatures
 
-from app import shreds, app
-from models import Batches, Tags
+from app import app
+from models import Batches, Tags, Shreds
 
 
 class AbstractStorage(object):
@@ -101,7 +99,7 @@ def load_new_batch(flt, batch):
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
     strg.clear(out_dir)
-    shreds.remove({"batch": batch})
+    Shreds.objects(batch=batch).delete()
 
     for src_key in strg.list(flt):
         fname = strg.get_file(src_key)
@@ -114,7 +112,7 @@ def load_new_batch(flt, batch):
         pages_processed += 1
 
         for c in sheet.resulting_contours:
-            c["_id"] = "%s:%s_%s" % (batch, c["sheet"], c["name"])
+            c["id"] = "%s:%s_%s" % (batch, c["sheet"], c["name"])
             c["usersCount"] = 0
             c["batch"] = batch
             shreds_created += 1
@@ -130,7 +128,7 @@ def load_new_batch(flt, batch):
                     c[k] = res
 
             try:
-                shreds.insert(c)
+                Shreds.objects.create(**c)
             except bson.errors.InvalidDocument:
                 echo(c)
                 raise
@@ -143,14 +141,9 @@ def load_new_batch(flt, batch):
         import_took=int((time.time() - import_took) * 1000)
     ).save()
 
-    shreds.ensure_index([("name", ASCENDING),
-                         ("sheet", ASCENDING),
-                         ("batch", ASCENDING)])
-
-    shreds.ensure_index([("usersProcessed", ASCENDING),
-                         ("usersSkipped", ASCENDING),
-                         ("usersCount", ASCENDING),
-                         ("batch", ASCENDING)])
+    Shreds.ensure_index(["name", "sheet", "batch"])
+    Shreds.ensure_index(["users_processed", "users_skipped", "users_count",
+                         "batch"])
 
     with open("base_tags.json", "r") as f:
         tags = json.load(f)
