@@ -142,8 +142,8 @@ def load_new_batch(flt, batch):
     ).save()
 
     Shreds.ensure_index(["name", "sheet", "batch"])
-    Shreds.ensure_index(["users_processed", "users_skipped", "users_count",
-                         "batch"])
+    Shreds.ensure_index(["users_processed", "users_count", "batch"])
+    Shreds.ensure_index(["users_skipped", "users_count", "batch"])
 
     with open("base_tags.json", "r") as f:
         tags = json.load(f)
