@@ -103,10 +103,8 @@ def next():
         User.objects(pk=g.user.id).update_one(
             inc__processed=1, inc__tags_count=len(tags),
             add_to_set__tags=list(tags))
-        try:
-            session["processed"] += 1
-        except KeyError:
-            session["processed"] = 1
+
+        session["processed"] = session.get("processed", 0) + 1
 
         for tag in tags:
             Tags.objects(pk=tag.capitalize()).update_one(
@@ -133,8 +131,8 @@ def next():
                            all_tags=get_tags(),
                            tagging_start=datetime.utcnow(),
                            processed_per_session=session.get("processed", 0),
-                           processed_total=users.find_one({"_id": g.user.id}
-                                )["processed"],
+                           processed_total=User.objects(id=g.user.id)\
+                                .first()["processed"],
                            rating=list(User.objects.order_by("-processed")\
                                 .values_list("id")).index(g.user.id) + 1
                            )
