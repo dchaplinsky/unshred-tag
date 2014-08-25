@@ -9,7 +9,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags, TaggingSpeed, User
+from models import Shreds, Tags, TaggingSpeed, User, ShredTags
 from admin import admin_init
 
 app = Flask(__name__)
@@ -27,30 +27,23 @@ db = MongoEngine(app)
 
 init_social_login(app, db)
 
-shreds = Shreds._get_collection()
-users = User._get_collection()
-
 
 def get_next_shred():
-    shred = shreds.find_one(
-        {"$query": {"usersProcessed": {"$ne": str(g.user.id)},
-                    "usersSkipped": {"$ne": str(g.user.id)},
-                    "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                    }}, sort=[("batch", 1),
-                              ("usersCount", 1)])
+    shred = Shreds\
+        .objects(users_processed__ne=g.user.id, users_skipped__ne=g.user.id,
+                 users_count__lte=app.config["USERS_PER_SHRED"])\
+        .order_by("batch", "users_count").first()
 
     if shred:
         return shred
 
-    shred = shreds.find_one(
-        {"$query": {"usersSkipped": str(g.user.id),
-                    "usersCount": {"$lte": app.config["USERS_PER_SHRED"]}
-                    }}, sort=[("batch", 1),
-                              ("usersCount", 1)])
+    shred = Shreds\
+        .objects(users_skipped=g.user.id,
+                 users_count__lte=app.config["USERS_PER_SHRED"])\
+        .order_by("batch", "users_count").first()
 
     if shred:
-        shreds.update({"_id": shred["_id"]},
-                      {"$pull": {'usersSkipped': str(g.user.id)}})
+        shred.update_one(pull__users_skipped=g.user.id)
 
     return shred
 
@@ -72,15 +65,17 @@ def get_tag_synonyms():
 def get_auto_tags(shred):
     mapping = get_tag_synonyms()
     auto = [mapping.get(suggestion)
-            for suggestion in shred.get("tags_suggestions", [])]
+            for suggestion in shred.tags_suggestions]
 
     return filter(None, set(auto))
 
 
-def progress_per_user(id):
-    return shreds.find(
-        {"tags.user": str(id),
-         "tags.tags": {"$exists": True, "$ne": "skipped"}}).count()
+def progress_per_user(user_id):
+    return Shreds\
+        .objects(
+            tags__user=user_id, tags__tags__exists=True,
+            tags__tags__ne="skipped")\
+        .count()
 
 
 @app.route('/logout', methods=['POST'])
@@ -99,32 +94,28 @@ def index():
 def next():
     if request.method == "POST":
         tags = set(map(unicode.lower, request.form.getlist("tags")))
-        shreds.update({"_id": request.form["_id"]},
-                      {"$push": {"tags": {"user": str(g.user.id),
-                       "tags": list(tags)}},
-                       "$inc": {"usersCount": 1},
-                       "$addToSet": {"summarizedTags": {"$each": list(tags)},
-                                     "usersProcessed": str(g.user.id)}
-                       })
+        Shreds.objects(pk=request.form["_id"]).update_one(
+            push__tags=ShredTags(user=g.user.id, tags=list(tags)),
+            inc__users_count=1,
+            add_to_set__summarized_tags=list(tags),
+            add_to_set__users_processed=g.user.id)
 
-        users.update({"_id": g.user.id},
-                     {"$inc": {"processed": 1, "tagsCount": len(tags)},
-                      "$addToSet": {"tags": {"$each": list(tags)}}})
+        User.objects(pk=g.user.id).update_one(
+            inc__processed=1, inc__tags_count=len(tags),
+            add_to_set__tags=list(tags))
         try:
             session["processed"] += 1
         except KeyError:
             session["processed"] = 1
 
         for tag in tags:
-            db_tag, _ = Tags.objects.get_or_create(
-                title=tag.capitalize(),
-                defaults={
-                    "is_base": False,
-                    "created_by": g.user.id
-                }
-            )
-            db_tag.update(inc__usages=1,
-                          add_to_set__shreds=request.form["_id"])
+            Tags.objects(pk=tag.capitalize()).update_one(
+                set_on_insert__is_base=False,
+                set_on_insert__created_by=g.user.id,
+                set_on_insert__created_at=Tags().created_at,
+                inc__usages=1,
+                add_to_set__shreds=request.form["_id"],
+                upsert=True)
 
         start = datetime.strptime(request.form["tagging_start"],
                                   '%Y-%m-%d %H:%M:%S.%f')
@@ -151,10 +142,9 @@ def next():
 
 @app.route("/skip", methods=["POST"])
 def skip():
-    shreds.update({"_id": request.form["_id"]},
-                  {"$addToSet": {"usersSkipped": str(g.user.id)}})
-
-    users.update({"_id": g.user.id}, {"$inc": {"skipped": 1}})
+    Shreds.objects(pk=request.form["_id"]).update_one(
+        add_to_set__users_skipped=g.user.id)
+    User.objects(pk=g.user.id).update_one(inc__skipped=1)
 
     return redirect(url_for("next"))
 
