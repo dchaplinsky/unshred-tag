@@ -49,8 +49,9 @@ def get_next_shred():
 
 
 def get_tags():
-    return [unicode(t["title"]).lower()
-            for t in Tags.objects.order_by("-usages")]
+    return set([unicode(t["title"]).lower()
+                for t in Tags.objects(is_base=True).order_by("-usages")] +
+               map(lambda x: unicode(x).lower(), g.user.tags))
 
 
 def get_tag_synonyms():
