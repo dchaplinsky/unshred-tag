@@ -94,7 +94,6 @@ def index():
 @app.route('/next', methods=["GET", "POST"])
 def next():
     if request.method == "POST":
-
         tags = set(map(unicode.lower, request.form.getlist("tags")))
         Shreds.objects(pk=request.form["_id"]).update_one(
             push__tags=ShredTags(user=g.user.id, tags=list(tags),
