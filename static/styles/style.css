@@ -307,3 +307,13 @@ dl {
 table th {
     width: 270px;
 }
+
+#rec_chars {
+    margin: 20px 0;
+    padding: 0 5px;
+    border: 1px solid #9daccc;
+    color: black;
+    width: 630px;
+    height: 46px;
+    font-size: 17px;
+}

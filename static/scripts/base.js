@@ -14,7 +14,8 @@ $(function(){
         return {
             "_id": $("#shred_id").val(),
             "tagging_start": $("#tagging_start").val(),
-            "tags": data
+            "tags": data,
+            "recognizable_chars": $("#rec_chars").val()
         };
     }
 
