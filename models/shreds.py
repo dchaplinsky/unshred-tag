@@ -29,6 +29,7 @@ class Features(EmbeddedDocument):
 class ShredTags(EmbeddedDocument):
     user = ReferenceField(User)
     tags = ListField(StringField())
+    recognizable_chars = StringField()
 
 
 class Shreds(Document):
