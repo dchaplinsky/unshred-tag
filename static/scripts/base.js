@@ -37,6 +37,14 @@ $(function(){
 
             prompt: 'Укажите тэги',
             suggestions: suggs,
+        }).bind('isTagAllowed', function(e, data){
+            var formData = $(e.target).textext()[0].tags()._formData,
+                list = eval(formData);
+
+            if (formData.length && list.indexOf(data.tag) >= 0) {
+               alert([ 'Тэг', '"' + data.tag + '"', 'уже добавлен.' ].join(' '));
+               data.result = false;
+            }
         }).textext()[0].focusInput();
 
 
