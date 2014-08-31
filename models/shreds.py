@@ -1,8 +1,9 @@
 import datetime
 from mongoengine import (
-    StringField, IntField, Document, DateTimeField, ListField, BooleanField,
+    StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
     URLField, CASCADE)
+from flask.ext.mongoengine import Document
 
 from .user import User
 
@@ -51,6 +52,12 @@ class Shreds(Document):
 
     def __unicode__(self):
         return self.id
+
+    def get_user_tags(self, user):
+        for shred_tags in self.tags:
+            if shred_tags.user.pk == user.pk:
+                return shred_tags
+        return None
 
 
 class Tags(Document):

@@ -12,7 +12,7 @@ def init_social_login(app, db):
     init_social(app, db)
 
     login_manager = login.LoginManager()
-    login_manager.login_view = 'main'
+    login_manager.login_view = 'index'
     login_manager.login_message = ''
     login_manager.init_app(app)
 

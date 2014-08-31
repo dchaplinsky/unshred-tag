@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_pagination %}
+
+{% block nav %}
+    <li><a href="/">Главная</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="inner cover container-fluid">
+        <div class="text-center">
+            {{ render_pagination(shreds, 'review') }}
+        </div>
+
+        {% for shred in shreds.items %}
+            {% if loop.index % 4 == 1 %}
+            <div class="row">
+            {% endif %}
+            <div class="col-md-3">
+                <div class="thumbnail clearfix shred">
+                    <img src="{{ shred.piece_in_context_fname }}" />
+                    <div class="caption">
+                        {% with shred_tags = shred.get_user_tags(user) %}
+                        {% if shred_tags %}
+                        <dl>
+                            <dt>Тэги</dt>
+                            <dd>
+                                <ul>
+                                {% for tag in shred_tags.tags %}
+                                    <li>{{ tag|capitalize }}</li>
+                                {% endfor %}
+                                </ul>
+                            </dd>
+                            {% if shred_tags.recognizable_chars %}
+                            <dt>Текст</dt>
+                            <dd>{{ shred_tags.recognizable_chars }}</dd>
+                            {% endif %}
+                        </dl>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+            {% if loop.index % 4 == 0 or loop.last %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="text-center">
+            {{ render_pagination(shreds, 'review') }}
+        </div>
+    </div>
+
+{% endblock %}
