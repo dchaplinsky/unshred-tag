@@ -56,8 +56,8 @@ class Shreds(Document):
     def get_user_tags(self, user):
         for shred_tags in self.tags:
             if shred_tags.user.pk == user.pk:
-                return shred_tags.tags
-        return []
+                return shred_tags
+        return None
 
 
 class Tags(Document):

@@ -101,7 +101,7 @@ h5 a,
 .masthead-brand {
     margin-top: 10px;
     margin-bottom: 10px;
-    font-size: 20px;
+    font-size: 17px;
 }
 
 .masthead-nav > li {
@@ -318,4 +318,21 @@ table th {
     width: 630px;
     height: 46px;
     font-size: 17px;
+}
+
+/*
+ *Shred review page
+ */
+
+.shred.thumbnail img {
+    float: left;
+    width: 40px;
+}
+
+.shred.thumbnail .caption {
+    margin-left: 40px; /* Compensate for the image floated to the left */
+}
+
+.shred.thumbnail .caption ul {
+    padding-left: 20px; /* Decrease default styled <li> padding */
 }

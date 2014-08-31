@@ -151,11 +151,12 @@ def skip():
 
 
 @app.route("/review")
+@login.login_required
 def review():
     page = int(request.args.get('page', 1))
     shreds = Shreds\
         .objects(users_processed=g.user.id)\
-        .paginate(page=page, per_page=8)
+        .paginate(page=page, per_page=100)
     return render_template("review.html", shreds=shreds)
 
 

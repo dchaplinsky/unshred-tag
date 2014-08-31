@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block nav %}
     <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция (F1)</a></li>
-    <li><a href="{{ url_for('review') }}">Фрагменты</a></li>
+    <li><a href="{{ url_for('review') }}">Ваши Фрагменты</a></li>
 {% endblock %}
 {% block content %}
     {% if config.SITE_IS_CLOSED and not user.is_admin() %}
