@@ -37,6 +37,18 @@
         <div class="site-wrapper">
             <div class="site-wrapper-inner">
                 <div class="cover-container">
+                    <div class="masthead clearfix">
+                        <div class="inner">
+                            <h3 class="masthead-brand">Собери 10 мешков и получи Курченко в подарок!</h3>
+                            <ul class="nav masthead-nav">
+                                {% block nav %}
+                                {% endblock %}
+                                {% if user.is_authenticated() %}
+                                <li><form action="{{ url_for('logout') }}" method="post"><input type="submit" value="Logout"></form></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
                     {% block content %}
                     {% endblock %}
                 </div>

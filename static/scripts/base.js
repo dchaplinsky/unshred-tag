@@ -92,7 +92,7 @@ $(function(){
         mainClass: 'my-mfp-zoom-in'
     });
 
-    if (window.user) {
+    if (window.user && current_shred.length) {
         $.get(window.urls.next, load_next);
 
         if (!$.cookie('help')) {
@@ -133,5 +133,4 @@ $(function(){
         ).bind('keydown', 'cmd+z', rotate_cw
         ).bind('keydown', 'ctrl+x', rotate_cw
         ).bind('keydown', 'cmd+x', rotate_cw);
-
 });

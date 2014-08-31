@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_pagination %}
+
+{% block nav %}
+    <li><a href="/">Главная</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="inner cover container-fluid">
+        <div class="text-center">
+            {{ render_pagination(shreds, 'review') }}
+        </div>
+
+        {% for shred in shreds.items %}
+            {% if loop.index % 4 == 1 %}
+            <div class="row">
+            {% endif %}
+            <div class="col-md-3">
+                <div class="thumbnail">
+                    <img src="{{ shred.piece_in_context_fname }}" />
+                    <div class="caption">
+                        <ul>
+                        {% for tag in shred.get_user_tags(user) %}
+                            <li>{{ tag|capitalize }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% if loop.index % 4 == 0 or loop.last %}
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="text-center">
+            {{ render_pagination(shreds, 'review') }}
+        </div>
+    </div>
+
+{% endblock %}

@@ -14,3 +14,21 @@
         </tbody>
     </table>
 {% endmacro %}
+
+{% macro render_pagination(pagination, endpoint) %}
+    <ul class="pagination">
+    {% if pagination.has_prev %}
+        <li><a href="{{ url_for(endpoint, page=pagination.prev().page) }}">&laquo;</a></li>
+    {% endif %}
+    {%- for page in pagination.iter_pages() %}
+    {% if page %}
+        <li{% if page == pagination.page %} class="active"{% endif %}><a href="{{ url_for(endpoint, page=page) }}">{{ page }}</a></li>
+    {% else %}
+        <span class="ellipsis">…</span>
+    {% endif %}
+    {%- endfor %}
+    {% if pagination.has_next %}
+        <li><a href="{{ url_for(endpoint, page=pagination.next().page) }}">&raquo;</a></li>
+    {% endif %}
+    </ul>
+{% endmacro %}

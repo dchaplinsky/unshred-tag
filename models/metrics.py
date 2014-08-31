@@ -1,6 +1,7 @@
 import datetime
 from mongoengine import (
-    FloatField, IntField, Document, DateTimeField, ReferenceField, CASCADE)
+    FloatField, IntField, DateTimeField, ReferenceField, CASCADE)
+from flask.ext.mongoengine import Document
 
 from .user import User
 from .shreds import Shreds

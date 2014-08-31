@@ -1,7 +1,7 @@
-
 from mongoengine import StringField, EmailField, BooleanField, \
-    Document, DateTimeField, IntField, SequenceField
+    DateTimeField, IntField, SequenceField
 from flask.ext.login import UserMixin
+from flask.ext.mongoengine import Document
 import datetime
 
 

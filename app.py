@@ -134,9 +134,9 @@ def next():
                            all_tags=get_tags(),
                            tagging_start=datetime.utcnow(),
                            processed_per_session=session.get("processed", 0),
-                           processed_total=User.objects(id=g.user.id)\
+                           processed_total=User.objects(id=g.user.id)
                                 .first()["processed"],
-                           rating=list(User.objects.order_by("-processed")\
+                           rating=list(User.objects.order_by("-processed")
                                 .values_list("id")).index(g.user.id) + 1
                            )
 
@@ -148,6 +148,15 @@ def skip():
     User.objects(pk=g.user.id).update_one(inc__skipped=1)
 
     return redirect(url_for("next"))
+
+
+@app.route("/review")
+def review():
+    page = int(request.args.get('page', 1))
+    shreds = Shreds\
+        .objects(users_processed=g.user.id)\
+        .paginate(page=page, per_page=8)
+    return render_template("review.html", shreds=shreds)
 
 
 if __name__ == "__main__":

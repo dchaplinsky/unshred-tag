@@ -1,16 +1,9 @@
 {% extends "base.html" %}
+{% block nav %}
+    <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция (F1)</a></li>
+    <li><a href="{{ url_for('review') }}">Фрагменты</a></li>
+{% endblock %}
 {% block content %}
-    <div class="masthead clearfix">
-        <div class="inner">
-            <h3 class="masthead-brand">Собери 10 мешков и получи Курченко в подарок!</h3>
-            <ul class="nav masthead-nav">
-                <li class="active"><a href="#tag_hints" class="popup-with-zoom-anim">Инструкция (F1)</a></li>
-                {% if user.is_authenticated() %}
-                <li><form action="{{ url_for('logout') }}" method="post"><input type="submit" value="Logout"></form></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
     {% if config.SITE_IS_CLOSED and not user.is_admin() %}
         {% include 'holding_page.html' %}
     {% else %}

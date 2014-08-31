@@ -33,7 +33,6 @@ body {
     color: #fff;
     text-align: center;
     /*text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
-    box-shadow: inset 0 0 100px rgba(0,0,0,.5);
 }
 
 .row {
@@ -61,6 +60,7 @@ li.list-group-item.active a {
     width: 100%;
     height: 100%; /* For at least Firefox */
     min-height: 100%;
+    box-shadow: inset 0 0 100px rgba(0,0,0,.5);
 }
 .site-wrapper-inner {
     display: table-cell;
@@ -94,12 +94,14 @@ h5 a,
  * Header
  */
 .masthead {
-	color: #999;
+    color: #999;
+    z-index: 1000;
 }
 
 .masthead-brand {
     margin-top: 10px;
     margin-bottom: 10px;
+    font-size: 20px;
 }
 
 .masthead-nav > li {
