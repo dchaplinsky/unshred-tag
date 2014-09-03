@@ -352,3 +352,7 @@ table th {
         inset 0 0 40px 2px rgba(0, 0, 0, 0.25);
     display: none;
 }
+
+div.transparent-bg > div {
+    display: inline;
+}
