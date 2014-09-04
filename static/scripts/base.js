@@ -58,6 +58,24 @@ $(function(){
         $("img.zoom_it").each(function() {
             $(this).image_zoomer({height: 130, width: 130, scale: 2});
         });
+        $(document).ready(function() {
+            var piece_fname = $("#piece_fname"),
+                piece_in_context_fname = $("#piece_in_context_fname"),
+                template = {
+                    lensShape: "circle",
+                    lensSize: 180,
+                    borderSize: 4,
+                    borderColor: "#fff",
+                    borderRadius: 0,
+                    overlayAdapt: true,
+                    zoomLevel: 2
+                },
+                piece_template = {imgSrc: piece_fname.attr("data-big")},
+                piece_ctx_template = {imgSrc: piece_in_context_fname.attr("data-big")};
+
+            $("#piece_fname").mlens($.extend({}, template, piece_template));
+            $("#piece_in_context_fname").mlens($.extend({}, template, piece_ctx_template));
+        });
     }
 
     $(document.body).on("click", "a#save-button", function(e) {
@@ -137,4 +155,7 @@ $(function(){
         ).bind('keydown', 'cmd+z', rotate_cw
         ).bind('keydown', 'ctrl+x', rotate_cw
         ).bind('keydown', 'cmd+x', rotate_cw);
+
+
 });
+

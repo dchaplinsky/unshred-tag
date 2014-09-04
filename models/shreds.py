@@ -47,6 +47,8 @@ class Shreds(Document):
     contour = ListField(ListField(ListField(IntField())))
     sheet = StringField()
     piece_fname = URLField()
+    piece_large_fname = URLField(default="")
+    piece_large_in_context_fname = URLField(default="")
     batch = ReferenceField('Batches')
     tags = ListField(EmbeddedDocumentField(ShredTags))
 
