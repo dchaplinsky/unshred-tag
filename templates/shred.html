@@ -1,7 +1,7 @@
 {% if shred %}
 <div>
-    <div class="shred-img transparent-bg"><img src="{{ shred.piece_fname }}"/></div>
-    <div class="shred-img"><img src="{{ shred.piece_in_context_fname }}" /></div>
+    <div class="shred-img transparent-bg"><img id="piece_fname" src="{{ shred.piece_fname }}" data-big="{{ shred.piece_large_fname }}" /></div>
+    <div class="shred-img"><img id="piece_in_context_fname" src="{{ shred.piece_in_context_fname }}" data-big="{{ shred.piece_large_in_context_fname }}" /></div>
 
     <div class="shed-features">
         <h3>Порция {{ shred.batch }} / Лист #{{ shred.sheet }} / фрагмент #{{ shred.name }}</h3>
