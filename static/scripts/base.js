@@ -54,6 +54,10 @@ $(function(){
             }).bind('keydown', 'f1', function(e){
                 $('.popup-with-zoom-anim').click();
             });
+
+        $("img.zoom_it").each(function() {
+            $(this).image_zoomer({height: 130, width: 130, scale: 2});
+        });
     }
 
     $(document.body).on("click", "a#save-button", function(e) {
