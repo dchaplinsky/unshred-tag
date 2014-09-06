@@ -55,6 +55,9 @@ $(function(){
                 $('.popup-with-zoom-anim').click();
             });
 
+        $("img.zoom_it").each(function() {
+            $(this).image_zoomer({height: 130, width: 130, scale: 2});
+        });
         $(document).ready(function() {
             var piece_fname = $("#piece_fname"),
                 piece_in_context_fname = $("#piece_in_context_fname"),
