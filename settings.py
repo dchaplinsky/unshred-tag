@@ -58,9 +58,7 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js',
              'vendor/jquery.rotate/jquery.rotate.js',
-             'vendor/jquery.mlens/jquery.mlens-1.4.min.js',
-             'scripts/base.js'
-             ]
+             'scripts/base.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 
 JS_ASSETS_FILTERS = 'yui_js'
