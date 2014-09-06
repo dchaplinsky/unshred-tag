@@ -58,7 +58,6 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.min.js',
              'vendor/jquery.rotate/jquery.rotate.js',
-             'scripts/zoomer.js',
              'vendor/jquery.mlens/jquery.mlens-1.4.min.js',
              'scripts/base.js'
              ]
