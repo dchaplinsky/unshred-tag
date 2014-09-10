@@ -84,3 +84,14 @@ class Batches(Document):
 
     def __unicode__(self):
         return self.name
+
+
+class Pages(Document):
+    name = StringField(primary_key=True, max_length=200)
+    created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
+    shreds = ListField(ReferenceField(Shreds))
+    created = DateTimeField(default=datetime.datetime.now)
+
+    def __unicode__(self):
+        return self.name
+

@@ -336,3 +336,47 @@ table th {
 .shred.thumbnail .caption ul {
     padding-left: 20px; /* Decrease default styled <li> padding */
 }
+
+#page-wrapper {
+    display: block;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    /*height: 20%;*/
+    position: fixed;
+    border: 1px solid white;
+    background-color: #333;
+    z-index: 100;
+}
+
+#page-wrapper img {
+    max-height: 20%;
+    margin: 5px;
+}
+
+#page-wrapper #checked-shreds {
+    width: 80%;
+    float: left;
+}
+
+#page-wrapper #controls-wrapper {
+    display: none;
+}
+
+#controls-wrapper #select-page {
+    margin-top: 10px;
+    min-width: 150px;
+    color: black;
+}
+
+.popup-with-zoom-anim {
+    display: none;
+}
+
+.container-fluid {
+    margin-bottom: 20px;
+}
+
+#push-shreds-to-page {
+    margin-top: 10px;
+}

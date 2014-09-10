@@ -9,7 +9,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags, TaggingSpeed, User, ShredTags
+from models import Shreds, Tags, TaggingSpeed, User, ShredTags, Pages
 from admin import admin_init
 
 app = Flask(__name__)
@@ -150,14 +150,20 @@ def skip():
     return redirect(url_for("next"))
 
 
-@app.route("/review")
+@app.route("/review", methods=["GET", "POST"])
 @login.login_required
 def review():
+    if request.method == "POST":
+        shreds = request.form.get("shreds").split(',')
+        page_name = request.form.get("page-name")
+        Pages.objects(created_by=g.user.id, name=page_name)\
+            .update_one(set__shreds=shreds, upsert=True)
     page = int(request.args.get('page', 1))
     shreds = Shreds\
         .objects(users_processed=g.user.id)\
         .paginate(page=page, per_page=100)
-    return render_template("review.html", shreds=shreds)
+    pages = Pages.objects(created_by=g.user.id)
+    return render_template("review.html", shreds=shreds, pages=pages)
 
 
 if __name__ == "__main__":
