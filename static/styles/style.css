@@ -30,7 +30,7 @@ body {
     background-color: #333;
 }
 body {
-    color: #fff;
+    color: #999;
     text-align: center;
     /*text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
 }
@@ -73,7 +73,7 @@ li.list-group-item.active a {
 
 /* Padding for spacing */
 .inner {
-    padding: 30px;
+    padding: 30px 20px;
 }
 
 h3 a,
@@ -164,73 +164,42 @@ h5 a,
     color: rgba(255,255,255,.5);
 }
 
-
-/*
- * Affix and center
- */
-
-@media (min-width: 768px) {
-    /* Pull out the header and footer */
-    .masthead {
-        position: fixed;
-        top: 0;
-    }
-    .mastfoot {
-        position: fixed;
-        bottom: 0;
-    }
-    /* Start the vertical centering */
-    .site-wrapper-inner {
-        vertical-align: top;
-    }
-    /* Handle the widths */
-    .masthead,
-    .mastfoot,
-    .cover-container {
-        width: 100%; /* Must be percentage or pixels for horizontal alignment */
-    }
+/* Pull out the header and footer */
+.masthead {
+    position: fixed;
+    top: 0;
+}
+.mastfoot {
+    position: fixed;
+    bottom: 0;
+}
+/* Start the vertical centering */
+.site-wrapper-inner {
+    vertical-align: top;
 }
 
-@media (min-width: 992px) {
-    .masthead,
-    .mastfoot,
-    .cover-container {
-        width: 900px;
-    }
+.masthead,
+.mastfoot,
+.cover-container {
+    width: 920px;
 }
 
 .shred-img {
-    float: left;
-    padding: 20px 0;
-    margin-right: 40px;
+    max-height: 440px;
+    background: url(/static/images/checkerboard.png);
+    padding: 10px;
+    display: block;
+    margin: 0 auto;
 }
 
-div.shred-img.vertical {
-    position: relative;
-}
-
-div.shred-img.transparent-bg.vertical {
-    position: absolute;
-    top: 0;
-}
-
-.shred-img.transparent-bg {
-    padding: 20px;
-    background: url(../images/checkerboard.png);
-}
-
-.shed-features {
+.shred-features {
     float: right;
-    color: gray;
-}
-
-.shed-features h3 {
-	margin-top: 0;
+    width: 400px;
 }
 
 .textarea-tags {
 	color: black;
-	width: 630px;
+	width: 400px;
 	font-size: 20px;
 }
 
@@ -282,7 +251,7 @@ dl {
 }
 
 #signin a {
-    background: transparent url(../images/signin.png) left top no-repeat;
+    background: transparent url(/static/images/signin.png) left top no-repeat;
     display: block;
     width: 188px;
     height: 34px;
@@ -310,13 +279,12 @@ table th {
     width: 270px;
 }
 
-#rec_chars {
+#rec-chars {
     margin: 20px 0;
     padding: 8px 5px;
     border: 1px solid #9daccc;
     color: black;
-    width: 630px;
-    height: 46px;
+    width: 400px;
     font-size: 17px;
 }
 
@@ -379,4 +347,64 @@ table th {
 
 #push-shreds-to-page {
     margin-top: 10px;
+}
+.mastfoot dt, .mastfoot dd {
+    float: left;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.mastfoot dd {
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+.mastfoot dt {
+    margin-right: 5px;
+}
+
+
+#additional-info .sTable {
+    margin-top: 20px;
+    float: left;
+}
+
+#additional-info .shred-img-ctx {
+    float: left;
+    padding: 20px 0;
+    margin-right: 40px;
+}
+
+.btn-tools {
+    background: #ddd;
+    border-color: #eee;
+    padding: 4px 7px;
+}
+
+.btn-tools span {
+    display: block;
+    width: 24px;
+    height: 24px;
+}
+
+.btn-tools.ccw span {
+    background: url(/static/images/button-rotate-ccw.png) no-repeat;
+}
+
+.btn-tools.cw span {
+    background: url(/static/images/button-rotate-cw.png) no-repeat;
+}
+
+.btn-tools.info span {
+    background: url(/static/images/information.png) no-repeat;
+}
+
+.workspace {
+    float: left;
+    width: 460px;
+    height: 460px
+}
+
+.text-dropdown {
+    box-shadow: 0 8px 5px rgba(0, 0, 0, 0.5);    
 }

@@ -15,11 +15,29 @@ $(function(){
             "_id": $("#shred_id").val(),
             "tagging_start": $("#tagging_start").val(),
             "tags": data,
-            "recognizable_chars": $("#rec_chars").val()
+            "recognizable_chars": $("#rec-chars").val()
         };
     }
 
+    function assign_hotkeys(elem) {
+        elem
+            .bind('keydown', 'alt+return', function(e) {
+                $("a#save-button").click();
+            })
+            .bind('keydown', 'f1', function(e) {
+                e.preventDefault();
+                $('.popup-with-zoom-anim').click();
+            })
+            .bind('keydown', 'ctrl+g', rotate_cw)
+            .bind('keydown', 'ctrl+h', rotate_ccw)
+            .bind('keydown', 'ctrl+i', function(e) {
+                e.preventDefault();
+                $('a.btn-tools.info').click();
+            });
+    }
+
     function load_next(data) {
+        degree = 0;
         current_shred.css("visibility", "visible").html(data);
 
         var tags_area = current_shred.find('.textarea-tags'),
@@ -47,36 +65,48 @@ $(function(){
         }).textext()[0].focusInput();
 
 
-        current_shred.find("textarea.textarea-tags").bind(
-            'keydown', 'alt+return',
-            function(e) {
-                $("a#save-button").click();
-            }).bind('keydown', 'f1', function(e){
-                $('.popup-with-zoom-anim').click();
-            });
+        assign_hotkeys(current_shred.find("textarea"));
+
+        $("img.zoom-it").each(function() {
+            $(this).image_zoomer({height: 130, width: 130, scale: 2});
+        });
+
+        $(".btn-tools").tooltip({"placement": "bottom"});
+
+        $('#additional-info-link').magnificPopup({
+            type: 'inline',
+
+            fixedContentPos: false,
+            fixedBgPos: true,
+            overflowY: 'auto',
+            closeBtnInside: true,
+            preloader: false,
+
+            midClick: true,
+            removalDelay: 100,
+            mainClass: 'my-mfp-zoom-in'
+        });        
     }
 
-    $(document.body).on("click", "a#save-button", function(e) {
-        e.preventDefault();
-        form = collect_data();
+    $(document.body)
+        .on("click", "a#save-button", function(e) {
+            e.preventDefault();
+            form = collect_data();
 
-        if (form["tags"].length === 0) {
-            if (window.confirm("Вы не ввели тэгов для этого фрагмента. Пропустить его?")) {
+            if (form["tags"].length === 0) {
+                if (window.confirm("Вы не ввели тэгов для этого фрагмента. Пропустить его?")) {
+                    current_shred.css("visibility", "hidden");
+
+                    $.post(window.urls.skip, form, load_next);
+                }
+            } else {
                 current_shred.css("visibility", "hidden");
 
-                $.post(window.urls.skip, form, load_next);
+                $.post(window.urls.next, form, load_next);
             }
-        } else {
-            current_shred.css("visibility", "hidden");
-
-            $.post(window.urls.next, form, load_next);
-        }
-    }).bind('keydown', 'alt+return', function(e) {
-        $("a#save-button").click();
-    }).bind('keydown', 'f1', function(e){
-        e.preventDefault();
-        $('.popup-with-zoom-anim').click();
-    });
+        })
+        .on("click", "a.btn-tools.cw", rotate_cw)
+        .on("click", "a.btn-tools.ccw", rotate_ccw);
 
     $('.popup-with-zoom-anim').magnificPopup({
         type: 'inline',
@@ -105,34 +135,21 @@ $(function(){
     }
 
     function rotate(val) {
-        $(".shred-img").rotate({angle: val});
-        if (val == 90 || val == 270) {
-            $(".shred-img").addClass('vertical');
-        } else {
-            $(".shred-img").removeClass('vertical');
-        }
+        degree = (degree + val + 360) % 360;
+        $(".shred-img")
+            .data("angle", degree)
+            .rotate({angle: degree});
+    }
+    
+    function rotate_ccw(e) {
+        e.preventDefault();
+        rotate(-90);
     }
 
-    $(document.body).on("click", ".btn-group .btn", function() {
-        var val = parseInt($(this).find('input').val());
-        rotate(val);
-        degree = val;
-    });
-
-    function rotate_ccw() {
-        degree = (degree - 90 + 360) % 360;
-        rotate(degree);
+    function rotate_cw(e) {
+        e.preventDefault();
+        rotate(90);
     }
-
-    function rotate_cw() {
-        degree = (degree + 90) % 360;
-        rotate(degree);
-    }
-
-    $(document.body).bind('keydown', 'ctrl+z', rotate_ccw
-        ).bind('keydown', 'cmd+z', rotate_cw
-        ).bind('keydown', 'ctrl+x', rotate_cw
-        ).bind('keydown', 'cmd+x', rotate_cw);
 
     var shreds_for_page = [];
     var name_for_page = "";
