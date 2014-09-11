@@ -62,7 +62,11 @@ $(function(){
             if (formData.length && list.indexOf(data.tag) >= 0) {
                data.result = false;
             }
-        }).textext()[0].focusInput();
+        });
+
+        if (tags_area.length) {
+            tags_area.textext()[0].focusInput();
+        }
 
 
         assign_hotkeys(current_shred.find("textarea"));
@@ -151,15 +155,14 @@ $(function(){
         rotate(90);
     }
 
-    var shreds_for_page = [];
-    var name_for_page = "";
-    var page = $("#checked-shreds");
-    var select = $('#select-page');
-    var pages = [];
-    var name_for_page_forced = "";
+    var shreds_for_page = [],
+        name_for_page = "",
+        page = $("#checked-shreds"),
+        select = $('#select-page'),
+        pages = [],
+        name_for_page_forced = "";
 
-    window.pages.forEach(function(e)
-    {
+    window.pages.forEach(function(e) {
         pages.push(e.split(','));
     });
 

@@ -20,6 +20,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from flask_debugtoolbar import DebugToolbarExtension
+    toolbar = DebugToolbarExtension(app)
+except ImportError:
+    pass
+
 assets_init(app)
 admin_init(app)
 
@@ -64,6 +70,9 @@ def get_tag_synonyms():
 
 
 def get_auto_tags(shred):
+    if not shred:
+        return []
+
     mapping = get_tag_synonyms()
     auto = [mapping.get(suggestion)
             for suggestion in shred.tags_suggestions]
@@ -92,6 +101,7 @@ def index():
 
 
 @app.route('/next', methods=["GET", "POST"])
+@login.login_required
 def next():
     if request.method == "POST":
         tags = set(map(unicode.lower, request.form.getlist("tags")))
@@ -128,20 +138,21 @@ def next():
             msec=(end - start).total_seconds() * 1000)
 
     shred = get_next_shred()
-    return render_template("shred.html",
-                           shred=shred,
-                           auto_tags=get_auto_tags(shred),
-                           all_tags=get_tags(),
-                           tagging_start=datetime.utcnow(),
-                           processed_per_session=session.get("processed", 0),
-                           processed_total=User.objects(id=g.user.id)
-                                .first()["processed"],
-                           rating=list(User.objects.order_by("-processed")
-                                .values_list("id")).index(g.user.id) + 1
-                           )
+    return render_template(
+        "shred.html",
+        shred=shred,
+        auto_tags=get_auto_tags(shred),
+        all_tags=get_tags(),
+        tagging_start=datetime.utcnow(),
+        processed_per_session=session.get("processed", 0),
+        processed_total=User.objects(id=g.user.id).first()["processed"],
+        rating=list(User.objects.order_by(
+            "-processed").values_list("id")).index(g.user.id) + 1
+    )
 
 
 @app.route("/skip", methods=["POST"])
+@login.login_required
 def skip():
     Shreds.objects(pk=request.form["_id"]).update_one(
         add_to_set__users_skipped=g.user.id)
@@ -158,10 +169,13 @@ def review():
         page_name = request.form.get("page-name")
         Pages.objects(created_by=g.user.id, name=page_name)\
             .update_one(set__shreds=shreds, upsert=True)
+
     page = int(request.args.get('page', 1))
-    shreds = Shreds\
-        .objects(users_processed=g.user.id)\
-        .paginate(page=page, per_page=100)
+    shreds = (Shreds
+              .objects(users_processed=g.user.id)
+              .exclude("features", "contour")  # 10x speedup
+              .paginate(page=page, per_page=100))
+
     pages = Pages.objects(created_by=g.user.id)
     return render_template("review.html", shreds=shreds, pages=pages)
 

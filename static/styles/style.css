@@ -146,7 +146,7 @@ h5 a,
  */
 
 .cover {
-    padding: 120px 20px 0;
+    padding: 0 20px 0;
     text-align: left;
 }
 .cover .btn-lg {
@@ -164,9 +164,7 @@ h5 a,
     color: rgba(255,255,255,.5);
 }
 
-/* Pull out the header and footer */
 .masthead {
-    position: fixed;
     top: 0;
 }
 .mastfoot {
@@ -292,9 +290,16 @@ table th {
  *Shred review page
  */
 
+.shred.thumbnail {
+    overflow: hidden;
+}
+
 .shred.thumbnail img {
     float: left;
-    width: 40px;
+    max-width: 40px;
+    max-height: 250px;
+    background: url(/static/images/checkerboard.png);
+    padding: 5px;
 }
 
 .shred.thumbnail .caption {
@@ -348,6 +353,7 @@ table th {
 #push-shreds-to-page {
     margin-top: 10px;
 }
+
 .mastfoot dt, .mastfoot dd {
     float: left;
     font-size: 12px;

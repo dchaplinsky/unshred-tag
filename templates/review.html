@@ -18,28 +18,23 @@
             <div class="col-md-3">
                 <div class="thumbnail clearfix shred">
                     <a class="add-to-page" href=""
-                    data-img="{{ shred.piece_in_context_fname }}"
+                    data-img="{{ shred.piece_fname }}"
                     data-id="{{ shred.id }}"
                     data-page="{% for page in pages %}{% for shr in page.shreds %}{% if shr|string == shred.id|string %}{{ page }}{% endif %}{% endfor %}{% endfor %}">
-                    <img src="{{ shred.piece_in_context_fname }}" /></a>
+                    <img src="{{ shred.piece_fname }}" /></a>
                     <div class="caption">
                         {% with shred_tags = shred.get_user_tags(user) %}
                         {% if shred_tags %}
+                            {% for tag in shred_tags.tags %}
+                                <span class="label label-info">{{ tag|capitalize }}</span>
+                            {% endfor %}
+                        {% endif %}
                         <dl>
-                            <dt>Тэги</dt>
-                            <dd>
-                                <ul>
-                                {% for tag in shred_tags.tags %}
-                                    <li>{{ tag|capitalize }}</li>
-                                {% endfor %}
-                                </ul>
-                            </dd>
                             {% if shred_tags.recognizable_chars %}
                             <dt>Текст</dt>
                             <dd>{{ shred_tags.recognizable_chars }}</dd>
                             {% endif %}
                         </dl>
-                        {% endif %}
                         {% endwith %}
                         {% for page in pages %}
                             {% for shr in page.shreds %}

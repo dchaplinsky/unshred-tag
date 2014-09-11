@@ -38,7 +38,8 @@ class Shreds(Document):
     name = IntField()
     users_count = IntField(default=0, db_field='usersCount')
     users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
-    users_processed = ListField(ReferenceField(User), db_field='usersProcessed')
+    users_processed = ListField(ReferenceField(User),
+                                db_field='usersProcessed')
     summarized_tags = ListField(StringField(), db_field='summarizedTags')
     features = EmbeddedDocumentField(Features)
     tags_suggestions = ListField(StringField())
@@ -55,7 +56,8 @@ class Shreds(Document):
 
     def get_user_tags(self, user):
         for shred_tags in self.tags:
-            if shred_tags.user.pk == user.pk:
+            # in some rare cases user reference from shred_tags has no pk field
+            if shred_tags.user.id == user.pk:
                 return shred_tags
         return None
 
@@ -94,4 +96,3 @@ class Pages(Document):
 
     def __unicode__(self):
         return self.name
-
