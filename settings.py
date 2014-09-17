@@ -58,8 +58,10 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.js',
              'vendor/jquery.rotate/jquery.rotate.js',
-             'scripts/zoomer.js',
-             'scripts/base.js']
+             'vendor/jquery.jscroll/jquery.jscroll.js',
+             'scripts/zoomer.js',  # includes customisation
+             'scripts/base.js',
+             'scripts/review.js']
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 
 JS_ASSETS_FILTERS = 'yui_js'

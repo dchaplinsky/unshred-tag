@@ -20,11 +20,13 @@ try:
 except ImportError:
     pass
 
-try:
-    from flask_debugtoolbar import DebugToolbarExtension
-    toolbar = DebugToolbarExtension(app)
-except ImportError:
-    pass
+# Disabled temporary because of
+# https://github.com/MongoEngine/flask-mongoengine/issues/72
+# try:
+#     from flask_debugtoolbar import DebugToolbarExtension
+#     toolbar = DebugToolbarExtension(app)
+# except ImportError:
+#     pass
 
 assets_init(app)
 admin_init(app)
@@ -55,9 +57,10 @@ def get_next_shred():
 
 
 def get_tags():
-    return set([unicode(t["title"]).lower()
-                for t in Tags.objects(is_base=True).order_by("-usages")] +
-               map(lambda x: unicode(x).lower(), g.user.tags))
+    g.user.reload()  # To capture tags that has been just added
+    return filter(None, set([unicode(t["title"]).lower()
+                  for t in Tags.objects(is_base=True).order_by("-usages")] +
+                  map(unicode.lower, g.user.tags)))
 
 
 def get_tag_synonyms():
@@ -97,7 +100,7 @@ def logout():
 @app.route('/')
 def index():
     return render_template("index.html",
-                           base_tags=Tags.objects.all())
+                           base_tags=Tags.objects(is_base=True))
 
 
 @app.route('/next', methods=["GET", "POST"])
@@ -106,9 +109,9 @@ def next():
     if request.method == "POST":
         tags = set(map(unicode.lower, request.form.getlist("tags")))
         Shreds.objects(pk=request.form["_id"]).update_one(
-            push__tags=ShredTags(user=g.user.id, tags=list(tags),
-                                 recognizable_chars=request.form
-                                 .get("recognizable_chars", "")),
+            push__tags=ShredTags(
+                user=g.user.id, tags=list(tags),
+                recognizable_chars=request.form.get("recognizable_chars", "")),
             inc__users_count=1,
             add_to_set__summarized_tags=list(tags),
             add_to_set__users_processed=g.user.id)
@@ -161,23 +164,47 @@ def skip():
     return redirect(url_for("next"))
 
 
-@app.route("/review", methods=["GET", "POST"])
+@app.route("/review", methods=["GET"])
 @login.login_required
 def review():
-    if request.method == "POST":
-        shreds = request.form.get("shreds").split(',')
-        page_name = request.form.get("page-name")
-        Pages.objects(created_by=g.user.id, name=page_name)\
-            .update_one(set__shreds=shreds, upsert=True)
-
     page = int(request.args.get('page', 1))
     shreds = (Shreds
               .objects(users_processed=g.user.id)
               .exclude("features", "contour")  # 10x speedup
-              .paginate(page=page, per_page=100))
+              .paginate(page=page, per_page=20))
 
     pages = Pages.objects(created_by=g.user.id)
     return render_template("review.html", shreds=shreds, pages=pages)
+
+
+@app.route("/pages", methods=["GET", "POST"])
+@login.login_required
+def pages():
+    if request.method == "POST":
+        shreds = set(request.form.getlist("shreds"))
+        page_name = request.form.get("page_name")
+        page_id = request.form.get("page_id")
+
+        if page_id:
+            page = Pages.objects.get(pk=page_id)
+        else:
+            page, _ = Pages.objects.get_or_create(
+                created_by=g.user.id, name=page_name)
+
+        page.update(add_to_set__shreds=shreds)
+
+        for shred in Shreds.objects(id__in=shreds):
+            tags = shred.get_user_tags(g.user)
+            if tags is not None:
+                tags.pages = list(set(tags.pages + [page]))
+
+            shred.save()
+
+    pages = Pages.objects(created_by=g.user.id)
+
+    return render_template(
+        "pages.html",
+        pages=pages)
 
 
 if __name__ == "__main__":

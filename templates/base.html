@@ -58,7 +58,8 @@
             window.user = '{{ user.username }}';
             window.urls = {
                 "skip": "{{ url_for("skip") }}",
-                "next": "{{ url_for("next") }}"
+                "next": "{{ url_for("next") }}",
+                "pages": "{{ url_for("pages") }}",
             }
         </script>
         {% endif %}

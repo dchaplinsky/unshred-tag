@@ -31,6 +31,7 @@ class ShredTags(EmbeddedDocument):
     user = ReferenceField(User)
     tags = ListField(StringField())
     recognizable_chars = StringField()
+    pages = ListField(ReferenceField("Pages"))
 
 
 class Shreds(Document):
@@ -89,7 +90,7 @@ class Batches(Document):
 
 
 class Pages(Document):
-    name = StringField(primary_key=True, max_length=200)
+    name = StringField(max_length=200)
     created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
     shreds = ListField(ReferenceField(Shreds))
     created = DateTimeField(default=datetime.datetime.now)

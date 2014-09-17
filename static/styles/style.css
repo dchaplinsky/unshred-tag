@@ -31,12 +31,11 @@ body {
 }
 body {
     color: #999;
-    text-align: center;
     /*text-shadow: 0 1px 3px rgba(0,0,0,.5);*/
 }
 
 .row {
-	margin-top: 60px;
+	margin-top: 30px;
 }
 
 em.list-group-item-text {
@@ -292,6 +291,8 @@ table th {
 
 .shred.thumbnail {
     overflow: hidden;
+    height: 250px;
+    margin: 0;
 }
 
 .shred.thumbnail img {
@@ -304,36 +305,50 @@ table th {
 
 .shred.thumbnail .caption {
     margin-left: 40px; /* Compensate for the image floated to the left */
+    height: 235px;
+    overflow: scroll;
+    padding: 0 9px;
 }
 
-.shred.thumbnail .caption ul {
-    padding-left: 20px; /* Decrease default styled <li> padding */
+.shred.thumbnail pre {
+    margin: 3px 0 0 0;
+    padding: 0 5px;
 }
 
 #page-wrapper {
-    display: block;
+    display: none;
     bottom: 0px;
     left: 0px;
     width: 100%;
-    /*height: 20%;*/
     position: fixed;
-    border: 1px solid white;
-    background-color: #333;
+    border-top: 1px solid white;
+    background-color: #555;
     z-index: 100;
+    height: 300px;
 }
 
-#page-wrapper img {
-    max-height: 20%;
-    margin: 5px;
-}
-
-#page-wrapper #checked-shreds {
-    width: 80%;
+#checked-shreds img {
+    max-width: 40px;
+    max-height: 250px;
+    background: url(/static/images/checkerboard.png);
+    padding: 5px;
+    cursor: pointer;
+    display: block;
     float: left;
+    margin: 3px;
 }
 
-#page-wrapper #controls-wrapper {
-    display: none;
+#checked-shreds {
+    height: 300px;
+    width: 100%;
+    padding-left: 300px;
+    overflow: scroll;
+}
+
+#controls-wrapper {
+    width: 280px;
+    padding: 10px;
+    position: absolute;
 }
 
 #controls-wrapper #select-page {
@@ -413,4 +428,44 @@ table th {
 
 .text-dropdown {
     box-shadow: 0 8px 5px rgba(0, 0, 0, 0.5);    
+}
+
+.shreds-list-wrapper {
+    overflow: scroll;
+    position: absolute;
+    top: 100px;
+    width: 920px;
+    bottom: 0;
+}
+
+#page-name {
+    display: none;
+}
+
+.shreds-preview {
+    background: url(/static/images/checkerboard.png);
+    overflow: hidden;
+    display: none;
+    margin-top: 10px;
+}
+
+.shreds-preview img {
+    float: left;
+    max-width: 40px;
+    max-height: 230px;
+    padding: 5px 7px;
+}
+
+#page-id, #page-name {
+    width: 180px;
+    color: #333;
+}
+
+#save-page {
+    width: 76px;
+}
+
+.label {
+    display: inline-block;
+    margin-bottom: 3px;
 }

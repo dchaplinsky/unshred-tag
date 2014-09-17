@@ -1,7 +1,10 @@
+// Code below is mostly written by Imran Latif and available at https://github.com/ilatif/image_zoomer.
+// Unfortunatelly Imran didn't specify a licence for it.
+// I (Dmtiry Chaplinsky) made some modifications to fix FF issues and issues with rotated images.
+
 (function($) {
 
   var zoom_context, zoom_canvas  = "<canvas id='zoom_canvas' style='position: absolute; border: solid 1px #e8e8e8;'></canvas>";
-  // var newCanvas = $('<canvas/>').width(1000).height(1000);
   var zoom_canvas_container_name = "#zoom_canvas_container", zoom_canvas_name = "#zoom_canvas", temp_image_canvas_context, remove_image_zoomer_timer;
 
   $.fn.image_zoomer = function(options) {
