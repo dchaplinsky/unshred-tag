@@ -1,0 +1,18 @@
+<form method="POST" action="{{ url_for("pages") }}">
+<select id="page-id" name="page_id">
+	{% for page in pages %}
+		<option value="{{ page.id }}" data-name="{{ page.name }}">{{ page.name }}, ({{ page.shreds|length }})</option>
+	{% endfor %}
+	<option value="">Создать новую страницу</option>
+</select>
+<input type="submit" class="btn btn-xs btn-default" id="save-page" value="Сохранить">
+
+<input type="text" id="page-name" name="page_name" placeholder="Имя новой страницы"/>
+</form>
+{% for page in pages %}
+	<div class="shreds-preview" id="page-{{ page.pk }}">
+		{% for shred in page.shreds[:5] %}
+			<img src="{{ shred.piece_fname }}" class="shred-on-page" />
+		{% endfor %}
+	</div>
+{% endfor %}

@@ -6,95 +6,53 @@
 {% endblock %}
 
 {% block content %}
-    <div class="inner cover container-fluid">
-        <div class="text-center">
-            {{ render_pagination(shreds, 'review') }}
-        </div>
-
-        {% for shred in shreds.items %}
-            {% if loop.index % 4 == 1 %}
-            <div class="row">
-            {% endif %}
-            <div class="col-md-3">
-                <div class="thumbnail clearfix shred">
-                    <a class="add-to-page" href=""
-                    data-img="{{ shred.piece_in_context_fname }}"
-                    data-id="{{ shred.id }}"
-                    data-page="{% for page in pages %}{% for shr in page.shreds %}{% if shr|string == shred.id|string %}{{ page }}{% endif %}{% endfor %}{% endfor %}">
-                    <img src="{{ shred.piece_in_context_fname }}" /></a>
-                    <div class="caption">
-                        {% with shred_tags = shred.get_user_tags(user) %}
-                        {% if shred_tags %}
-                        <dl>
-                            <dt>Тэги</dt>
-                            <dd>
-                                <ul>
+    <div class="inner cover container-fluid shreds-list-wrapper">
+        <div class="shreds-list">
+            {% for shred in shreds.items %}
+                {% if loop.index % 4 == 1 %}
+                <div class="row">
+                {% endif %}
+                <div class="col-md-3">
+                    <div class="thumbnail clearfix shred">
+                        <a class="add-to-page" href=""
+                        data-img="{{ shred.piece_fname }}"
+                        data-id="{{ shred.id }}">
+                        <img src="{{ shred.piece_fname }}" /></a>
+                        <div class="caption">
+                            {% with shred_tags = shred.get_user_tags(user) %}
+                            {% if shred_tags %}
                                 {% for tag in shred_tags.tags %}
-                                    <li>{{ tag|capitalize }}</li>
+                                    <span class="label label-info">{{ tag|capitalize }}</span>
                                 {% endfor %}
-                                </ul>
-                            </dd>
-                            {% if shred_tags.recognizable_chars %}
-                            <dt>Текст</dt>
-                            <dd>{{ shred_tags.recognizable_chars }}</dd>
-                            {% endif %}
-                        </dl>
-                        {% endif %}
-                        {% endwith %}
-                        {% for page in pages %}
-                            {% for shr in page.shreds %}
-                                {% if shr|string == shred.id|string %}
-                                <dl>
-                                    <dt>Страница</dt>
-                                    <dd>
-                                        <ul>
-                                            <li>{{ page }}</li>
-                                        </ul>
-                                    </dd>
-                                </dl>
+
+                                {% if shred_tags.recognizable_chars %}
+                                    <pre>{{ shred_tags.recognizable_chars }}</pre>
                                 {% endif %}
-                            {% endfor %}
-                        {% endfor %}
+
+                                <div class="shred-pages">
+                                {% for page in shred_tags.pages %}
+                                    <span class="label label-warning" data-name="{{ page.name }}">{{ page.name }}</span>
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
                     </div>
                 </div>
+                {% if loop.index % 4 == 0 or loop.last %}
+                </div>
+                {% endif %}
+            {% endfor %}
+            <div class="text-center">
+                {{ render_pagination(shreds, 'review') }}
             </div>
-            {% if loop.index % 4 == 0 or loop.last %}
-            </div>
-            {% endif %}
-        {% endfor %}
-
-        <div class="text-center">
-            {{ render_pagination(shreds, 'review') }}
         </div>
     </div>
 
     <div id="page-wrapper">
+        <div id="controls-wrapper">
+        </div>
         <div id="checked-shreds">
         </div>
-        <div id="controls-wrapper">
-            <select id="select-page" name="select-page">
-                <option value="" selected disabled>Please select page...</option>
-                <option value="new-page">Create new</option>
-                {% for page in pages %}
-                    <option value="{{ page.name }}">{{ page.name }}</option>
-                {% endfor %}
-            </select>
-            <a href="#create-page-overlay" class="popup-with-zoom-anim"></a>
-            <a class="btn btn-primary" id="push-shreds-to-page" href="#">Отправить</a>
-        </div>
     </div>
-
-    <div class="zoom-anim-dialog mfp-hide small-dialog" id="create-page-overlay">
-        <div class="dialog-content">
-            <h3>Введите имя страницы</h3>
-            <input id="page-name" type="text" value="" />
-            <a class="btn btn-primary" id="set-page-name" href="#">Создать</a>
-        </div>
-    </div>
-    <script type="text/javascript">
-        window.pages = [];
-        {% for page in pages %}
-            window.pages.push("{{ page.name }},{{ page.shreds|map(attribute='id')|join(',') }}")
-        {% endfor %}
-    </script>
 {% endblock %}
