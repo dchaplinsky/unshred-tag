@@ -148,7 +148,10 @@ def load_new_batch(flt, batch):
     with open("base_tags.json", "r") as f:
         tags = json.load(f)
         for tag in tags:
+            tag["is_base"] = True
             Tags.objects.get_or_create(title=tag["title"], defaults=tag)
+
+    Tags.ensure_index(["is_base", "usages", "category"])
 
 
 def list():

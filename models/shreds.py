@@ -2,7 +2,7 @@ import datetime
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
-    URLField, CASCADE)
+    URLField, CASCADE, QuerySet)
 from flask.ext.mongoengine import Document
 
 from .user import User
@@ -63,9 +63,18 @@ class Shreds(Document):
         return None
 
 
+class TagsQS(QuerySet):
+    def get_base_tags(self, order_by_category=False):
+        qs = self.filter(is_base=True)
+        if order_by_category:
+            return qs.order_by("category", "-usages")
+
+        return qs.order_by("-usages")
+
+
 class Tags(Document):
-    description = StringField(max_length=200, default='')
     title = StringField(max_length=200, default='', primary_key=True)
+    description = StringField(max_length=200, default='')
     usages = IntField(default=0)
     shreds = ListField(ReferenceField(Shreds))
     synonyms = ListField(StringField(max_length=200))
@@ -73,6 +82,9 @@ class Tags(Document):
     category = StringField(max_length=200, default='')
     created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
     created_at = DateTimeField(default=datetime.datetime.now)
+    hotkey = StringField(max_length=10, default='')
+
+    meta = {'queryset_class': TagsQS}
 
     def __unicode__(self):
         return self.title

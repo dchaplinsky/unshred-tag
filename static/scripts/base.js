@@ -3,8 +3,21 @@ $(function(){
         traditional: true
     });
 
-    var current_shred = $("#current_shred");
-    var degree = 0;
+    var current_shred = $("#current_shred"),
+        degree = 0;
+
+    var tags = $("#tags_list .label")
+        .tooltip({"placement": "bottom"})
+        .on("click", function(e) {
+            e.preventDefault();
+
+            var tags_input = $(".textarea-tags"),
+                elem = $(this).closest("a");
+            
+            if (tags_input.length > 0) {
+                tags_input.textext()[0].tags().addTags([elem.data("value")]);
+            }
+        });
 
     function collect_data() {
         var data = $(".textarea-tags").textext()[0].hiddenInput().val();
@@ -34,6 +47,15 @@ $(function(){
                 e.preventDefault();
                 $('a.btn-tools.info').click();
             });
+
+        tags.filter("[data-hotkey]").each(function(){
+            var tag = $(this),
+                hk = tag.data("hotkey");
+
+            elem.bind("keydown", hk, function() {
+                tag.click();
+            });
+        });
     }
 
     function load_next(data) {
@@ -111,6 +133,8 @@ $(function(){
         })
         .on("click", "a.btn-tools.cw", rotate_cw)
         .on("click", "a.btn-tools.ccw", rotate_ccw);
+
+    assign_hotkeys($(document.body));
 
     $('.popup-with-zoom-anim').magnificPopup({
         type: 'inline',

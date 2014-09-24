@@ -11,6 +11,7 @@ from users import init_social_login
 from assets import init as assets_init
 from models import Shreds, Tags, TaggingSpeed, User, ShredTags, Pages
 from admin import admin_init
+from utils import unique
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -21,7 +22,7 @@ except ImportError:
     pass
 
 # Disabled temporary because of
-# https://github.com/MongoEngine/flask-mongoengine/issues/72
+# https://github.com/mgood/flask-debugtoolbar/pull/66
 # try:
 #     from flask_debugtoolbar import DebugToolbarExtension
 #     toolbar = DebugToolbarExtension(app)
@@ -58,9 +59,11 @@ def get_next_shred():
 
 def get_tags():
     g.user.reload()  # To capture tags that has been just added
-    return filter(None, set([unicode(t["title"]).lower()
-                  for t in Tags.objects(is_base=True).order_by("-usages")] +
-                  map(unicode.lower, g.user.tags)))
+
+    base_tags = [t["title"] for t in Tags.objects.get_base_tags()]
+
+    # using unique here to maintain order by popularity for base tags
+    return filter(None, unique(base_tags + g.user.tags))
 
 
 def get_tag_synonyms():
@@ -99,8 +102,9 @@ def logout():
 
 @app.route('/')
 def index():
-    return render_template("index.html",
-                           base_tags=Tags.objects(is_base=True))
+    return render_template(
+        "index.html",
+        base_tags=Tags.objects.get_base_tags(order_by_category=True))
 
 
 @app.route('/next', methods=["GET", "POST"])
@@ -123,7 +127,7 @@ def next():
         session["processed"] = session.get("processed", 0) + 1
 
         for tag in tags:
-            Tags.objects(pk=tag.capitalize()).update_one(
+            Tags.objects(pk=tag).update_one(
                 set_on_insert__is_base=False,
                 set_on_insert__created_by=g.user.id,
                 set_on_insert__created_at=Tags().created_at,

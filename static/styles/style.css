@@ -145,14 +145,16 @@ h5 a,
  */
 
 .cover {
-    padding: 0 20px 0;
+    padding: 0;
+    margin-right: 20px;
     text-align: left;
+    float: left;
 }
+
 .cover .btn-lg {
     padding: 10px 20px;
     font-weight: bold;
 }
-
 
 /*
  * Footer
@@ -178,7 +180,7 @@ h5 a,
 .masthead,
 .mastfoot,
 .cover-container {
-    width: 920px;
+    width: 1180px;
 }
 
 .shred-img {
@@ -217,7 +219,7 @@ h5 a,
     background: white;
     padding: 20px;
     text-align: left;
-    max-width: 700px;
+    max-width: 900px;
     margin: 30px auto;
     position: relative;
     color: #333;
@@ -225,11 +227,15 @@ h5 a,
 
 .dialog-content {
     overflow: scroll;
-    max-height: 600px;
+    max-height: 700px;
 }
 
 .dialog-content h3 {
     margin-top: 0;
+}
+
+.dialog-content h5 {
+    margin-top: 20px;
 }
 
 dl {
@@ -434,8 +440,14 @@ table th {
     overflow: scroll;
     position: absolute;
     top: 100px;
-    width: 920px;
+    width: 1180px;
     bottom: 0;
+}
+
+.col-5 {
+    width: 20%;
+    float: left;
+    padding: 0 15px;
 }
 
 #page-name {
@@ -468,4 +480,21 @@ table th {
 .label {
     display: inline-block;
     margin-bottom: 3px;
+}
+
+#tags_list {
+    width: 300px;
+    float: right;
+    margin-top: -15px;
+    margin-bottom: 20px;
+}
+
+#tags_list .label {
+    color: #ddd;
+    letter-spacing: 0.05em;
+    padding: 0.25em 0.65em 0.35em;
+}
+
+#tags_list .label span.hotkey {
+    color: #444;
 }

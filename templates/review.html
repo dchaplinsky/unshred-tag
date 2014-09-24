@@ -9,10 +9,10 @@
     <div class="inner cover container-fluid shreds-list-wrapper">
         <div class="shreds-list">
             {% for shred in shreds.items %}
-                {% if loop.index % 4 == 1 %}
+                {% if loop.index % 5 == 1 %}
                 <div class="row">
                 {% endif %}
-                <div class="col-md-3">
+                <div class="col-5">
                     <div class="thumbnail clearfix shred">
                         <a class="add-to-page" href=""
                         data-img="{{ shred.piece_fname }}"
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                {% if loop.index % 4 == 0 or loop.last %}
+                {% if loop.index % 5 == 0 or loop.last %}
                 </div>
                 {% endif %}
             {% endfor %}
