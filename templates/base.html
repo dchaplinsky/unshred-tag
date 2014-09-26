@@ -18,21 +18,32 @@
     </head>
     <body>
         {% if user.is_anonymous() %}
-        <ul id="signin">
-            <li><a class="facebook" href="{{ url_for("social.auth", backend="facebook") }}" title="Facebook">Facebook</a></li>
-            <li><a class="twitter" href="{{ url_for("social.auth", backend="twitter") }}" title="Twitter">Twitter</a></li>
-            <li><a class="googleplus" href="{{ url_for("social.auth", backend="google-oauth2") }}" title="Google+/Gmail">Google+/Gmail</a></li>
-            <li><a class="vkontakte" href="{{ url_for("social.auth", backend="vk-oauth2") }}" title="VK.com">VK.com</a></li>
-        </ul>
-        {% if config.SITE_IS_CLOSED %}
         <div class="site-wrapper">
             <div class="site-wrapper-inner">
                 <div class="cover-container">
-                    {% include 'holding_page.html' %}
+                    {% if config.SITE_IS_CLOSED %}
+                        {% include 'holding_page.html' %}
+                    {% else %}
+                    <div id="public-homepage">
+                        <div id="warm-welcome" class="cover inner">
+                            <p>Привет. Если вы уже знаете, куда попали – переходите к панели обработки или перечитайте инструкцию. Если нет, то давайте я вкратце расскажу.</p>
+                            <p>Жил-был молодой человек по имени Сережа Курченко. Он начинал свою трудовую деятельность менеджером в пивной компании. Но при Януковиче за несколько лет стал олигархом. Его холдинг ВЕТЭК в основном махинациями с торговлей топливом. В тесном сотрудничестве с экс-министром налогов и сборов Александром Клименко. Проще говоря – Сергей Курченко был «ширмой», за которой скрывалось множество политиков времен Януковича.</p>
+                            <p>Когда Янукович сбежал, Курченко тоже переместился в Москву. А на мусорке под его офисом журналисты нашли 40 мешков с разрезанными документами. Это первые документы из очень засекреченного офиса. В них много интересной и важной информации. Инициатива по их восстановлению выросла в работу по созданию программного комплекса, позволяющего восстанавливать «шред». Потому что оказалось, что программы для этого не существует.</p>
+                            <p><strong>Нет, не существует.</strong></p>
+                            <p>Да, вы уверены, что она есть, но ее нет. Честно. Даже у ФБР ничего особо хорошего в этом плане нет. Иначе мы бы просто ее купили и сделали вжжжжик. А ее нет. Так что вам сейчас предстоит стать частью комплекса по восстановлению документов Курченка. Проекта, который начинался под названием «Канцелярская сотня», а теперь переехал в интернет. Спасибо вам за это.</p>
+                        </div>
+
+                        <ul id="signin">
+                            <li><a class="facebook" href="{{ url_for("social.auth", backend="facebook") }}" title="Facebook">Facebook</a></li>
+                            <li><a class="twitter" href="{{ url_for("social.auth", backend="twitter") }}" title="Twitter">Twitter</a></li>
+                            <li><a class="googleplus" href="{{ url_for("social.auth", backend="google-oauth2") }}" title="Google+/Gmail">Google+/Gmail</a></li>
+                            <li><a class="vkontakte" href="{{ url_for("social.auth", backend="vk-oauth2") }}" title="VK.com">VK.com</a></li>
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        {% endif %}
         {% else %}
         <div class="site-wrapper">
             <div class="site-wrapper-inner">

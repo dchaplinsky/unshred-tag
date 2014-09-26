@@ -242,15 +242,34 @@ dl {
     margin-bottom: 7px;
 }
 
+#public-homepage {
+    width: 650px;
+    margin: 50px auto 0;
+}
+
 #signin {
     width: 188px;
-    margin: 0 auto;
-    padding: 100px 0 0;
+    padding: 0;
+    float: right;
+    margin-top: 4px;
+}
+
+#warm-welcome {
+    width: 400px;
+    color: white;
+    margin-right: 40px;
+}
+
+#holding-page {
+    width: 900px;
+    color: white;
+    padding: 0;
+    margin: 20px auto 0;
 }
 
 #signin li {
     display: block;
-    margin: 20px 0;
+    margin: 0 0 20px 0;
 }
 
 #signin a {
@@ -406,6 +425,8 @@ table th {
     background: #ddd;
     border-color: #eee;
     padding: 4px 7px;
+    margin-right: 4px;
+    float: left;
 }
 
 .btn-tools span {
@@ -493,6 +514,7 @@ table th {
     color: #ddd;
     letter-spacing: 0.05em;
     padding: 0.25em 0.65em 0.35em;
+    margin-right: 4px;
 }
 
 #tags_list .label span.hotkey {

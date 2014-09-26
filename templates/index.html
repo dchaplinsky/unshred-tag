@@ -13,10 +13,10 @@
         <div id="tags_list">
             {% for category in base_tags|groupby('category') %}
                 <h6>{{ category.grouper }}</h6>
-                {% for t in category.list %}
+                {% for t in category.list -%}
                 <a href="#" class="label label-primary" data-toggle="tooltip" href="#" title="{{ t.description }}" data-value="{{ t.title|capitalize }}" {% if t.hotkey %}data-hotkey="{{ t.hotkey }}"{% endif %}>
                     {{ t.title|capitalize }}{% if t.hotkey %} <span class="hotkey">({{ t.hotkey }})</span>{% endif %}</a>
-                {% endfor %}
+                {%- endfor %}
             {% endfor %}
         </div>
     {% endif %}
