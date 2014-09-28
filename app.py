@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 from datetime import datetime
-from flask import Flask, g, render_template, request, redirect, \
-    url_for, session
+from flask import (Flask, g, render_template, request, redirect,
+                   url_for, session, abort)
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
@@ -36,7 +36,10 @@ db = MongoEngine(app)
 
 init_social_login(app, db)
 
+# TODO: docstrings everywhere!
 
+
+# TODO: method of Shreds QS
 def get_next_shred():
     shred = Shreds\
         .objects(users_processed__ne=g.user.id, users_skipped__ne=g.user.id,
@@ -57,6 +60,7 @@ def get_next_shred():
     return shred
 
 
+# TODO: method of Tags QS
 def get_tags():
     g.user.reload()  # To capture tags that has been just added
 
@@ -66,6 +70,7 @@ def get_tags():
     return filter(None, unique(base_tags + g.user.tags))
 
 
+# TODO: method of Tags QS
 def get_tag_synonyms():
     mapping = {}
     for t in Tags.objects(synonyms__exists=True):
@@ -75,6 +80,7 @@ def get_tag_synonyms():
     return mapping
 
 
+# TODO: method of Shreds
 def get_auto_tags(shred):
     if not shred:
         return []
@@ -86,10 +92,12 @@ def get_auto_tags(shred):
     return filter(None, set(auto))
 
 
+# TODO: Method of Users
 def progress_per_user(user_id):
     return Shreds\
         .objects(
             tags__user=user_id, tags__tags__exists=True,
+            # TODO: skipped? WTF?
             tags__tags__ne="skipped")\
         .count()
 
@@ -107,17 +115,65 @@ def index():
         base_tags=Tags.objects.get_base_tags(order_by_category=True))
 
 
+@app.route('/shred/<string:shred_id>', methods=["GET", "POST"])
+@login.login_required
+def shred(shred_id):
+    shred = Shreds.objects.get(id=shred_id)
+    if not shred:
+        abort(404)
+
+    if request.method == "POST":
+        # TODO: helper
+        tags = set(map(unicode.lower, request.form.getlist("tags")))
+
+        shred_tag = shred.get_user_tags(g.user)
+        if not shred_tag:
+            abort(404)
+
+        shred_tag.tags = list(tags)
+        shred_tag.recognizable_chars = request.form.get(
+            "recognizable_chars", "")
+        shred_tag.angle = int(request.form.get("angle", 0))
+        shred.save()
+
+        User.objects(pk=g.user.id).update_one(
+            add_to_set__tags=list(tags))
+
+        for tag in tags:
+            Tags.objects(pk=tag).update_one(
+                set_on_insert__is_base=False,
+                set_on_insert__created_by=g.user.id,
+                set_on_insert__created_at=Tags().created_at,
+                inc__usages=1,
+                add_to_set__shreds=request.form["_id"],
+                upsert=True)
+
+        return render_template("_shred_snippet.html", shred=shred)
+    else:
+        return render_template(
+            "_shred.html",
+            shred=shred,
+            auto_tags=get_auto_tags(shred),
+            all_tags=get_tags(),
+            user_data=shred.get_user_tags(g.user),
+            edit=True
+        )
+
+
 @app.route('/next', methods=["GET", "POST"])
 @login.login_required
 def next():
     if request.method == "POST":
+        # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
+
         Shreds.objects(pk=request.form["_id"]).update_one(
             push__tags=ShredTags(
-                user=g.user.id, tags=list(tags),
-                recognizable_chars=request.form.get("recognizable_chars", "")),
+                user=g.user.id,
+                tags=list(tags),
+                recognizable_chars=request.form.get("recognizable_chars", ""),
+                angle=int(request.form.get("angle", 0))),
             inc__users_count=1,
-            add_to_set__summarized_tags=list(tags),
             add_to_set__users_processed=g.user.id)
 
         User.objects(pk=g.user.id).update_one(
@@ -146,11 +202,13 @@ def next():
 
     shred = get_next_shred()
     return render_template(
-        "shred.html",
+        "_shred.html",
         shred=shred,
         auto_tags=get_auto_tags(shred),
         all_tags=get_tags(),
         tagging_start=datetime.utcnow(),
+
+        # TODO: move to context processor
         processed_per_session=session.get("processed", 0),
         processed_total=User.objects(id=g.user.id).first()["processed"],
         rating=list(User.objects.order_by(
@@ -172,6 +230,7 @@ def skip():
 @login.login_required
 def review():
     page = int(request.args.get('page', 1))
+
     shreds = (Shreds
               .objects(users_processed=g.user.id)
               .exclude("features", "contour")  # 10x speedup
@@ -201,13 +260,14 @@ def pages():
             tags = shred.get_user_tags(g.user)
             if tags is not None:
                 tags.pages = list(set(tags.pages + [page]))
+            # TODO: else 404?
 
             shred.save()
 
     pages = Pages.objects(created_by=g.user.id)
 
     return render_template(
-        "pages.html",
+        "_pages.html",
         pages=pages)
 
 

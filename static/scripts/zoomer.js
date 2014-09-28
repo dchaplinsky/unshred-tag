@@ -94,7 +94,7 @@
     $(zoom_canvas_name).css({
       left: coordinates.page_x,
       top: coordinates.page_y,
-      "z-index": 99
+      "z-index": 9999
     });
 
     try {

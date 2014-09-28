@@ -35,7 +35,7 @@ body {
 }
 
 .row {
-	margin-top: 30px;
+	margin: 30px 0 0;
 }
 
 em.list-group-item-text {
@@ -519,4 +519,39 @@ table th {
 
 #tags_list .label span.hotkey {
     color: #444;
+}
+
+#inline-shred {
+    background: #333;
+    padding: 60px 20px 20px 20px;
+    width: 900px;
+    margin: 30px auto;
+    position: relative;
+}
+
+.mfp-close-btn-in .mfp-close {
+    background: white;
+}
+
+.shred .btn {
+    float: left;
+    height: 17px;
+    padding: 0;
+    width: 17px;
+    border: none;
+    margin: 2px;
+}
+
+.btn.edit-link {
+    background: url(/static/images/button-pencil.png) no-repeat;   
+}
+
+.btn.add-to-page {
+    background: url(/static/images/button-link.png) no-repeat;   
+}
+
+.label-angle {
+    display: block;
+    float: left;
+    line-height: 14px;
 }

@@ -31,6 +31,7 @@ class ShredTags(EmbeddedDocument):
     user = ReferenceField(User)
     tags = ListField(StringField())
     recognizable_chars = StringField()
+    angle = IntField(default=0)
     pages = ListField(ReferenceField("Pages"))
 
 
@@ -41,7 +42,6 @@ class Shreds(Document):
     users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
     users_processed = ListField(ReferenceField(User),
                                 db_field='usersProcessed')
-    summarized_tags = ListField(StringField(), db_field='summarizedTags')
     features = EmbeddedDocumentField(Features)
     tags_suggestions = ListField(StringField())
     piece_in_context_fname = URLField()

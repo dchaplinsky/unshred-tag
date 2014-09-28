@@ -1,0 +1,90 @@
+{% if shred %}
+<form method="POST" action="{% if edit %}{{ url_for("shred", shred_id=shred.id) }}{% else %}{{ url_for("next") }}{% endif %}">
+    <div class="workspace">
+        <img class="shred-img zoom-it" src="{{ shred.piece_fname }}" />
+    </div>
+
+    <div class="shred-features">
+        <textarea class="textarea-tags" rows="2" data-suggestions="{{ all_tags|map('capitalize')|list|tojson|forceescape }}"
+        data-auto_tags="{{ auto_tags|map('capitalize')|list|tojson|forceescape}}"
+        {% if user_data %}data-existing_tags="{{ user_data.tags|map('capitalize')|list|tojson|forceescape}}"{% endif %}></textarea>
+        <div class="clearfix"></div>
+        <textarea name="rec-chars" id="rec-chars" placeholder="Узнаваемые элементы текста" rows="3">{% if user_data %}{{ user_data.recognizable_chars }}{% endif %}</textarea>
+
+        <a class="btn btn-default btn-tools cw" data-toggle="tooltip" href="#" title="Повернуть по часовой стрелке (ctrl+g)"><span></span></a>
+        <a class="btn btn-default btn-tools ccw" data-toggle="tooltip" href="#" title="Повернуть против часовой стрелки  (ctrl+h)"><span></span></a>
+        {% if not edit %}
+            <a class="btn btn-default btn-tools info" data-toggle="tooltip" href="#additional-info" id="additional-info-link" title="Детальная информация о фрагменте (ctrl+i)"><span></span></a>
+        {% endif %}
+        <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
+
+        <input type="hidden" name="edit" value="{{ edit|default(False)|int }}"/>
+        <input type="hidden" name="shred_id" id="shred_id" value="{{ shred.pk }}"/>
+        <input type="hidden" name="tagging_start" id="tagging_start" value="{{ tagging_start }}">
+        {% if user_data %}<input type="hidden" name="angle" value="{{ user_data.angle }}">{% endif %}
+    </div>
+
+    <div class="clearfix"></div>
+</form>
+
+{% if not edit %}
+    <div class="mastfoot clearfix">
+        <div class="inner">
+            <dl>
+                <dt>Обработал всего:</dt>
+                <dd>{{ processed_total }}</dd>
+                <dt>Обработал за сессию:</dt>
+                <dd>{{ processed_per_session }}</dd>
+                <dt>Рейтинг:</dt>
+                <dd>{{ rating }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="zoom-anim-dialog mfp-hide small-dialog" id="additional-info">
+        <h4>Порция {{ shred.batch }} / Лист #{{ shred.sheet }} / фрагмент #{{ shred.name }}</h4>
+        <div class="shred-img-ctx"><img src="{{ shred.piece_in_context_fname }}" /></div>
+        <table class="sTable">
+            <tbody>
+                <tr>
+                    <th>x</th>
+                    <td>{{ shred.features.x }}px</td>
+                </tr>
+                <tr>
+                    <th>y</th>
+                    <td>{{ shred.features.y }}px</td>
+                </tr>
+                <tr>
+                    <th>Угол</th>
+                    <td>{{ "%5.1f"|format(shred.features.angle) }}&deg;</td>
+                </tr>
+                <tr>
+                    <th>Площадь</th>
+                    <td>{{ shred.features.area }}px<sup>2</sup></td>
+                </tr>
+                <tr>
+                    <th>Ширина</th>
+                    <td>{{ shred.features.width }}px</td>
+                </tr>
+                <tr>
+                    <th>Высота</th>
+                    <td>{{ shred.features.height }}px</td>
+                </tr>
+                <tr>
+                    <th>Соотношение сторон</th>
+                    <td>{{ "%5.2f"|format(shred.features.ratio) }}</td>
+                </tr>
+                <tr>
+                    <th>Компактность</th>
+                    <td>{{ "%5.2f"|format(shred.features.solidity) }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="clearfix"></div>
+    </div>
+{% endif %}
+
+{% else %}
+<div><h2>Спасибо за помощь, сознательный гражданин! Работа завершена и теперь
+подарочный Курченко будет выслан Вам укрпочтой в течении 7 рабочих дней.</h2></div>
+{% endif %}

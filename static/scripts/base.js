@@ -4,7 +4,7 @@ $(function(){
     });
 
     var current_shred = $("#current_shred"),
-        degree = 0;
+        angle = 0;
 
     var tags = $("#tags_list .label")
         .tooltip({"placement": "bottom"})
@@ -19,16 +19,17 @@ $(function(){
             }
         });
 
-    function collect_data() {
-        var data = $(".textarea-tags").textext()[0].hiddenInput().val();
+    function collect_data(form) {
+        var data = form.find(".textarea-tags").textext()[0].hiddenInput().val();
 
         data = JSON.parse(data);
-        if (data.length && !!degree) data.push("Поворот на " + degree + " градусов");
         return {
-            "_id": $("#shred_id").val(),
-            "tagging_start": $("#tagging_start").val(),
+            "_id": form.find("input[name=shred_id]").val(),
+            "tagging_start": form.find("input[name=tagging_start]").val(),
             "tags": data,
-            "recognizable_chars": $("#rec-chars").val()
+            "edit": form.find("input[name=edit]").val(),
+            "recognizable_chars": form.find("textarea[name=rec-chars]").val(),
+            "angle": angle
         };
     }
 
@@ -59,16 +60,29 @@ $(function(){
     }
 
     function load_next(data) {
-        degree = 0;
         current_shred.css("visibility", "visible").html(data);
+        init_shred_stuff(current_shred);
+    }
 
-        var tags_area = current_shred.find('.textarea-tags'),
+    /* http://xkcd.com/292/ */
+    window.init_shred_stuff = function (shred) {
+        var tags_area = shred.find('.textarea-tags'),
             suggs = tags_area.data("suggestions"),
-            auto_tags = tags_area.data("auto_tags");
+            angle_input = shred.find("input[name=angle]"),
+            auto_tags = tags_area.data("auto_tags") || [],
+            existing_tags = tags_area.data("existing_tags") || [];
+
+        if (angle_input.length > 0) {
+            angle = parseInt(angle_input.val());
+            // Set correct rotation
+            rotate(0);
+        } else {
+            angle = 0;
+        }
 
         tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
-            tagsItems: auto_tags,
+            tagsItems: existing_tags || auto_tags,
             autocomplete: {
                 dropdown: {
                     maxHeight : '200px'
@@ -90,8 +104,7 @@ $(function(){
             tags_area.textext()[0].focusInput();
         }
 
-
-        assign_hotkeys(current_shred.find("textarea"));
+        assign_hotkeys(shred.find("textarea"));
 
         $("img.zoom-it").each(function() {
             $(this).image_zoomer({height: 130, width: 130, scale: 2});
@@ -111,24 +124,38 @@ $(function(){
             midClick: true,
             removalDelay: 100,
             mainClass: 'my-mfp-zoom-in'
-        });        
+        });
     }
 
     $(document.body)
         .on("click", "a#save-button", function(e) {
+            var form = $(this).closest("form"),
+                url = form.attr("action"),
+                data;
             e.preventDefault();
-            form = collect_data();
+            data = collect_data(form);
 
-            if (form["tags"].length === 0) {
-                if (window.confirm("Вы не ввели тэгов для этого фрагмента. Пропустить его?")) {
-                    current_shred.css("visibility", "hidden");
+            if (data["edit"] == "1") {
+                $.post(url, data, function(response) {
+                    $.magnificPopup.close();
 
-                    $.post(window.urls.skip, form, load_next);
-                }
+                    $(".container-fluid")
+                        .find(".shred[data-id='" + data["_id"] +"']")
+                        .parent()
+                        .html(response);
+                });
             } else {
-                current_shred.css("visibility", "hidden");
-
-                $.post(window.urls.next, form, load_next);
+                if (data["tags"].length === 0) {
+                    if (window.confirm("Вы не ввели тэгов для этого фрагмента. Пропустить его?")) {
+                        current_shred.css("visibility", "hidden");
+    
+                        $.post(window.urls.skip, data, load_next);
+                    }
+                } else {
+                    current_shred.css("visibility", "hidden");
+    
+                    $.post(url, data, load_next);
+                }
             }
         })
         .on("click", "a.btn-tools.cw", rotate_cw)
@@ -163,10 +190,10 @@ $(function(){
     }
 
     function rotate(val) {
-        degree = (degree + val + 360) % 360;
+        angle = (angle + val + 360) % 360;
         $(".shred-img")
-            .data("angle", degree)
-            .rotate({angle: degree});
+            .data("angle", angle)
+            .rotate({angle: angle});
     }
     
     function rotate_ccw(e) {

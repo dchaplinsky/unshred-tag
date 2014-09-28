@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import render_pagination %}
+{% from "_macros.html" import render_pagination, render_shred_snippet with context %}
 
 {% block nav %}
     <li><a href="/">Главная</a></li>
@@ -13,31 +13,7 @@
                 <div class="row">
                 {% endif %}
                 <div class="col-5">
-                    <div class="thumbnail clearfix shred">
-                        <a class="add-to-page" href=""
-                        data-img="{{ shred.piece_fname }}"
-                        data-id="{{ shred.id }}">
-                        <img src="{{ shred.piece_fname }}" /></a>
-                        <div class="caption">
-                            {% with shred_tags = shred.get_user_tags(user) %}
-                            {% if shred_tags %}
-                                {% for tag in shred_tags.tags %}
-                                    <span class="label label-info">{{ tag|capitalize }}</span>
-                                {% endfor %}
-
-                                {% if shred_tags.recognizable_chars %}
-                                    <pre>{{ shred_tags.recognizable_chars }}</pre>
-                                {% endif %}
-
-                                <div class="shred-pages">
-                                {% for page in shred_tags.pages %}
-                                    <span class="label label-warning" data-name="{{ page.name }}">{{ page.name }}</span>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                            {% endwith %}
-                        </div>
-                    </div>
+                    {{ render_shred_snippet(shred) }}
                 </div>
                 {% if loop.index % 5 == 0 or loop.last %}
                 </div>

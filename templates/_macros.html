@@ -20,3 +20,32 @@
         <a href="{{ url_for(endpoint, page=pagination.next_num) }}" class="next-page">&raquo;</a>
     {% endif %}
 {% endmacro %}
+
+{% macro render_shred_snippet(shred) %}
+    <div class="thumbnail clearfix shred" data-img="{{ shred.piece_fname }}"
+        data-id="{{ shred.id }}">
+        <a class="add-to-page" href="#"><img src="{{ shred.piece_fname }}" /></a>
+        <div class="caption">
+            {% with shred_tags = shred.get_user_tags(user) %}
+            {% if shred_tags %}
+            <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", shred_id=shred.id) }}" title="Редактировать"></a>
+            <a class="btn add-to-page" data-toggle="tooltip" href="#" title="Добавить на страницу"></a>
+            {% if shred_tags.angle %}<span class="label label-success label-angle">{{ shred_tags.angle }}&deg;</span>{% endif %}
+            <div class="clearfix"></div>
+                <div class="shred-pages">
+                {% for page in shred_tags.pages %}
+                    <span class="label label-warning" data-name="{{ page.name }}">{{ page.name }}</span>
+                {% endfor %}
+                </div>
+                {% for tag in shred_tags.tags %}
+                    <span class="label label-info">{{ tag|capitalize }}</span>
+                {% endfor %}
+
+                {% if shred_tags.recognizable_chars %}
+                    <pre>{{ shred_tags.recognizable_chars }}</pre>
+                {% endif %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endmacro %}

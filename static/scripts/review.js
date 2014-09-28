@@ -1,7 +1,8 @@
 $(function(){
     $('.shreds-list-wrapper').jscroll({
         nextSelector: 'a.next-page:last',
-        contentSelector: 'div.shreds-list'
+        contentSelector: 'div.shreds-list',
+        callback: init_tooltips
     });
 
     var page_toolbar = $("#page-wrapper"),  // Toolbar at the bottom of the page
@@ -9,10 +10,14 @@ $(function(){
         page_controls_form = $("#controls-wrapper"); // Controls
 
 
+    function init_tooltips() {
+        $(".shred .btn").tooltip({"placement": "bottom"});
+    }
+
+    init_tooltips();
+
     function load_page_controls(data) {
         page_controls_form.html(data);
-
-
         page_controls_form.find("form").on("submit", submit_page_form);
 
         page_controls_form.find("#page-id").on("change", function() {
@@ -56,7 +61,7 @@ $(function(){
         params.shreds = ids;
 
         $.post(window.urls.pages, params, function() {
-            var shreds_in_list = $(".container-fluid").find(".shred a");
+            var shreds_in_list = $(".container-fluid").find(".shred");
             page_workspace.find("img").remove();
             update_page_toolbar();
 
@@ -97,7 +102,7 @@ $(function(){
     $(document.body).on("click", ".add-to-page", function(e) {
         e.preventDefault();
 
-        var el = $(this),
+        var el = $(this).closest(".shred"),
             id = el.data("id");
 
         if (page_workspace.find("img[data-id='" + id + "']").length) {
@@ -116,5 +121,21 @@ $(function(){
         $(this).remove();
 
         update_page_toolbar();
+    });
+
+    $(".shreds-list-wrapper").magnificPopup({
+        delegate: 'a.edit-link',
+        type: 'ajax',
+        callbacks: {
+            parseAjax: function(mfpResponse) {
+                var content = $(mfpResponse.data);
+                content = $('<div id="inline-shred" class="small-dialog">').append(content);
+                content.find(".mastfoot").remove();
+                mfpResponse.data = content;
+            },
+            ajaxContentAdded: function() {
+                init_shred_stuff(this.content);
+            }
+        }
     });
 });
