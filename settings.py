@@ -58,6 +58,8 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'scripts/textext.plugin.suggestions.monkeypatch.js',
              'vendor/jquery.magnific-popup/jquery.magnific-popup.js',
              'vendor/jquery.rotate/jquery.rotate.js',
+             # includes bugfix for this issue:
+             # https://github.com/pklauzinski/jscroll/issues/39
              'vendor/jquery.jscroll/jquery.jscroll.js',
              'scripts/zoomer.js',  # includes customisation
              'scripts/base.js',
