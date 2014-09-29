@@ -2,7 +2,7 @@ $(function(){
     $('.shreds-list-wrapper').jscroll({
         nextSelector: 'a.next-page:last',
         contentSelector: 'div.shreds-list',
-        callback: init_tooltips
+        callback: init_snippets
     });
 
     var page_toolbar = $("#page-wrapper"),  // Toolbar at the bottom of the page
@@ -10,11 +10,27 @@ $(function(){
         page_controls_form = $("#controls-wrapper"); // Controls
 
 
-    function init_tooltips() {
-        $(".shred .btn").tooltip({"placement": "bottom"});
+    function init_snippets() {
+        var shreds = $(".shred");
+
+        shreds.find(".btn").tooltip({"placement": "bottom"});
+
+        shreds.each(function() {
+            var shred = $(this),
+                angle;
+
+            if (!shred.data("rotated")) {
+                angle = shred.data("angle");
+                shred.data("rotated", true);
+
+                if (angle == 180) {
+                    shred.find("img").rotate({angle: angle});
+                }
+            }
+        });
     }
 
-    init_tooltips();
+    init_snippets();
 
     function load_page_controls(data) {
         page_controls_form.html(data);

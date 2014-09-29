@@ -22,11 +22,11 @@
 {% endmacro %}
 
 {% macro render_shred_snippet(shred) %}
+    {% with shred_tags = shred.get_user_tags(user) %}
     <div class="thumbnail clearfix shred" data-img="{{ shred.piece_fname }}"
-        data-id="{{ shred.id }}">
+        data-id="{{ shred.id }}" {% if shred_tags %}data-angle="{{ shred_tags.angle }}"{% endif %}>
         <a class="add-to-page" href="#"><img src="{{ shred.piece_fname }}" /></a>
         <div class="caption">
-            {% with shred_tags = shred.get_user_tags(user) %}
             {% if shred_tags %}
             <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", shred_id=shred.id) }}" title="Редактировать"></a>
             <a class="btn add-to-page" data-toggle="tooltip" href="#" title="Добавить на страницу"></a>
