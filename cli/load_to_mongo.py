@@ -145,14 +145,33 @@ def load_new_batch(flt, batch):
     Shreds.ensure_index(["users_processed", "users_count", "batch"])
     Shreds.ensure_index(["users_skipped", "users_count", "batch"])
 
+
+def import_tags(drop=False):
+    if drop:
+        Tags.objects(is_base=True).delete()
+
+    added = 0
+    updated = 0
+
     with open("base_tags.json", "r") as f:
         tags = json.load(f)
         for tag in tags:
             tag["is_base"] = True
-            Tags.objects.get_or_create(title=tag["title"], defaults=tag)
+            _, created = Tags.objects.get_or_create(
+                title=tag["title"], defaults=tag)
+            if created:
+                added += 1
+            else:
+                updated += 1
 
     Tags.ensure_index(["is_base", "usages", "category"])
 
+    return added, updated
 
-def list():
+
+def list_batches():
     return Batches.objects.order_by("created")
+
+
+def list_tags():
+    return Tags.objects.order_by("-usages")

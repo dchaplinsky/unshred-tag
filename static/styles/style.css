@@ -97,10 +97,16 @@ h5 a,
     z-index: 1000;
 }
 
+#logo {
+    float: left;
+    margin-right: 10px;
+}
+
 .masthead-brand {
     margin-top: 10px;
     margin-bottom: 10px;
     font-size: 17px;
+    line-height: 21px;
 }
 
 .masthead-nav > li {
@@ -252,12 +258,24 @@ dl {
     padding: 0;
     float: right;
     margin-top: 4px;
+    margin-bottom: 40px;
+}
+
+.sponsored-logo {
+    float: right;
+    width: 188px;
+    line-height: 2em;
+    font-size: 11px;
 }
 
 #warm-welcome {
     width: 400px;
     color: white;
     margin-right: 40px;
+}
+
+#warm-welcome a {
+    text-decoration: underline;
 }
 
 #holding-page {

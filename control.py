@@ -42,6 +42,12 @@ def batch():
     pass
 
 
+@cli.group('tags')
+def tags():
+    """Manage tags"""
+    pass
+
+
 @batch.command("process")
 @click.argument('wildcard_filter')
 @click.argument('batch')
@@ -55,12 +61,36 @@ def batch_process(wildcard_filter, batch):
 def batch_list():
     """Show all batches and stats"""
     from cli import load_to_mongo
-    batches = load_to_mongo.list()
+    batches = load_to_mongo.list_batches()
     x = PrettyTable(["Batch name", "Created", "Pages", "Shreds"])
 
     for b in batches:
         x.add_row([b["name"], b["created"], b["pages_processed"],
                    b["shreds_created"]])
+
+    click.echo(x)
+
+
+@tags.command("import")
+@click.option('--clear/--no-clear', default=False,
+              help='delete existing base tags before import')
+def tags_import(clear):
+    """Import base tags from fixtures"""
+    from cli import load_to_mongo
+    added, updated = load_to_mongo.import_tags(clear)
+    click.echo(u"%s tags created, %s tags updated" % (added, updated))
+
+
+@tags.command("list")
+def tags_list():
+    """List tags in db"""
+    from cli import load_to_mongo
+
+    tags = load_to_mongo.list_tags()
+    x = PrettyTable(["Tag name", "Is base", "Used"])
+
+    for tag in tags:
+        x.add_row([tag["title"], tag["is_base"], tag["usages"]])
 
     click.echo(x)
 
