@@ -10,5 +10,5 @@ services: mongodb
 before_script:
   - sleep 15
 
-after_success:
-  - coveralls
+# after_success:
+#   - coveralls
