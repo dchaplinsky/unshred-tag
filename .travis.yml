@@ -15,5 +15,8 @@ services: mongodb
 before_script:
   - sleep 15
 
+notifications:
+  slack: unshredit:2nm3MUsOgq9Bz9bqDPAOPn7S
+
 # after_success:
 #   - coveralls
