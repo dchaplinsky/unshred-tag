@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.7"
+install:
+  - pip install coveralls --use-mirrors
+
+# command to run tests
+script: nosetests -vs tests/ --all-modules --with-coverage --cover-erase --cover-package=.
+services: mongodb
+before_script:
+  - sleep 15
+
+after_success:
+  - coveralls
