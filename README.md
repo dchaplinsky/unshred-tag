@@ -1,5 +1,7 @@
-unshred-tag
+unshred-tag 
 ===========
+
+[![Build Status](https://travis-ci.org/dchaplinsky/unshred-tag.svg?branch=master)](https://travis-ci.org/dchaplinsky/unshred-tag)
 
 Flask/Mongo app to manually tag shreds. Experimental, volatile, unstable. No english translation yet, sorry.
 
