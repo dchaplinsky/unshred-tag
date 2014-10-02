@@ -14,3 +14,7 @@ You've been warned
 
 ### Collaboration
 If you want to help with development or documentation – we have [a bunch of useful links](https://github.com/dchaplinsky/unshred-tag/wiki/Collaboration) for you to start
+
+
+### Tests
+UI tests can be found [here](https://github.com/bv/unshred-tag-ui-tests). Thanks to @bv
