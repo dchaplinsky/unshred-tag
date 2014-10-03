@@ -589,3 +589,25 @@ table th {
 .redhot {
     color: #f00;
 }
+
+.sceditor-container * {
+    box-sizing: content-box;
+}
+
+div.sceditor-grip,
+.sceditor-button div {
+    background-image: url('/static/vendor/sceditor/themes/famfamfam.png');
+    background-repeat: no-repeat;
+}
+
+.shred-features .sceditor-container {
+    margin: 3px 0 10px;
+}
+
+.shred-features .text-core {
+    margin-bottom: 15px;
+}
+
+.text-core .text-wrap .text-dropdown {
+    z-index: 300;
+}

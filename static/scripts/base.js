@@ -28,7 +28,8 @@ $(function(){
             "tagging_start": form.find("input[name=tagging_start]").val(),
             "tags": data,
             "edit": form.find("input[name=edit]").val(),
-            "recognizable_chars": form.find("textarea[name=rec-chars]").val(),
+            "recognizable_chars": $.trim(
+                form.find("textarea[name=rec-chars]").sceditor("instance").val()),
             "angle": angle
         };
     }
@@ -57,6 +58,13 @@ $(function(){
                 tag.click();
             });
         });
+
+        $('#rec-chars').sceditor('instance').bind('keydown', function(e) {
+            // Dirty hack to make sceditor support at least our main hotkey
+            if (e.altKey && e.keyCode == 13) {
+                $("a#save-button").click();
+            }
+        });
     }
 
     function load_next(data) {
@@ -82,7 +90,7 @@ $(function(){
 
         tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
-            tagsItems: existing_tags ? existing_tags : auto_tags,
+            tagsItems: existing_tags.length ? existing_tags : auto_tags,
             autocomplete: {
                 dropdown: {
                     maxHeight : '200px'
@@ -103,6 +111,18 @@ $(function(){
         if (tags_area.length) {
             tags_area.textext()[0].focusInput();
         }
+
+        $("#rec-chars").sceditor({
+            plugins: 'bbcode',
+            toolbar: "bold,italic,underline,strike",
+            emoticonsEnabled: false,
+            width: 398,
+            height: 200,
+            resizeMinWidth: 398,
+            resizeMaxWidth: 398,
+            bbcodeTrim: true,
+            style: "/static/vendor/sceditor/jquery.sceditor.default.css"
+        });
 
         assign_hotkeys(shred.find("textarea"));
 

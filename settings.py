@@ -61,6 +61,7 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              # includes bugfix for this issue:
              # https://github.com/pklauzinski/jscroll/issues/39
              'vendor/jquery.jscroll/jquery.jscroll.js',
+             'vendor/sceditor/jquery.sceditor.bbcode.js',
              'scripts/zoomer.js',  # includes customisation
              'scripts/base.js',
              'scripts/review.js']
@@ -75,7 +76,9 @@ CSS_ASSETS = ['vendor/bootstrap/bootstrap.css',
               'vendor/textext/css/textext.plugin.arrow.css',
               'vendor/textext/css/textext.plugin.autocomplete.css',
               'vendor/jquery.magnific-popup/jquery.magnific-popup.css',
-              'styles/textext.overwrite.css', 'styles/style.css']
+              'vendor/sceditor/themes/square.css',
+              'styles/textext.overwrite.css',
+              'styles/style.css']
 CSS_ASSETS_OUTPUT = 'styles/packed.css'
 CSS_ASSETS_FILTERS = 'yui_css'
 

@@ -9,6 +9,7 @@
         data-auto_tags="{{ auto_tags|map('capitalize')|list|tojson|forceescape}}"
         {% if user_data %}data-existing_tags="{{ user_data.tags|map('capitalize')|list|tojson|forceescape}}"{% endif %}></textarea>
         <div class="clearfix"></div>
+        <label>Узнаваемые элементы текста:</label>
         <textarea name="rec-chars" id="rec-chars" placeholder="Узнаваемые элементы текста" rows="3">{% if user_data %}{{ user_data.recognizable_chars }}{% endif %}</textarea>
 
         <a class="btn btn-default btn-tools cw" data-toggle="tooltip" href="#" title="Повернуть по часовой стрелке (ctrl+g)"><span></span></a>
