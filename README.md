@@ -1,7 +1,7 @@
 unshred-tag 
 ===========
 
-[![Build Status](https://travis-ci.org/dchaplinsky/unshred-tag.svg?branch=master)](https://travis-ci.org/dchaplinsky/unshred-tag)
+[![Build Status](https://travis-ci.org/dchaplinsky/unshred-tag.svg?branch=master)](https://travis-ci.org/dchaplinsky/unshred-tag) [![Coverage Status](https://coveralls.io/repos/dchaplinsky/unshred-tag/badge.png?branch=master)](https://coveralls.io/r/dchaplinsky/unshred-tag?branch=master)
 
 Flask/Mongo app to manually tag shreds. Experimental, volatile, unstable. No english translation yet, sorry.
 
@@ -14,3 +14,7 @@ You've been warned
 
 ### Collaboration
 If you want to help with development or documentation – we have [a bunch of useful links](https://github.com/dchaplinsky/unshred-tag/wiki/Collaboration) for you to start
+
+
+### Tests
+UI tests can be found [here](https://github.com/bv/unshred-tag-ui-tests). Thanks to @bv
