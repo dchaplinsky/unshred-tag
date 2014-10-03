@@ -412,6 +412,10 @@ table th {
     margin-top: 10px;
 }
 
+.mastfoot {
+    width: 500px;
+}
+
 .mastfoot dt, .mastfoot dd {
     float: left;
     font-size: 12px;
@@ -572,4 +576,16 @@ table th {
     display: block;
     float: left;
     line-height: 14px;
+}
+
+#tag_hints p {
+    margin-bottom: 18px;
+}
+
+#tag_hints img {
+    padding: 0 10px;
+}
+
+.redhot {
+    color: #f00;
 }

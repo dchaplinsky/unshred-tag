@@ -7,7 +7,7 @@ $(function(){
         angle = 0;
 
     var tags = $("#tags_list .label")
-        .tooltip({"placement": "bottom"})
+        .tooltip({"placement": "bottom", "html": true})
         .on("click", function(e) {
             e.preventDefault();
 
@@ -82,7 +82,7 @@ $(function(){
 
         tags_area.textext({
             plugins: 'tags autocomplete suggestions prompt arrow',
-            tagsItems: existing_tags || auto_tags,
+            tagsItems: existing_tags ? existing_tags : auto_tags,
             autocomplete: {
                 dropdown: {
                     maxHeight : '200px'
