@@ -1,6 +1,6 @@
 from mongoengine import StringField, EmailField, BooleanField, \
     DateTimeField, IntField, SequenceField
-from flask.ext.login import UserMixin
+from flask.ext.login import UserMixin, AnonymousUserMixin
 from flask.ext.mongoengine import Document
 import datetime
 
@@ -26,3 +26,7 @@ class User(Document, UserMixin):
 
     def __unicode__(self):
         return self.username
+
+
+class Anonymous(AnonymousUserMixin):
+    name = u"Anonymous"
