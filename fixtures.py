@@ -24,7 +24,7 @@ def _import_from_file(fname, model):
                 model.objects.create(**obj)
 
 
-@mod.route("/reset_db", methods=["GET", "POST"])
+@mod.route("/reset_db", methods=["POST"])
 @handle_exception_as_json()
 def reset_db():
     Shreds.objects.delete()
@@ -38,25 +38,25 @@ def reset_db():
     FlaskStorage.code.objects.delete()
 
 
-@mod.route("/create_users", methods=["GET", "POST"])
+@mod.route("/create_users", methods=["POST"])
 @handle_exception_as_json()
 def create_users():
     _import_from_file("fixtures/users.json", User)
 
 
-@mod.route("/create_base_tags", methods=["GET", "POST"])
+@mod.route("/create_base_tags", methods=["POST"])
 @handle_exception_as_json()
 def create_base_tags():
     _import_from_file("fixtures/base_tags.json", Tags)
 
 
-@mod.route("/create_shreds", methods=["GET", "POST"])
+@mod.route("/create_shreds", methods=["POST"])
 @handle_exception_as_json()
 def create_shreds():
     _import_from_file("fixtures/shreds.json", Shreds)
 
 
-@mod.route("/login_user/<string:username>", methods=["GET", "POST"])
+@mod.route("/login_user/<string:username>", methods=["POST"])
 @handle_exception_as_json()
 def login_user(username):
     usr = User.objects.get(username=username)
