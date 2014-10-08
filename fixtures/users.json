@@ -1,0 +1,28 @@
+[
+    {
+        "id": "53e497522e55bf13e68af17a",
+        "username": "admin",
+        "password": "password",
+        "email": "admin@unshred.it",
+        "active": true,
+        "admin": true
+    },
+
+    {
+        "id": "53e497522e55bf13e68af17b",
+        "username": "user",
+        "password": "password",
+        "email": "user@unshred.it",
+        "active": true,
+        "admin": false
+    },
+
+    {
+        "id": "53e497522e55bf13e68af17c",
+        "username": "nobody",
+        "password": "password",
+        "email": "nobody@unshred.it",
+        "active": false,
+        "admin": false
+    }
+]

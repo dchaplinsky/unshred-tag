@@ -36,6 +36,10 @@ db = MongoEngine(app)
 
 init_social_login(app, db)
 
+if app.config["ENABLE_FIXTURES_ENDPOINTS"]:
+    from fixtures import mod as fixtures_module
+    app.register_blueprint(fixtures_module)
+
 # TODO: docstrings everywhere!
 
 

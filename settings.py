@@ -15,7 +15,6 @@ MONGODB_SETTINGS = {
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 SESSION_PROTECTION = 'strong'
 
-
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
 SOCIAL_AUTH_LOGIN_URL = '/'
@@ -29,6 +28,7 @@ SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social.backends.vk.VKOAuth2',
 )
 
+# Keypairs for social auth backends
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
 
@@ -92,6 +92,13 @@ LOCAL_FS_SRC_DIR = '../cv/pink/'
 LOCAL_FS_URL = 'http://localhost:5000/'
 SPLIT_OUT_DIR = "static/out"
 
+# Redundancy level for shreds processing
 USERS_PER_SHRED = 2
 
+# Restrict an access to site to admins only
 SITE_IS_CLOSED = False
+
+# Include fixtures.py blueprint that will provide set of endpoints to reset
+# db and create test users/shreds/tags. Required mostly for UI testing.
+# Enable with great care
+ENABLE_FIXTURES_ENDPOINTS = True

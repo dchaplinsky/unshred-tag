@@ -153,10 +153,9 @@ def import_tags(drop=False):
     added = 0
     updated = 0
 
-    with open("base_tags.json", "r") as f:
+    with open("fixtures/base_tags.json", "r") as f:
         tags = json.load(f)
         for tag in tags:
-            tag["is_base"] = True
             _, created = Tags.objects.get_or_create(
                 title=tag["title"], defaults=tag)
             if created:
