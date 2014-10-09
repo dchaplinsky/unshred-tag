@@ -101,4 +101,4 @@ SITE_IS_CLOSED = False
 # Include fixtures.py blueprint that will provide set of endpoints to reset
 # db and create test users/shreds/tags. Required mostly for UI testing.
 # Enable with great care
-ENABLE_FIXTURES_ENDPOINTS = True
+ENABLE_FIXTURES_ENDPOINTS = False
