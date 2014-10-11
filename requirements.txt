@@ -18,3 +18,4 @@ python-social-auth==0.1.26
 flask-mongoengine==0.7.0
 click==2.4
 prettytable==0.7.2
+Flask-Testing==0.4.2
