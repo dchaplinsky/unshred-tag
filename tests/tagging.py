@@ -54,3 +54,19 @@ class TaggingTest(BasicTestCase):
 
         self.assertFalse("shred_id" in body)
         self.assertFalse(url_for("next") in body)
+
+    def test_has_some_tasks(self):
+        self.create_user_and_login("user")
+
+        self.client.post(url_for("fixtures.create_shreds"))
+
+        res = self.client.get(url_for("next"))
+        self.assert200(res)
+        body = res.get_data(as_text=True)
+
+        self.assertTrue("shred_id" in body)
+        self.assertTrue(url_for("next") in body)
+
+        for tag in Tags.objects(is_base=True):
+            self.assertTrue(
+                tag.title.capitalize().encode('unicode-escape') in body)
