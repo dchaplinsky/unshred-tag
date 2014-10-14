@@ -12,7 +12,7 @@ from click import echo
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-from unshred.split import Sheet
+from unshred.split import SheetIO
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import app
@@ -106,12 +106,13 @@ def load_new_batch(flt, batch):
         sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
         echo("\n\nProcessing file %s from %s" % (fname, sheet_name))
-        sheet = Sheet(fname, sheet_name, [GeometryFeatures, ColourFeatures],
-                      out_dir, "png")
+        sheet = SheetIO(fname, sheet_name, [GeometryFeatures, ColourFeatures],
+                        out_dir, "png")
 
         pages_processed += 1
 
-        for c in sheet.resulting_contours:
+        for c in sheet.get_shreds():
+            c = c._asdict()
             c["id"] = "%s:%s_%s" % (batch, c["sheet"], c["name"])
             c["usersCount"] = 0
             c["batch"] = batch
