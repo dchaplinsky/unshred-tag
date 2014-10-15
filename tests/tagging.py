@@ -1,6 +1,6 @@
 from flask import url_for
 
-from models import Tags, User
+from models import Tags, User, Shreds
 from . import BasicTestCase
 
 
@@ -127,3 +127,27 @@ class TaggingTest(BasicTestCase):
             body.index(
                 new_first_tag.title.capitalize().encode('unicode-escape'))
         )
+
+    def test_auto_tags(self):
+        self.create_user_and_login("user")
+        self.client.post(url_for("fixtures.create_shreds"))
+
+        tag = Tags.objects.create(title="my new tag",
+                                  synonyms=["foobar_synonym"],
+                                  is_base=True)
+
+        res = self.client.get(url_for("next"))
+        self.assert200(res)
+        body = res.get_data(as_text=True)
+
+        self.assertEquals(
+            body.count(tag.title.capitalize().encode('unicode-escape')), 1)
+
+        Shreds.objects.update(add_to_set__tags_suggestions=["foobar_synonym"])
+
+        res = self.client.get(url_for("next"))
+        self.assert200(res)
+        body = res.get_data(as_text=True)
+
+        self.assertEquals(
+            body.count(tag.title.capitalize().encode('unicode-escape')), 2)

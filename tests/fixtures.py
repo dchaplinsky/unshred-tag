@@ -61,7 +61,7 @@ class FixturesTest(BasicTestCase):
         self.assert_count(Shreds, 9, batch="fixtures")
         self.assert_count(Shreds, 0, batch="foobar")
 
-    def login_user(self):
+    def test_login_user(self):
         self.client.post(url_for("fixtures.create_users"))
 
         for user in ["user", "admin"]:
@@ -70,8 +70,21 @@ class FixturesTest(BasicTestCase):
             self.assert_success(res)
             self.assertTrue(self.is_user_logged())
 
+    def test_login_inactive_user(self):
+        self.client.post(url_for("fixtures.create_users"))
+
         for user in ["nobody"]:
             res = self.client.post(
                 url_for("fixtures.login_user", username=user))
             self.assert_success(res)
             self.assertFalse(self.is_user_logged())
+
+    def test_login_non_existant_user(self):
+        self.client.post(url_for("fixtures.create_users"))
+
+        for user in ["non-existing"]:
+            res = self.client.post(
+                url_for("fixtures.login_user", username=user))
+            self.assert200(res)
+
+            self.assertFalse(res.json["result"])
