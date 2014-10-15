@@ -1,5 +1,4 @@
 import re
-import unittest
 from flask import url_for
 
 from models import Tags, User, Shreds
@@ -162,6 +161,10 @@ class TaggingTest(BasicTestCase):
 
     def test_skipping(self):
         self.create_user_and_login("user")
+        user = User.objects.get(username="user")
+        self.assertEqual(user.skipped, 0)
+        self.assertEqual(user.processed, 0)
+
         self.client.post(url_for("fixtures.create_shreds"))
 
         res = self.client.get(url_for("next"))
@@ -181,7 +184,8 @@ class TaggingTest(BasicTestCase):
             current_shred = self.parse_shred_id(body)
             self.assertNotEqual(current_shred, first_shred)
 
-        raise unittest.SkipTest("WIP")
+        self.assertEqual(
+            len(Shreds.objects(id=first_shred).first().users_skipped), 1)
 
         res = self.client.post(url_for("skip"),
                                data={"_id": current_shred},
@@ -192,3 +196,10 @@ class TaggingTest(BasicTestCase):
 
         current_shred = self.parse_shred_id(body)
         self.assertEqual(current_shred, first_shred)
+
+        self.assertEqual(
+            len(Shreds.objects(id=first_shred).first().users_skipped), 0)
+
+        user.reload()
+        self.assertEqual(user.skipped, 10)
+        self.assertEqual(user.processed, 0)

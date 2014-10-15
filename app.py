@@ -59,7 +59,7 @@ def get_next_shred():
         .order_by("batch", "users_count").first()
 
     if shred:
-        shred.update_one(pull__users_skipped=g.user.id)
+        Shreds.objects(id=shred.id).update_one(pull__users_skipped=g.user.id)
 
     return shred
 
