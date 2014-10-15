@@ -1,7 +1,8 @@
 import re
+from datetime import datetime
 from flask import url_for
 
-from models import Tags, User, Shreds
+from models import Tags, User, Shreds, TaggingSpeed
 from . import BasicTestCase
 
 
@@ -171,35 +172,97 @@ class TaggingTest(BasicTestCase):
         self.assert200(res)
         body = res.get_data(as_text=True)
 
-        current_shred = first_shred = self.parse_shred_id(body)
+        current_shred_id = first_shred_id = self.parse_shred_id(body)
 
         for i in xrange(9):
             res = self.client.post(url_for("skip"),
-                                   data={"_id": current_shred},
+                                   data={"_id": current_shred_id},
                                    follow_redirects=True)
 
             body = res.get_data(as_text=True)
             self.assert200(res)
 
-            current_shred = self.parse_shred_id(body)
-            self.assertNotEqual(current_shred, first_shred)
+            current_shred_id = self.parse_shred_id(body)
+            self.assertNotEqual(current_shred_id, first_shred_id)
 
         self.assertEqual(
-            len(Shreds.objects(id=first_shred).first().users_skipped), 1)
+            len(Shreds.objects(id=first_shred_id).first().users_skipped), 1)
 
         res = self.client.post(url_for("skip"),
-                               data={"_id": current_shred},
+                               data={"_id": current_shred_id},
                                follow_redirects=True)
 
         body = res.get_data(as_text=True)
         self.assert200(res)
 
-        current_shred = self.parse_shred_id(body)
-        self.assertEqual(current_shred, first_shred)
+        current_shred_id = self.parse_shred_id(body)
+        self.assertEqual(current_shred_id, first_shred_id)
 
         self.assertEqual(
-            len(Shreds.objects(id=first_shred).first().users_skipped), 0)
+            len(Shreds.objects(id=first_shred_id).first().users_skipped), 0)
 
         user.reload()
         self.assertEqual(user.skipped, 10)
         self.assertEqual(user.processed, 0)
+
+    def test_valid_tagging(self):
+        self.create_user_and_login("user")
+        user = User.objects.get(username="user")
+        self.assertEqual(user.skipped, 0)
+        self.assertEqual(user.processed, 0)
+        self.assertEqual(user.tags_count, 0)
+        self.assertEqual(TaggingSpeed.objects.count(), 0)
+
+        new_tags = ["foo", "bar"]
+
+        self.client.post(url_for("fixtures.create_shreds"))
+
+        res = self.client.get(url_for("next"))
+        self.assert200(res)
+        body = res.get_data(as_text=True)
+
+        current_shred_id = self.parse_shred_id(body)
+        current_shred = Shreds.objects.get(id=current_shred_id)
+        self.assertEqual(current_shred.get_user_tags(user), None)
+
+        res = self.client.post(
+            url_for("next"), data={
+                "_id": current_shred_id,
+                "recognizable_chars": "foo\nbar\nfoo",
+                "angle": 90,
+                "tags": ["FOO", "foo", "Bar", "bAR"],
+                "tagging_start": datetime.utcnow()
+            })
+
+        body = res.get_data(as_text=True)
+        self.assert200(res)
+
+        new_shred_id = self.parse_shred_id(body)
+        current_shred.reload()
+        user.reload()
+        user_tag = current_shred.get_user_tags(user)
+
+        self.assertNotEqual(new_shred_id, current_shred_id)
+
+        self.assertEqual(user_tag.tags, new_tags)
+        self.assertEqual(user_tag.angle, 90)
+        self.assertEqual(user_tag.recognizable_chars, "foo\nbar\nfoo")
+
+        self.assertEqual(current_shred.users_count, 1)
+        self.assertEqual(current_shred.users_skipped, [])
+        self.assertEqual(current_shred.users_processed[0].username,
+                         user.username)
+
+        self.assertEqual(user.skipped, 0)
+        self.assertEqual(user.processed, 1)
+        self.assertEqual(user.tags_count, 2)
+        self.assertEqual(user.tags, new_tags)
+        self.assertEqual(TaggingSpeed.objects.count(), 1)
+
+        for tag_name in new_tags:
+            tag = Tags.objects.get(title=tag_name)
+
+            self.assertEqual(tag.is_base, False)
+            self.assertEqual(tag.usages, 1)
+            self.assertEqual(tag.shreds[0].id, current_shred_id)
+            self.assertEqual(tag.created_by.username, user.username)
