@@ -58,7 +58,8 @@ class FixturesTest(BasicTestCase):
         self.assert_success(res)
 
         self.assert_count(Shreds, 10)  # Another magic number
-        self.assert_count(Shreds, 9, batch="fixtures")
+        self.assert_count(Shreds, 9, batch="fixtures1")
+        self.assert_count(Shreds, 1, batch="fixtures2")
         self.assert_count(Shreds, 0, batch="foobar")
 
     def test_login_user(self):

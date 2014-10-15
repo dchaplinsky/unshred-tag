@@ -1,3 +1,5 @@
+import re
+import unittest
 from flask import url_for
 
 from models import Tags, User, Shreds
@@ -151,3 +153,42 @@ class TaggingTest(BasicTestCase):
 
         self.assertEquals(
             body.count(tag.title.capitalize().encode('unicode-escape')), 2)
+
+    def parse_shred_id(self, body):
+        pattern = r'id="shred_id".*?"([^"]*)"'
+
+        m = re.search(pattern, body)
+        return m.group(1)
+
+    def test_skipping(self):
+        self.create_user_and_login("user")
+        self.client.post(url_for("fixtures.create_shreds"))
+
+        res = self.client.get(url_for("next"))
+        self.assert200(res)
+        body = res.get_data(as_text=True)
+
+        current_shred = first_shred = self.parse_shred_id(body)
+
+        for i in xrange(9):
+            res = self.client.post(url_for("skip"),
+                                   data={"_id": current_shred},
+                                   follow_redirects=True)
+
+            body = res.get_data(as_text=True)
+            self.assert200(res)
+
+            current_shred = self.parse_shred_id(body)
+            self.assertNotEqual(current_shred, first_shred)
+
+        raise unittest.SkipTest("WIP")
+
+        res = self.client.post(url_for("skip"),
+                               data={"_id": current_shred},
+                               follow_redirects=True)
+
+        body = res.get_data(as_text=True)
+        self.assert200(res)
+
+        current_shred = self.parse_shred_id(body)
+        self.assertEqual(current_shred, first_shred)
