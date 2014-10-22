@@ -4,8 +4,8 @@ from itertools import chain, combinations, islice, izip_longest
 from app import db
 from models import Shreds, ShredsDistances
 
-BULK_INSERT_SIZE = 1000
-SHREDS_CAP = 1000
+BULK_INSERT_SIZE = 100000
+SHREDS_CAP = 10000
 
 # Performance stats
 # 100 shreds -> 8 sec
@@ -36,8 +36,13 @@ def jaccard_distance(tags_a, tags_b):
     return 1 - len(tags_a.intersection(tags_b)) / len(tags_a.union(tags_b))
 
 
-def jaccard_distances_iterator(shreds_tags):
-    for shred_a, shred_b in combinations(islice(shreds_tags.items(), 0, SHREDS_CAP), 2):
+def jaccard_distances_iterator(shreds_tags, input_cap=SHREDS_CAP):
+    """
+    You can take only first `input_cap` items from `shreds_tags` iterable.
+    Usefull for debugging and test runs.
+    """
+
+    for shred_a, shred_b in combinations(islice(shreds_tags.items(), 0, input_cap), 2):
         shred_a_id, tags_a = shred_a
         shred_b_id, tags_b = shred_b
         yield shred_a_id, shred_b_id, jaccard_distance(tags_a, tags_b)
@@ -49,24 +54,40 @@ def fetch_normalized_shreds_tags():
     filtered(soon) normalized tags.
     """
     shreds = Shreds.objects().only('id', 'tags.tags')
-    # import ipdb; ipdb.set_trace()
     shreds_tags = {}
     for s in shreds:
         # TODO: Add filtering and extract as Shreds.filtered_normalized_tags method/property
-        shreds_tags[s.id] = set(map(lambda _: unicode(_.lower()), chain(*[st['tags'] for st in s.tags])))
+        shreds_tags[s.id] = set(map(lambda _: unicode(_.lower()), chain(*[st.tags for st in s.tags])))
     return shreds_tags
 
 
 def churn_jaccard():
+    """
+    We'll be working with pre-created list of ShredsDistances documents - s_distances
+    This way we don't spend CPU cycles & mallocs to create millions of
+    objects to be thrown away.
+
+    It would be even more efficient to not create these documents at all
+    and insert raw data into mongo, but I haven't dug deep enough.
+    """
+
     shreds_tags = fetch_normalized_shreds_tags()
+    s_distances = [ShredsDistances() for _ in xrange(BULK_INSERT_SIZE)]
+
     for distances in grouper(BULK_INSERT_SIZE, jaccard_distances_iterator(shreds_tags)):
-        s_distances = []
-        # import ipdb; ipdb.set_trace()
-        for dist in distances:
+        for i, dist in enumerate(distances):
             if dist:
                 a, b, d = dist
-                s_distances.append(ShredsDistances(shreds_pair=[a, b], distance=d, distance_type='jaccard'))
-        ShredsDistances.objects.insert(s_distances, load_bulk=True)
+
+                # assign data to pre-created ShredsDistances document
+                s_d = s_distances[i]
+                s_d.shreds_pair = [a, b]
+                s_d.distance = d
+                s_d.distance_type = 'jaccard'
+            else:
+                # Cut the tail of pre-created documents from last bulk set
+                s_distances[i] = None
+        ShredsDistances.objects.insert(filter(None, s_distances), load_bulk=False)
 
 
 if __name__ == '__main__':
