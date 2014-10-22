@@ -2,7 +2,7 @@ import datetime
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
-    URLField, CASCADE, QuerySet)
+    CASCADE, QuerySet)
 from flask.ext.mongoengine import Document
 
 from .user import User
