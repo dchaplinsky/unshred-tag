@@ -1,28 +1,16 @@
+#!env python
+
 from __future__ import division
 
-from itertools import chain, combinations, islice, izip_longest
+from itertools import combinations, islice
+from fn.iters import grouper
+
 from app import db
 from models import Shreds, ShredsDistances
 
 BULK_INSERT_SIZE = 100000
 SHREDS_CAP = 10000
-
-# Performance stats
-# 100 shreds -> 8 sec
-# 1000 shreds -> 3 min
-# 2800 shreds -> 24 min
-
-
-def grouper(n, iterable, fillvalue=None):
-    """Collect data into fixed-length chunks or blocks, so
-    grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx
-
-    http://docs.python.org/3.4/library/itertools.html#itertools-recipes
-
-    Shameless copypaste from https://github.com/kachayev/fn.py/blob/master/fn/iters.py#L113
-    """
-    args = [iter(iterable)] * n
-    return izip_longest(*args, fillvalue=fillvalue)
+TAGS_REPEATS = 2
 
 
 def jaccard_distance(tags_a, tags_b):
@@ -45,7 +33,7 @@ def jaccard_distances_iterator(shreds_tags, input_cap=SHREDS_CAP):
     for shred_a, shred_b in combinations(islice(shreds_tags.items(), 0, input_cap), 2):
         shred_a_id, tags_a = shred_a
         shred_b_id, tags_b = shred_b
-        yield shred_a_id, shred_b_id, jaccard_distance(tags_a, tags_b)
+        yield shred_a_id, shred_b_id, jaccard_distance(set(tags_a), set(tags_b))
 
 
 def fetch_normalized_shreds_tags():
@@ -56,8 +44,9 @@ def fetch_normalized_shreds_tags():
     shreds = Shreds.objects().only('id', 'tags.tags')
     shreds_tags = {}
     for s in shreds:
-        # TODO: Add filtering and extract as Shreds.filtered_normalized_tags method/property
-        shreds_tags[s.id] = set(map(lambda _: unicode(_.lower()), chain(*[st.tags for st in s.tags])))
+        tags = s.get_repeated_tags(TAGS_REPEATS)
+        if tags:
+            shreds_tags[s.id] = tags
     return shreds_tags
 
 

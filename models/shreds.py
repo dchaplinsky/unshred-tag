@@ -1,4 +1,6 @@
 import datetime
+from collections import Counter
+from itertools import chain
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
@@ -61,6 +63,13 @@ class Shreds(Document):
             if shred_tags.user.id == user.pk:
                 return shred_tags
         return None
+
+    def get_tags_set(self):
+        return set(chain(*[st.tags for st in self.tags]))
+
+    def get_repeated_tags(self, repeats=2):
+        tags_counts = Counter(chain(*[st.tags for st in self.tags]))
+        return [tag for tag, count in tags_counts.items() if count >= repeats]
 
 
 class TagsQS(QuerySet):
