@@ -32,4 +32,7 @@ class ShredsDistances(Document):
     distance_type = StringField(max_length=10, default='')
     distance = FloatField()
 
-    # TODO: add indexes
+    meta = {
+        'indexes': ['shreds_pair', 'distance', 'distance_type'],
+        'index_background': True,
+    }
