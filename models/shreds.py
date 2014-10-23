@@ -64,11 +64,11 @@ class Shreds(Document):
                 return shred_tags
         return None
 
-    def get_tags_set(self):
-        return set(chain(*[st.tags for st in self.tags]))
+    def get_tags(self):
+        return chain(*[st.tags for st in self.tags])
 
     def get_repeated_tags(self, repeats=2):
-        tags_counts = Counter(chain(*[st.tags for st in self.tags]))
+        tags_counts = Counter(self.get_tags())
         return [tag for tag, count in tags_counts.items() if count >= repeats]
 
 

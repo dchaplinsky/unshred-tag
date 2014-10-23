@@ -64,14 +64,13 @@ def churn_jaccard():
     s_distances = [ShredsDistances() for _ in xrange(BULK_INSERT_SIZE)]
 
     for distances in grouper(BULK_INSERT_SIZE, jaccard_distances_iterator(shreds_tags)):
-        for i, dist in enumerate(distances):
-            if dist:
-                a, b, d = dist
-
+        for i, distance in enumerate(distances):
+            if distance:
                 # assign data to pre-created ShredsDistances document
+                tag_a, tag_b, dist = distance
                 s_d = s_distances[i]
-                s_d.shreds_pair = [a, b]
-                s_d.distance = d
+                s_d.shreds_pair = [tag_a, tag_b]
+                s_d.distance = dist
                 s_d.distance_type = 'jaccard'
             else:
                 # Cut the tail of pre-created documents from last bulk set

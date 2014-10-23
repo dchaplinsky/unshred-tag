@@ -28,9 +28,9 @@ class ShredsDistances(Document):
     - tf-idf: term frequency-inverse document frequency http://en.wikipedia.org/wiki/Tf-idf
     """
 
-    shreds_pair = ListField(ReferenceField(Shreds), default=[])
-    distance_type = StringField(max_length=10, default='')
-    distance = FloatField()
+    shreds_pair = ListField(ReferenceField(Shreds))
+    distance_type = StringField(max_length=10, choices=('jaccard', ))
+    distance = FloatField(min_value=0, max_value=1)
 
     meta = {
         'indexes': ['shreds_pair', 'distance', 'distance_type'],
