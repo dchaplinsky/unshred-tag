@@ -36,21 +36,21 @@ def jaccard_distances_iterator(shreds_tags):
         yield shred_a_id, shred_b_id, jaccard_distance(set(tags_a), set(tags_b))
 
 
-def fetch_normalized_shreds_tags():
+def fetch_normalized_shreds_tags(repeats):
     """
     Returns dictionary where keys are shreds ids and values are sets of
-    filtered(soon) normalized tags.
+    filtered normalized tags.
     """
     shreds = Shreds.objects().only('id', 'tags.tags')[:SHREDS_CAP]
     shreds_tags = {}
     for s in shreds:
-        tags = s.get_repeated_tags(TAGS_REPEATS)
+        tags = s.get_repeated_tags(repeats)
         if tags:
             shreds_tags[s.id] = tags
     return shreds_tags
 
 
-def churn_jaccard():
+def churn_jaccard(drop=False, repeats=TAGS_REPEATS):
     """
     We'll be working with pre-created list of ShredsDistances documents - s_distances
     This way we don't spend CPU cycles & mallocs to create millions of
@@ -60,7 +60,10 @@ def churn_jaccard():
     and insert raw data into mongo, but I haven't dug deep enough.
     """
 
-    shreds_tags = fetch_normalized_shreds_tags()
+    if drop:
+        ShredsDistances.objects.delete()
+
+    shreds_tags = fetch_normalized_shreds_tags(repeats=repeats)
     s_distances = [ShredsDistances() for _ in xrange(BULK_INSERT_SIZE)]
 
     for distances in grouper(BULK_INSERT_SIZE, jaccard_distances_iterator(shreds_tags)):

@@ -3,6 +3,7 @@
 import click
 from cli import admin as _admin
 from prettytable import PrettyTable
+import metrics
 
 
 @click.group()
@@ -93,6 +94,20 @@ def tags_list():
         x.add_row([tag["title"], tag["is_base"], tag["usages"]])
 
     click.echo(x)
+
+
+@cli.group('metric')
+def metric():
+    """Manage Shreds metrics"""
+    pass
+
+
+@metric.command('jaccard')
+@click.option('--clear/--no-clear', default=False,
+              help='delete existing shreds distances before inserting new')
+@click.option('--repeats', default=metrics.TAGS_REPEATS)
+def churn_jaccard(clear, repeats):
+    metrics.churn_jaccard(clear, repeats)
 
 if __name__ == '__main__':
     cli()
