@@ -2,7 +2,7 @@
 
 from __future__ import division
 
-from itertools import combinations, islice
+from itertools import combinations
 from fn.iters import grouper
 
 from app import db
@@ -24,13 +24,13 @@ def jaccard_distance(tags_a, tags_b):
     return 1 - len(tags_a.intersection(tags_b)) / len(tags_a.union(tags_b))
 
 
-def jaccard_distances_iterator(shreds_tags, input_cap=SHREDS_CAP):
+def jaccard_distances_iterator(shreds_tags):
     """
     You can take only first `input_cap` items from `shreds_tags` iterable.
     Usefull for debugging and test runs.
     """
 
-    for shred_a, shred_b in combinations(islice(shreds_tags.items(), 0, input_cap), 2):
+    for shred_a, shred_b in combinations(shreds_tags.items(), 2):
         shred_a_id, tags_a = shred_a
         shred_b_id, tags_b = shred_b
         yield shred_a_id, shred_b_id, jaccard_distance(set(tags_a), set(tags_b))
@@ -41,7 +41,7 @@ def fetch_normalized_shreds_tags():
     Returns dictionary where keys are shreds ids and values are sets of
     filtered(soon) normalized tags.
     """
-    shreds = Shreds.objects().only('id', 'tags.tags')
+    shreds = Shreds.objects().only('id', 'tags.tags')[:SHREDS_CAP]
     shreds_tags = {}
     for s in shreds:
         tags = s.get_repeated_tags(TAGS_REPEATS)
