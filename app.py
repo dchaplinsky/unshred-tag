@@ -9,7 +9,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags, TaggingSpeed, User, ShredTags, Pages
+from models import Shreds, ShredsDistances, Tags, TaggingSpeed, User, ShredTags, Pages
 from admin import admin_init
 from utils import unique
 
@@ -274,6 +274,13 @@ def pages():
         "_pages.html",
         pages=pages)
 
+
+@app.route('/shred/pairs', defaults={'start': 0, 'end': 100})
+@app.route('/shred/pairs/<int:end>', defaults={'start': 0})
+@app.route('/shred/pairs/<int:start>/<int:end>')
+def pairs(start, end):
+    dists = ShredsDistances.objects().order_by('distance')[start:end]
+    return render_template('_pairs.html', dists=dists)
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
