@@ -4,13 +4,29 @@ from __future__ import division
 
 from itertools import combinations
 from fn.iters import grouper
+from flask import Blueprint, g, redirect, render_template
+from flask.ext import login
 
-from app import db
-from models import Shreds, ShredsDistances
+from models import Shreds, ShredsDistances, User
 
 BULK_INSERT_SIZE = 100000
 SHREDS_CAP = 10000
 TAGS_REPEATS = 2
+
+
+mod = Blueprint('metrics', __name__, template_folder='templates/metrics',
+                url_prefix='/metrics')
+
+
+@mod.route('/shred/pairs', defaults={'start': 0, 'end': 100})
+@mod.route('/shred/pairs/<int:end>', defaults={'start': 0})
+@mod.route('/shred/pairs/<int:start>/<int:end>')
+@login.login_required
+def dist_pairs(start, end):
+    if not User.objects(pk=g.user.id).first()['admin']:
+        redirect('/')
+    dists = ShredsDistances.objects().order_by('distance')[start:end]
+    return render_template('distance_pairs.html', dists=dists)
 
 
 def jaccard_distance(tags_a, tags_b):
@@ -25,11 +41,6 @@ def jaccard_distance(tags_a, tags_b):
 
 
 def jaccard_distances_iterator(shreds_tags):
-    """
-    You can take only first `input_cap` items from `shreds_tags` iterable.
-    Usefull for debugging and test runs.
-    """
-
     for shred_a, shred_b in combinations(shreds_tags.items(), 2):
         shred_a_id, tags_a = shred_a
         shred_b_id, tags_b = shred_b
@@ -61,7 +72,7 @@ def churn_jaccard(drop=False, repeats=TAGS_REPEATS):
     """
 
     if drop:
-        ShredsDistances.objects.delete()
+        ShredsDistances.objects(distance_type='jaccard').delete()
 
     shreds_tags = fetch_normalized_shreds_tags(repeats=repeats)
     s_distances = [ShredsDistances() for _ in xrange(BULK_INSERT_SIZE)]
@@ -82,4 +93,5 @@ def churn_jaccard(drop=False, repeats=TAGS_REPEATS):
 
 
 if __name__ == '__main__':
+    from app import db
     churn_jaccard()
