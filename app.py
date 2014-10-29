@@ -9,7 +9,8 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Shreds, Tags, TaggingSpeed, User, ShredTags, Pages
+from models import (Pages, Shreds, ShredsDistances, ShredTags, TaggingSpeed,
+                    Tags, User)
 from admin import admin_init
 from utils import unique
 
@@ -39,6 +40,10 @@ init_social_login(app, db)
 if app.config["ENABLE_FIXTURES_ENDPOINTS"]:
     from fixtures import mod as fixtures_module
     app.register_blueprint(fixtures_module)
+
+
+from metrics import mod as metrics_mod
+app.register_blueprint(metrics_mod)
 
 # TODO: docstrings everywhere!
 

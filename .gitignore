@@ -64,3 +64,6 @@ packed.js
 local_settings.py
 static/out
 devrequirements.txt
+
+# CTags files
+.tags*
