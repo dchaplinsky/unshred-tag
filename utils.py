@@ -2,8 +2,14 @@ from flask import jsonify
 from functools import wraps
 
 
-def unique(a):
-    return list(set(a))
+def unique(seq):
+    """ Perserves the order of the elements in the original sequense """
+
+    seen = set()
+    for i in seq:
+        if i not in seen:
+            seen.add(i)
+            yield i
 
 
 def handle_exception_as_json(exc=Exception):
