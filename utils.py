@@ -2,10 +2,8 @@ from flask import jsonify
 from functools import wraps
 
 
-# Soooo lame
 def unique(a):
-    seen = set()
-    return [seen.add(x) or x for x in a if x not in seen]
+    return list(set(a))
 
 
 def handle_exception_as_json(exc=Exception):
