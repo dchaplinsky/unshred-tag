@@ -285,6 +285,10 @@ dl {
     margin: 20px auto 0;
 }
 
+#holding-page a {
+    color: #729BDA;
+}
+
 #signin li {
     display: block;
     margin: 0 0 20px 0;
