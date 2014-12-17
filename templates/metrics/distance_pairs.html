@@ -1,0 +1,8 @@
+<html>
+    {% for dist in dists %}
+        {{ dist.distance }}
+        <img src="{{ dist.shreds_pair[0].piece_fname[17:] }}" alt="" style="height: 150px;">
+        <img src="{{ dist.shreds_pair[1].piece_fname[17:] }}" alt="" style="height: 150px;">
+        <br>
+    {% endfor %}
+</html>
