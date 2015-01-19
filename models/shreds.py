@@ -71,6 +71,32 @@ class Shreds(Document):
         tags_counts = Counter(self.get_tags())
         return [tag for tag, count in tags_counts.items() if count >= repeats]
 
+    @staticmethod
+    def next_for_user(user, users_per_shred):
+        shred = Shreds\
+            .objects(users_processed__ne=user.id, users_skipped__ne=user.id,
+                     users_count__lte=users_per_shred)\
+            .order_by("batch", "users_count").first()
+
+        if shred:
+            return shred
+
+        shred = Shreds\
+            .objects(users_skipped=user.id, users_count__lte=users_per_shred)\
+            .order_by("batch", "users_count").first()
+
+        if shred:
+            Shreds.objects(id=shred.id).update_one(pull__users_skipped=user.id)
+
+        return shred
+
+    def get_auto_tags(self):
+        mapping = Tags.objects.get_tag_synonyms()
+        auto = [mapping.get(suggestion)
+                for suggestion in self.tags_suggestions]
+
+        return filter(None, set(auto))
+
 
 class TagsQS(QuerySet):
     def get_base_tags(self, order_by_category=False):
@@ -79,6 +105,14 @@ class TagsQS(QuerySet):
             return qs.order_by("category", "-usages")
 
         return qs.order_by("-usages")
+
+    def get_tag_synonyms(self):
+        mapping = {}
+        for t in self.filter(synonyms__exists=True):
+            for s in t["synonyms"]:
+                mapping[s] = t["title"]
+
+        return mapping
 
 
 class Tags(Document):

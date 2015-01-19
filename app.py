@@ -47,28 +47,6 @@ app.register_blueprint(metrics_mod)
 
 # TODO: docstrings everywhere!
 
-
-# TODO: method of Shreds QS
-def get_next_shred():
-    shred = Shreds\
-        .objects(users_processed__ne=g.user.id, users_skipped__ne=g.user.id,
-                 users_count__lte=app.config["USERS_PER_SHRED"])\
-        .order_by("batch", "users_count").first()
-
-    if shred:
-        return shred
-
-    shred = Shreds\
-        .objects(users_skipped=g.user.id,
-                 users_count__lte=app.config["USERS_PER_SHRED"])\
-        .order_by("batch", "users_count").first()
-
-    if shred:
-        Shreds.objects(id=shred.id).update_one(pull__users_skipped=g.user.id)
-
-    return shred
-
-
 # TODO: method of Tags QS
 def get_tags():
     g.user.reload()  # To capture tags that has been just added
@@ -77,38 +55,6 @@ def get_tags():
 
     # using unique here to maintain order by popularity for base tags
     return filter(None, unique(base_tags + g.user.tags))
-
-
-# TODO: method of Tags QS
-def get_tag_synonyms():
-    mapping = {}
-    for t in Tags.objects(synonyms__exists=True):
-        for s in t["synonyms"]:
-            mapping[s] = t["title"]
-
-    return mapping
-
-
-# TODO: method of Shreds
-def get_auto_tags(shred):
-    if not shred:
-        return []
-
-    mapping = get_tag_synonyms()
-    auto = [mapping.get(suggestion)
-            for suggestion in shred.tags_suggestions]
-
-    return filter(None, set(auto))
-
-
-# TODO: Method of Users
-def progress_per_user(user_id):
-    return Shreds\
-        .objects(
-            tags__user=user_id, tags__tags__exists=True,
-            # TODO: skipped? WTF?
-            tags__tags__ne="skipped")\
-        .count()
 
 
 @app.route('/logout', methods=['POST'])
@@ -162,7 +108,7 @@ def shred(shred_id):
         return render_template(
             "_shred.html",
             shred=shred,
-            auto_tags=get_auto_tags(shred),
+            auto_tags=shred.get_auto_tags(),
             all_tags=get_tags(),
             user_data=shred.get_user_tags(g.user),
             edit=True
@@ -209,11 +155,13 @@ def next():
             tags_count=len(tags),
             msec=(end - start).total_seconds() * 1000)
 
-    shred = get_next_shred()
+    shred = Shreds.next_for_user(g.user, app.config['USERS_PER_SHRED'])
+
+    auto_tags = shred and shred.get_auto_tags() or []
     return render_template(
         "_shred.html",
         shred=shred,
-        auto_tags=get_auto_tags(shred),
+        auto_tags=auto_tags,
         all_tags=get_tags(),
         tagging_start=datetime.utcnow(),
 
