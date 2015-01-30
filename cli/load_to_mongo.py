@@ -87,22 +87,22 @@ class LocalFSStorage(AbstractStorage):
         return fname_src
 
 
-def load_new_batch(flt, batch):
+def load_new_batch(fname_glob, batch):
     if app.config["S3_ENABLED"]:
-        strg = S3Storage(app.config)
+        storage = S3Storage(app.config)
     else:
-        strg = LocalFSStorage(app.config)
+        storage = LocalFSStorage(app.config)
 
     pages_processed = 0
     shreds_created = 0
     import_took = time.time()
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
-    strg.clear(out_dir)
+    storage.clear(out_dir)
     Shreds.objects(batch=batch).delete()
 
-    for src_key in strg.list(flt):
-        fname = strg.get_file(src_key)
+    for src_key in storage.list(fname_glob):
+        fname = storage.get_file(src_key)
         sheet_name = os.path.splitext(os.path.basename(fname))[0]
 
         echo("\n\nProcessing file %s from %s" % (fname, sheet_name))
@@ -111,27 +111,28 @@ def load_new_batch(flt, batch):
 
         pages_processed += 1
 
-        for c in sheet.get_shreds():
-            c = c._asdict()
-            c["id"] = "%s:%s_%s" % (batch, c["sheet"], c["name"])
-            c["usersCount"] = 0
-            c["batch"] = batch
+        for shred in sheet.get_shreds():
+            shred = shred._asdict()
+            shred["id"] = "%s:%s_%s" % (batch, shred["sheet"], shred["name"])
+            shred["usersCount"] = 0
+            shred["batch"] = batch
             shreds_created += 1
 
-            del(c["simplified_contour"])
-            c["contour"] = c["contour"].tolist()
+            del(shred["simplified_contour"])
+            shred["contour"] = shred["contour"].tolist()
 
-            imgs = "piece_fname", "features_fname", "piece_in_context_fname"
+            image_path_fields = ["piece_fname", "features_fname",
+                                  "piece_in_context_fname"]
 
-            for k in imgs:
-                if k in c:
-                    res = strg.put_file(c[k])
-                    c[k] = res
+            for image_path_field in image_path_fields:
+                if image_path_field in shred:
+                    res = storage.put_file(shred[image_path_field])
+                    shred[image_path_field] = res
 
             try:
-                Shreds.objects.create(**c)
+                Shreds.objects.create(**shred)
             except bson.errors.InvalidDocument:
-                echo(c)
+                echo(shred)
                 raise
 
     Batches(
