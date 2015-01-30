@@ -989,7 +989,7 @@
             ]
         ],
         "features": {
-            "angle": -2.896423578262329,
+            "on_sheet_angle": -2.896423578262329,
             "area": 19591,
             "bottommost": [
                 4,
@@ -1148,10 +1148,10 @@
                 10,
                 282
             ],
-            "pos_height": 439,
-            "pos_width": 67,
-            "pos_x": 1066,
-            "pos_y": 3000,
+            "on_sheet_height": 439,
+            "on_sheet_width": 67,
+            "on_sheet_x": 1066,
+            "on_sheet_y": 3000,
             "ratio": 8.588235294117647,
             "solidity": 0.9613091587134129,
             "topmost": [
@@ -2191,7 +2191,7 @@
             ]
         ],
         "features": {
-            "angle": -3.403917074203491,
+            "on_sheet_angle": -3.403917074203491,
             "area": 20862,
             "bottommost": [
                 3,
@@ -2348,10 +2348,10 @@
                 14,
                 145
             ],
-            "pos_height": 455,
-            "pos_width": 70,
-            "pos_x": 1917,
-            "pos_y": 2999,
+            "on_sheet_height": 455,
+            "on_sheet_width": 70,
+            "on_sheet_x": 1917,
+            "on_sheet_y": 2999,
             "ratio": 8.73076923076923,
             "solidity": 0.9715456619941322,
             "topmost": [
@@ -3547,7 +3547,7 @@
             ]
         ],
         "features": {
-            "angle": -0.2367580533027649,
+            "on_sheet_angle": -0.2367580533027649,
             "area": 19508,
             "bottommost": [
                 38,
@@ -3706,10 +3706,10 @@
                 19,
                 300
             ],
-            "pos_height": 432,
-            "pos_width": 53,
-            "pos_x": 981,
-            "pos_y": 2998,
+            "on_sheet_height": 432,
+            "on_sheet_width": 53,
+            "on_sheet_x": 981,
+            "on_sheet_y": 2998,
             "ratio": 8.307692307692308,
             "solidity": 0.9530975180769983,
             "topmost": [
@@ -4563,7 +4563,7 @@
             ]
         ],
         "features": {
-            "angle": 1.119636535644531,
+            "on_sheet_angle": 1.119636535644531,
             "area": 21108,
             "bottommost": [
                 4,
@@ -4720,10 +4720,10 @@
                 18,
                 97
             ],
-            "pos_height": 450,
-            "pos_width": 59,
-            "pos_x": 2398,
-            "pos_y": 2997,
+            "on_sheet_height": 450,
+            "on_sheet_width": 59,
+            "on_sheet_x": 2398,
+            "on_sheet_y": 2997,
             "ratio": 8.333333333333334,
             "solidity": 0.9459956079415587,
             "topmost": [
@@ -5319,7 +5319,7 @@
             ]
         ],
         "features": {
-            "angle": 0.349365234375,
+            "on_sheet_angle": 0.349365234375,
             "area": 13815,
             "bottommost": [
                 13,
@@ -5474,10 +5474,10 @@
                 4,
                 49
             ],
-            "pos_height": 302,
-            "pos_width": 53,
-            "pos_x": 596,
-            "pos_y": 3115,
+            "on_sheet_height": 302,
+            "on_sheet_width": 53,
+            "on_sheet_x": 596,
+            "on_sheet_y": 3115,
             "ratio": 5.788461538461538,
             "solidity": 0.9712457817772778,
             "topmost": [
@@ -5983,7 +5983,7 @@
             ]
         ],
         "features": {
-            "angle": -1.665106058120728,
+            "on_sheet_angle": -1.665106058120728,
             "area": 12876,
             "bottommost": [
                 5,
@@ -6140,10 +6140,10 @@
                 3,
                 39
             ],
-            "pos_height": 292,
-            "pos_width": 56,
-            "pos_x": 318,
-            "pos_y": 3080,
+            "on_sheet_height": 292,
+            "on_sheet_width": 56,
+            "on_sheet_x": 318,
+            "on_sheet_y": 3080,
             "ratio": 5.509433962264151,
             "solidity": 0.9610030973616449,
             "topmost": [
@@ -7081,7 +7081,7 @@
             ]
         ],
         "features": {
-            "angle": -2.468118190765381,
+            "on_sheet_angle": -2.468118190765381,
             "area": 20359,
             "bottommost": [
                 2,
@@ -7238,10 +7238,10 @@
                 6,
                 125
             ],
-            "pos_height": 447,
-            "pos_width": 65,
-            "pos_x": 1733,
-            "pos_y": 3025,
+            "on_sheet_height": 447,
+            "on_sheet_width": 65,
+            "on_sheet_x": 1733,
+            "on_sheet_y": 3025,
             "ratio": 8.745098039215685,
             "solidity": 0.9721612071435393,
             "topmost": [
@@ -8071,7 +8071,7 @@
             ]
         ],
         "features": {
-            "angle": 1.81829833984375,
+            "on_sheet_angle": 1.81829833984375,
             "area": 19693,
             "bottommost": [
                 5,
@@ -8228,10 +8228,10 @@
                 8,
                 129
             ],
-            "pos_height": 443,
-            "pos_width": 57,
-            "pos_x": 1537,
-            "pos_y": 3007,
+            "on_sheet_height": 443,
+            "on_sheet_width": 57,
+            "on_sheet_x": 1537,
+            "on_sheet_y": 3007,
             "ratio": 8.86,
             "solidity": 0.9767626416685267,
             "topmost": [
@@ -9379,7 +9379,7 @@
             ]
         ],
         "features": {
-            "angle": 0.7161636352539062,
+            "on_sheet_angle": 0.7161636352539062,
             "area": 19894,
             "bottommost": [
                 17,
@@ -9536,10 +9536,10 @@
                 24,
                 149
             ],
-            "pos_height": 442,
-            "pos_width": 56,
-            "pos_x": 2295,
-            "pos_y": 3001,
+            "on_sheet_height": 442,
+            "on_sheet_width": 56,
+            "on_sheet_x": 2295,
+            "on_sheet_y": 3001,
             "ratio": 8.48076923076923,
             "solidity": 0.9597414188194997,
             "topmost": [
@@ -10765,7 +10765,7 @@
             ]
         ],
         "features": {
-            "angle": -0.9151901602745056,
+            "on_sheet_angle": -0.9151901602745056,
             "area": 20564,
             "bottommost": [
                 24,
@@ -10922,10 +10922,10 @@
                 25,
                 180
             ],
-            "pos_height": 441,
-            "pos_width": 58,
-            "pos_x": 2105,
-            "pos_y": 3001,
+            "on_sheet_height": 441,
+            "on_sheet_width": 58,
+            "on_sheet_x": 2105,
+            "on_sheet_y": 3001,
             "ratio": 8.166666666666666,
             "solidity": 0.9542016611758155,
             "topmost": [
