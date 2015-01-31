@@ -1,3 +1,4 @@
+import collections
 import os
 import os.path
 import json
@@ -5,7 +6,6 @@ import bson
 import fnmatch
 import urlparse
 import shutil
-import time
 from glob import glob
 from click import echo
 
@@ -16,7 +16,7 @@ from unshred.split import SheetIO
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import app
-from models import Batches, Tags, Shreds
+from models import Tags, Shreds
 
 
 class AbstractStorage(object):
@@ -95,7 +95,6 @@ def load_new_batch(fname_glob, batch):
 
     pages_processed = 0
     shreds_created = 0
-    import_took = time.time()
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
     storage.clear(out_dir)
@@ -148,14 +147,6 @@ def load_new_batch(fname_glob, batch):
                 echo(shred)
                 raise
 
-    Batches(
-        _id=batch,
-        name=batch,
-        shreds_created=shreds_created,
-        pages_processed=pages_processed,
-        import_took=int((time.time() - import_took) * 1000)
-    ).save()
-
     Shreds.ensure_index(["name", "sheet", "batch"])
     Shreds.ensure_index(["users_processed", "users_count", "batch"])
     Shreds.ensure_index(["users_skipped", "users_count", "batch"])
@@ -184,7 +175,13 @@ def import_tags(drop=False):
 
 
 def list_batches():
-    return Batches.objects.order_by("created")
+    batch_counts = Shreds.objects.map_reduce(
+        map_f='function() { emit(this.batch, 1); }',
+        reduce_f='function(key, values) { return Array.sum(values); }',
+        output='inline')
+    return sorted([{'name': item.key,
+                    'shreds_created': item.value} for item in batch_counts],
+                  key=lambda x: x['shreds_created'])
 
 
 def list_tags():

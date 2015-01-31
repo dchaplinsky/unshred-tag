@@ -46,7 +46,7 @@ class Shreds(Document):
     piece_fname = StringField()
     piece_in_context_fname = StringField()
     mask_fname = StringField()
-    batch = ReferenceField('Batches')
+    batch = StringField()
     tags = ListField(EmbeddedDocumentField(ShredTags))
 
     def __unicode__(self):
@@ -126,17 +126,6 @@ class Tags(Document):
 
     def __unicode__(self):
         return self.title
-
-
-class Batches(Document):
-    name = StringField(primary_key=True, max_length=200)
-    created = DateTimeField(default=datetime.datetime.now)
-    import_took = IntField(default=0)
-    pages_processed = IntField(default=0)
-    shreds_created = IntField(default=0)
-
-    def __unicode__(self):
-        return self.name
 
 
 class Pages(Document):
