@@ -11,19 +11,14 @@ from .user import User
 
 
 class Features(EmbeddedDocument):
-    on_sheet_x = IntField(default=0)
-    on_sheet_y = IntField(default=0)
-    on_sheet_angle = FloatField(default=0.0)
     histogram_clean = ListField(IntField())
     height_mm = FloatField(default=0.0)
     histogram_full = ListField(IntField())
     width_mm = FloatField(default=0.0)
-    on_sheet_height = IntField(default=0)
     area = IntField(default=0)
     dominant_colours = ListField(StringField())
     topmost = ListField(IntField())
     solidity = FloatField(default=0.0)
-    on_sheet_width = IntField(default=0)
     colour_names = ListField(StringField())
     ratio = FloatField(default=0.0)
     bottommost = ListField(IntField())
