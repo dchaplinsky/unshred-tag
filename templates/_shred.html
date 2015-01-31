@@ -1,6 +1,7 @@
 {% if shred %}
 <form method="POST" action="{% if edit %}{{ url_for("shred", shred_id=shred.id) }}{% else %}{{ url_for("next") }}{% endif %}">
     <div class="workspace">
+        {# TODO: shred.piece_fname not gonna work with clusters. #}
         <img class="shred-img zoom-it" src="{{ shred.piece_fname }}" />
     </div>
 

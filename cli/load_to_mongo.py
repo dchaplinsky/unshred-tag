@@ -16,7 +16,7 @@ from unshred.split import SheetIO
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import app
-from models import Batches, Tags, Shreds
+from models import Batches, Tags, Shred, Taggable
 
 
 class AbstractStorage(object):
@@ -99,7 +99,8 @@ def load_new_batch(fname_glob, batch):
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
     storage.clear(out_dir)
-    Shreds.objects(batch=batch).delete()
+    objects_in_batch = Shred.objects.filter(batch=batch)
+    Taggable.objects(object__in=objects_in_batch).delete()
 
     for src_key in storage.list(fname_glob):
         fname = storage.get_file(src_key)
@@ -114,26 +115,26 @@ def load_new_batch(fname_glob, batch):
         for shred in sheet.get_shreds():
             shred = shred._asdict()
             shred["id"] = "%s:%s_%s" % (batch, shred["sheet"], shred["name"])
-            shred["usersCount"] = 0
             shred["batch"] = batch
             shreds_created += 1
-
-            del(shred["simplified_contour"])
 
             def _convert_opencv_contour(contour):
                 """Converts opencv contour to a list of pairs."""
                 return contour.reshape((len(contour), 2)).tolist()
-
             shred["contour"] = _convert_opencv_contour(shred["contour"])
 
             image_path_fields = ["piece_fname", "features_fname",
-                                  "piece_in_context_fname"]
+                                 "piece_in_context_fname"]
 
             # TODO: Remove when all field names match unshred's.
             field_name_map = {
                 # Unshred-tag name: unshred name.
                 "mask_fname": "features_fname",
             }
+
+            taggable = {}
+            taggable["id"] = shred["id"]
+            taggable["usersCount"] = 0
 
             for image_path_field in image_path_fields:
                 if image_path_field in shred:
@@ -143,7 +144,9 @@ def load_new_batch(fname_glob, batch):
                     shred[image_path_field] = res
 
             try:
-                Shreds.objects.create(**shred)
+                shred = Shred.objects.create(**shred)
+                taggable['object'] = shred
+                Taggable.objects.create(**taggable)
             except bson.errors.InvalidDocument:
                 echo(shred)
                 raise
@@ -156,9 +159,9 @@ def load_new_batch(fname_glob, batch):
         import_took=int((time.time() - import_took) * 1000)
     ).save()
 
-    Shreds.ensure_index(["name", "sheet", "batch"])
-    Shreds.ensure_index(["users_processed", "users_count", "batch"])
-    Shreds.ensure_index(["users_skipped", "users_count", "batch"])
+    Shred.ensure_index(["name", "sheet", "batch"])
+    Taggable.ensure_index(["users_processed", "users_count"])
+    Taggable.ensure_index(["users_skipped", "users_count"])
 
 
 def import_tags(drop=False):
