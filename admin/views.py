@@ -31,7 +31,7 @@ class TagsView(ModelView, ActionsMixin):
 
 class ShredsView(ModelView):
     column_exclude_list = ('contour', 'piece_in_context_fname',
-                           'features_fname', 'piece_fname', 'tags_suggestions')
+                           'mask_fname', 'piece_fname', 'tags_suggestions')
     form_excluded_columns = ('contour', 'features')
 
 

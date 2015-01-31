@@ -119,14 +119,27 @@ def load_new_batch(fname_glob, batch):
             shreds_created += 1
 
             del(shred["simplified_contour"])
-            shred["contour"] = shred["contour"].tolist()
+
+            def _convert_opencv_contour(contour):
+                """Converts opencv contour to a list of pairs."""
+                return contour.reshape((len(contour), 2)).tolist()
+
+            shred["contour"] = _convert_opencv_contour(shred["contour"])
 
             image_path_fields = ["piece_fname", "features_fname",
                                   "piece_in_context_fname"]
 
+            # TODO: Remove when all field names match unshred's.
+            field_name_map = {
+                # Unshred-tag name: unshred name.
+                "mask_fname": "features_fname",
+            }
+
             for image_path_field in image_path_fields:
                 if image_path_field in shred:
-                    res = storage.put_file(shred[image_path_field])
+                    image_path = shred.pop(field_name_map.get(image_path_field,
+                                                              image_path_field))
+                    res = storage.put_file(image_path)
                     shred[image_path_field] = res
 
             try:
