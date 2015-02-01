@@ -63,11 +63,10 @@ def batch_list():
     """Show all batches and stats"""
     from cli import load_to_mongo
     batches = load_to_mongo.list_batches()
-    x = PrettyTable(["Batch name", "Created", "Pages", "Shreds"])
+    x = PrettyTable(["Batch name", "Shreds"])
 
     for b in batches:
-        x.add_row([b["name"], b["created"], b["pages_processed"],
-                   b["shreds_created"]])
+        x.add_row([b["name"], b["shreds_created"]])
 
     click.echo(x)
 
