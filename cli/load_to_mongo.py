@@ -175,17 +175,22 @@ def import_tags(drop=False):
 
 
 def list_batches():
-    batch_counts = Shreds._get_collection().aggregate([{
-        '$group': {
-            '_id': '$batch',
-            'shreds_created': {
-                '$sum': 1}
-            }
-    }])['result']
-    return sorted([{'name': item['_id'],
-                    'shreds_created': item['shreds_created']}
-                        for item in batch_counts],
-                  key=lambda x: x['shreds_created'])
+    batch_counts = Shreds._get_collection().aggregate([
+        {
+            '$group': {
+                '_id': '$batch',
+                'shreds_created': {
+                    '$sum': 1}
+                }
+        },
+        {
+            '$sort': {
+                'name': 1,
+            },
+        }])['result']
+    return [{'name': item['_id'], 'shreds_created': item['shreds_created']}
+            for item in batch_counts]
+
 
 
 def list_tags():
