@@ -1,4 +1,3 @@
-import copy
 from flask import (
     Blueprint,
     json

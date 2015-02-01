@@ -156,7 +156,7 @@ def next():
 
     shred = Taggable.next_for_user(g.user, app.config['USERS_PER_SHRED'])
     if shred:
-      shred = shred.object
+        shred = shred.object
 
     auto_tags = shred and shred.get_auto_tags() or []
     return render_template(

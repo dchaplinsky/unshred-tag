@@ -81,17 +81,18 @@ class Taggable(Document):
 
     @staticmethod
     def next_for_user(user, users_per_shred):
+        # TODO: add randomisation.
         shred = Taggable\
             .objects(users_processed__ne=user.id, users_skipped__ne=user.id,
                      users_count__lte=users_per_shred)\
-            .order_by("batch", "users_count").first()
+            .order_by("users_count").first()
 
         if shred:
             return shred
 
         shred = Taggable\
             .objects(users_skipped=user.id, users_count__lte=users_per_shred)\
-            .order_by("batch", "users_count").first()
+            .order_by("users_count").first()
 
         if shred:
             Taggable.objects(id=shred.id).update_one(
