@@ -63,6 +63,7 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'vendor/jquery.jscroll/jquery.jscroll.js',
              'vendor/sceditor/jquery.sceditor.bbcode.js',
 
+             'vendor/jquery.freetrans/jquery.freetrans.js',
              'vendor/jquery.freetrans/Matrix.js',
 
              'scripts/zoomer.js',  # includes customisation
@@ -70,7 +71,11 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              'scripts/review.js',
 
              'scripts/unshred_api_client.js',
-]
+
+             # TODO: compile JSX offline and/or bundle with assets.
+             #'vendor/react-0.13.1/react.min.js',
+             #'vendor/react-0.13.1/JSXTransformer.js',
+             ]
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 
 JS_ASSETS_FILTERS = 'yui_js'
@@ -83,7 +88,9 @@ CSS_ASSETS = ['vendor/bootstrap/bootstrap.css',
               'vendor/textext/css/textext.plugin.autocomplete.css',
               'vendor/jquery.magnific-popup/jquery.magnific-popup.css',
               'vendor/sceditor/themes/square.css',
+              'vendor/jquery.freetrans/jquery.freetrans.css',
               'styles/textext.overwrite.css',
+              'styles/stitch.css',
               'styles/style.css']
 CSS_ASSETS_OUTPUT = 'styles/packed.css'
 CSS_ASSETS_FILTERS = 'yui_css'

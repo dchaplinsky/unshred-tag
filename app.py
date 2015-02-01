@@ -226,7 +226,14 @@ def pages():
         "_pages.html",
         pages=pages)
 
+
+@app.route("/stitch", methods=["GET"])
+def stitch():
+    return render_template("stitch.html")
+
+
 app.register_blueprint(webapi.app, url_prefix='/api')
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
