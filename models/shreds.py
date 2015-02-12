@@ -33,7 +33,7 @@ class ShredTags(EmbeddedDocument):
 
 
 # Immutable once imported from CV.
-class Shred(Document):
+class Shred(EmbeddedDocument):
     id = StringField(max_length=200, default='', primary_key=True)
     name = IntField()
     features = EmbeddedDocumentField(Features)
@@ -43,7 +43,6 @@ class Shred(Document):
     piece_fname = StringField()
     piece_in_context_fname = StringField()
     mask_fname = StringField()
-    batch = ReferenceField('Batches')
 
     def get_auto_tags(self):
         mapping = Tags.objects.get_tag_synonyms()
@@ -55,11 +54,12 @@ class Shred(Document):
 
 class Taggable(Document):
     id = StringField(max_length=200, default='', primary_key=True)
-    object = GenericReferenceField(choices=[Shred])
+    object = EmbeddedDocumentField(Shred)
     users_count = IntField(default=0, db_field='usersCount')
     users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
     users_processed = ListField(ReferenceField(User),
                                 db_field='usersProcessed')
+    batch = ReferenceField('Batches')
     tags = ListField(EmbeddedDocumentField(ShredTags))
 
     def __unicode__(self):

@@ -145,7 +145,7 @@ class TaggingTest(BasicTestCase):
         self.assertEquals(
             body.count(tag.title.capitalize().encode('unicode-escape')), 1)
 
-        Shred.objects.update(add_to_set__tags=["foobar_synonym"])
+        Taggable.objects.update(add_to_set__object__tags=["foobar_synonym"])
 
         res = self.client.get(url_for("next"))
         self.assert200(res)

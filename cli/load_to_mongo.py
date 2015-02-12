@@ -99,8 +99,7 @@ def load_new_batch(fname_glob, batch):
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
     storage.clear(out_dir)
-    objects_in_batch = Shred.objects.filter(batch=batch)
-    Taggable.objects(object__in=objects_in_batch).delete()
+    Taggable.objects(batch=batch).delete()
 
     for src_key in storage.list(fname_glob):
         fname = storage.get_file(src_key)
@@ -135,6 +134,7 @@ def load_new_batch(fname_glob, batch):
             taggable = {}
             taggable["id"] = shred["id"]
             taggable["usersCount"] = 0
+            taggable["batch"] = shred["batch"]
 
             for image_path_field in image_path_fields:
                 if image_path_field in shred:
@@ -144,7 +144,6 @@ def load_new_batch(fname_glob, batch):
                     shred[image_path_field] = res
 
             try:
-                shred = Shred.objects.create(**shred)
                 taggable['object'] = shred
                 Taggable.objects.create(**taggable)
             except bson.errors.InvalidDocument:
@@ -159,9 +158,8 @@ def load_new_batch(fname_glob, batch):
         import_took=int((time.time() - import_took) * 1000)
     ).save()
 
-    Shred.ensure_index(["name", "sheet", "batch"])
-    Taggable.ensure_index(["users_processed", "users_count"])
-    Taggable.ensure_index(["users_skipped", "users_count"])
+    Taggable.ensure_index(["users_processed", "users_count", "batch"])
+    Taggable.ensure_index(["users_skipped", "users_count", "batch"])
 
 
 def import_tags(drop=False):

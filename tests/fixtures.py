@@ -58,9 +58,9 @@ class FixturesTest(BasicTestCase):
         self.assert_success(res)
 
         self.assert_count(Taggable, 10)  # Another magic number
-        self.assert_count(Shred, 9, batch="fixtures1")
-        self.assert_count(Shred, 1, batch="fixtures2")
-        self.assert_count(Shred, 0, batch="foobar")
+        self.assert_count(Taggable, 9, batch="fixtures1")
+        self.assert_count(Taggable, 1, batch="fixtures2")
+        self.assert_count(Taggable, 0, batch="foobar")
 
     def test_login_user(self):
         self.client.post(url_for("fixtures.create_users"))

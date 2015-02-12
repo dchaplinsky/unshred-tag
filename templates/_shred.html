@@ -21,7 +21,7 @@
         <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
 
         <input type="hidden" name="edit" value="{{ edit|default(False)|int }}"/>
-        <input type="hidden" name="shred_id" id="shred_id" value="{{ shred.pk }}"/>
+        <input type="hidden" name="shred_id" id="shred_id" value="{{ shred.id }}"/>
         <input type="hidden" name="tagging_start" id="tagging_start" value="{{ tagging_start }}">
         {% if user_data %}<input type="hidden" name="angle" value="{{ user_data.angle }}">{% endif %}
     </div>
