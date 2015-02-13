@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from flask import url_for
 
-from models import Tags, User, Shreds, TaggingSpeed
+from models import Tags, User, Taggable, TaggingSpeed, Shred
 from . import BasicTestCase
 
 
@@ -145,7 +145,7 @@ class TaggingTest(BasicTestCase):
         self.assertEquals(
             body.count(tag.title.capitalize().encode('unicode-escape')), 1)
 
-        Shreds.objects.update(add_to_set__tags_suggestions=["foobar_synonym"])
+        Taggable.objects.update(add_to_set__object__tags=["foobar_synonym"])
 
         res = self.client.get(url_for("next"))
         self.assert200(res)
@@ -186,7 +186,7 @@ class TaggingTest(BasicTestCase):
             self.assertNotEqual(current_shred_id, first_shred_id)
 
         self.assertEqual(
-            len(Shreds.objects(id=first_shred_id).first().users_skipped), 1)
+            len(Taggable.objects(id=first_shred_id).first().users_skipped), 1)
 
         res = self.client.post(url_for("skip"),
                                data={"_id": current_shred_id},
@@ -199,7 +199,7 @@ class TaggingTest(BasicTestCase):
         self.assertEqual(current_shred_id, first_shred_id)
 
         self.assertEqual(
-            len(Shreds.objects(id=first_shred_id).first().users_skipped), 0)
+            len(Taggable.objects(id=first_shred_id).first().users_skipped), 0)
 
         user.reload()
         self.assertEqual(user.skipped, 10)
@@ -222,7 +222,7 @@ class TaggingTest(BasicTestCase):
         body = res.get_data(as_text=True)
 
         current_shred_id = self.parse_shred_id(body)
-        current_shred = Shreds.objects.get(id=current_shred_id)
+        current_shred = Taggable.objects.get(id=current_shred_id)
         self.assertEqual(current_shred.get_user_tags(user), None)
 
         res = self.client.post(

@@ -9,8 +9,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import (Pages, Shreds, ShredsDistances, ShredTags, TaggingSpeed,
-                    Tags, User)
+from models import Pages, ShredTags, TaggingSpeed, Taggable, Tags, User
 from admin import admin_init
 from utils import unique
 
@@ -73,7 +72,7 @@ def index():
 @app.route('/shred/<string:shred_id>', methods=["GET", "POST"])
 @login.login_required
 def shred(shred_id):
-    shred = Shreds.objects.get(id=shred_id)
+    shred = Taggable.objects.get(id=shred_id)
     if not shred:
         abort(404)
 
@@ -107,8 +106,8 @@ def shred(shred_id):
     else:
         return render_template(
             "_shred.html",
-            shred=shred,
-            auto_tags=shred.get_auto_tags(),
+            shred=shred.object,
+            auto_tags=shred.object.get_auto_tags(),
             all_tags=get_tags(),
             user_data=shred.get_user_tags(g.user),
             edit=True
@@ -122,7 +121,7 @@ def next():
         # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
 
-        Shreds.objects(pk=request.form["_id"]).update_one(
+        Taggable.objects(pk=request.form["_id"]).update_one(
             push__tags=ShredTags(
                 user=g.user.id,
                 tags=list(tags),
@@ -151,11 +150,13 @@ def next():
         end = datetime.utcnow()
         TaggingSpeed.objects.create(
             user=g.user.id,
-            shred=request.form["_id"],
+            taggable=request.form["_id"],
             tags_count=len(tags),
             msec=(end - start).total_seconds() * 1000)
 
-    shred = Shreds.next_for_user(g.user, app.config['USERS_PER_SHRED'])
+    shred = Taggable.next_for_user(g.user, app.config['USERS_PER_SHRED'])
+    if shred:
+        shred = shred.object
 
     auto_tags = shred and shred.get_auto_tags() or []
     return render_template(
@@ -176,7 +177,7 @@ def next():
 @app.route("/skip", methods=["POST"])
 @login.login_required
 def skip():
-    Shreds.objects(pk=request.form["_id"]).update_one(
+    Taggable.objects(pk=request.form["_id"]).update_one(
         add_to_set__users_skipped=g.user.id)
     User.objects(pk=g.user.id).update_one(inc__skipped=1)
 
@@ -188,9 +189,8 @@ def skip():
 def review():
     page = int(request.args.get('page', 1))
 
-    shreds = (Shreds
+    shreds = (Taggable
               .objects(users_processed=g.user.id)
-              .exclude("features", "contour")  # 10x speedup
               .paginate(page=page, per_page=20))
 
     pages = Pages.objects(created_by=g.user.id)
@@ -213,7 +213,7 @@ def pages():
 
         page.update(add_to_set__shreds=shreds)
 
-        for shred in Shreds.objects(id__in=shreds):
+        for shred in Taggable.objects(id__in=shreds):
             tags = shred.get_user_tags(g.user)
             if tags is not None:
                 tags.pages = list(set(tags.pages + [page]))
