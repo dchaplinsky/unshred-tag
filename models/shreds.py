@@ -4,7 +4,7 @@ from itertools import chain
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
-    CASCADE, QuerySet, GenericReferenceField)
+    CASCADE, QuerySet)
 from flask.ext.mongoengine import Document
 
 from .user import User
@@ -33,7 +33,7 @@ class ShredTags(EmbeddedDocument):
 
 
 # Immutable once imported from CV.
-class Shred(EmbeddedDocument):
+class Shred(Document):
     id = StringField(max_length=200, default='', primary_key=True)
     name = IntField()
     features = EmbeddedDocumentField(Features)
@@ -52,9 +52,38 @@ class Shred(EmbeddedDocument):
         return filter(None, set(auto))
 
 
+class ClusterMember(EmbeddedDocument):
+    """Describes shred membership within a cluster.
+
+    Relative shred position is stored as rotation angle (in radians) and
+    (x, y) translation relative to cluster origin.
+    """
+    shred = ReferenceField(Shred)
+    position = ListField(FloatField())
+    angle = FloatField()
+
+
+class Cluster(EmbeddedDocument):
+    """Cluster of one or more shreds.
+
+    Clusters are immutable once created.
+
+    Shred membership described with a ClusterMember embedded document, which
+    contains a reference to the shred and its relative position and angle in a
+    cluster."""
+    id = StringField(required=True, max_length=36, primary_key=True)
+    members = ListField(EmbeddedDocumentField(ClusterMember))
+    parents = ListField(ReferenceField('Cluster'))
+
+    @property
+    def features(self):
+        # TODO: persist features on creation.
+        return self.members[0].shred.features
+
+
 class Taggable(Document):
     id = StringField(max_length=200, default='', primary_key=True)
-    object = EmbeddedDocumentField(Shred)
+    object = EmbeddedDocumentField(Cluster)
     users_count = IntField(default=0, db_field='usersCount')
     users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
     users_processed = ListField(ReferenceField(User),
@@ -71,6 +100,10 @@ class Taggable(Document):
             if shred_tags.user.id == user.pk:
                 return shred_tags
         return None
+
+    def get_auto_tags(self):
+        return set(sum((member.shred.get_auto_tags()
+                        for member in self.object.members), []))
 
     def get_tags(self):
         return chain(*[st.tags for st in self.tags])

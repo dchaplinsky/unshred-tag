@@ -21,32 +21,34 @@
     {% endif %}
 {% endmacro %}
 
-{% macro render_shred_snippet(shred) %}
-    {% with shred_tags = shred.get_user_tags(user) %}
-    {# TODO: shred.object.piece_fname not gonna work with clusters. #}
-    <div class="thumbnail clearfix shred" data-img="{{ shred.object.piece_fname }}"
-        data-id="{{ shred.id }}" {% if shred_tags %}data-angle="{{ shred_tags.angle }}"{% endif %}>
-        <a class="add-to-page" href="#"><img src="{{ shred.object.piece_fname }}" /></a>
+{% macro render_item_snippet(item) %}
+    {% with user_tags = item.get_user_tags(user) %}
+    {# TODO: render all members. #}
+    {% with shred = item.object.members.0.shred %}
+    <div class="thumbnail clearfix shred" data-img="{{ shred.piece_fname }}"
+        data-id="{{ shred.id }}" {% if user_tags %}data-angle="{{ user_tags.angle }}"{% endif %}>
+        <a class="add-to-page" href="#"><img src="{{ shred.piece_fname }}" /></a>
         <div class="caption">
-            {% if shred_tags %}
-            <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", shred_id=shred.id) }}" title="Редактировать"></a>
+            {% if user_tags %}
+            <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", item_id=shred.id) }}" title="Редактировать"></a>
             <a class="btn add-to-page" data-toggle="tooltip" href="#" title="Добавить на страницу"></a>
-            {% if shred_tags.angle %}<span class="label label-success label-angle">{{ shred_tags.angle }}&deg;</span>{% endif %}
+            {% if user_tags.angle %}<span class="label label-success label-angle">{{ user_tags.angle }}&deg;</span>{% endif %}
             <div class="clearfix"></div>
-                <div class="shred-pages">
-                {% for page in shred_tags.pages %}
-                    <span class="label label-warning" data-name="{{ page.name }}">{{ page.name }}</span>
-                {% endfor %}
-                </div>
-                {% for tag in shred_tags.tags %}
-                    <span class="label label-info">{{ tag|capitalize }}</span>
-                {% endfor %}
+            <div class="shred-pages">
+            {% for page in user_tags.pages %}
+                <span class="label label-warning" data-name="{{ page.name }}">{{ page.name }}</span>
+            {% endfor %}
+            </div>
+            {% for tag in user_tags.tags %}
+                <span class="label label-info">{{ tag|capitalize }}</span>
+            {% endfor %}
 
-                {% if shred_tags.recognizable_chars %}
-                    <pre>{{ shred_tags.recognizable_chars }}</pre>
-                {% endif %}
+            {% if user_tags.recognizable_chars %}
+                <pre>{{ user_tags.recognizable_chars }}</pre>
             {% endif %}
-            {% endwith %}
+            {% endif %}
         </div>
     </div>
+    {% endwith %}
+    {% endwith %}
 {% endmacro %}

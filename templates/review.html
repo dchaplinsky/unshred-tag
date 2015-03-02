@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import render_pagination, render_shred_snippet with context %}
+{% from "_macros.html" import render_pagination, render_item_snippet with context %}
 
 {% block nav %}
     <li><a href="/">Главная</a></li>
@@ -8,19 +8,19 @@
 {% block content %}
     <div class="inner cover container-fluid shreds-list-wrapper">
         <div class="shreds-list">
-            {% for shred in shreds.items %}
+            {% for item in items.items %}
                 {% if loop.index % 5 == 1 %}
                 <div class="row">
                 {% endif %}
                 <div class="col-5">
-                    {{ render_shred_snippet(shred) }}
+                    {{ render_item_snippet(item) }}
                 </div>
                 {% if loop.index % 5 == 0 or loop.last %}
                 </div>
                 {% endif %}
             {% endfor %}
             <div class="text-center">
-                {{ render_pagination(shreds, 'review') }}
+                {{ render_pagination(items, 'review') }}
             </div>
         </div>
     </div>

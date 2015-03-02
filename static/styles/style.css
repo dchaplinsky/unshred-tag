@@ -197,7 +197,7 @@ h5 a,
     margin: 0 auto;
 }
 
-.shred-features {
+.item-features {
     float: right;
     width: 400px;
 }
@@ -604,11 +604,11 @@ div.sceditor-grip,
     background-repeat: no-repeat;
 }
 
-.shred-features .sceditor-container {
+.item-features .sceditor-container {
     margin: 3px 0 10px;
 }
 
-.shred-features .text-core {
+.item-features .text-core {
     margin-bottom: 15px;
 }
 
