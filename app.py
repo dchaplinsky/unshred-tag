@@ -80,7 +80,7 @@ def shred(item_id):
         # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
 
-        user_tags = shred.get_user_tags(g.user)
+        user_tags = item.get_user_tags(g.user)
         if not user_tags:
             abort(404)
 
