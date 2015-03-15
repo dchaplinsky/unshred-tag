@@ -9,7 +9,7 @@ from flask.ext import login
 
 from users import init_social_login
 from assets import init as assets_init
-from models import Pages, ShredTags, TaggingSpeed, Taggable, Tags, User
+from models import Cluster, Pages, ShredTags, TaggingSpeed, Tags, User
 from admin import admin_init
 from utils import unique
 
@@ -69,18 +69,18 @@ def index():
         base_tags=Tags.objects.get_base_tags(order_by_category=True))
 
 
-@app.route('/shred/<string:item_id>', methods=["GET", "POST"])
+@app.route('/shred/<string:cluster_id>', methods=["GET", "POST"])
 @login.login_required
-def shred(item_id):
-    item = Taggable.objects.get(id=item_id)
-    if not item:
+def shred(cluster_id):
+    cluster = Cluster.objects.get(id=cluster_id)
+    if not cluster:
         abort(404)
 
     if request.method == "POST":
         # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
 
-        user_tags = item.get_user_tags(g.user)
+        user_tags = cluster.get_user_tags(g.user)
         if not user_tags:
             abort(404)
 
@@ -88,7 +88,7 @@ def shred(item_id):
         user_tags.recognizable_chars = request.form.get(
             "recognizable_chars", "")
         user_tags.angle = int(request.form.get("angle", 0))
-        item.save()
+        cluster.save()
 
         User.objects(pk=g.user.id).update_one(
             add_to_set__tags=list(tags))
@@ -102,15 +102,15 @@ def shred(item_id):
                 add_to_set__shreds=request.form["_id"],
                 upsert=True)
 
-        return render_template("_shred_snippet.html", item=item)
+        return render_template("_shred_snippet.html", cluster=cluster)
     else:
         return render_template(
             "_shred.html",
-            item=item,
-            auto_tags=item.get_auto_tags(),
+            cluster=cluster,
+            auto_tags=cluster.get_auto_tags(),
             all_tags=get_tags(),
-            user_data=item.get_user_tags(g.user),
-            edit=True
+            user_data=cluster.get_user_tags(g.user),
+            edit=True,
         )
 
 
@@ -121,7 +121,7 @@ def next():
         # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
 
-        Taggable.objects(pk=request.form["_id"]).update_one(
+        Cluster.objects(pk=request.form["_id"]).update_one(
             push__tags=ShredTags(
                 user=g.user.id,
                 tags=list(tags),
@@ -150,16 +150,16 @@ def next():
         end = datetime.utcnow()
         TaggingSpeed.objects.create(
             user=g.user.id,
-            taggable=request.form["_id"],
+            cluster=request.form["_id"],
             tags_count=len(tags),
             msec=(end - start).total_seconds() * 1000)
 
-    taggable = Taggable.next_for_user(g.user, app.config['USERS_PER_SHRED'])
+    cluster = Cluster.next_for_user(g.user, app.config['USERS_PER_SHRED'])
 
-    auto_tags = taggable and taggable.get_auto_tags() or []
+    auto_tags = cluster and cluster.get_auto_tags() or []
     return render_template(
         "_shred.html",
-        item=taggable,
+        cluster=cluster,
         auto_tags=auto_tags,
         all_tags=get_tags(),
         tagging_start=datetime.utcnow(),
@@ -175,7 +175,7 @@ def next():
 @app.route("/skip", methods=["POST"])
 @login.login_required
 def skip():
-    Taggable.objects(pk=request.form["_id"]).update_one(
+    Cluster.objects(pk=request.form["_id"]).update_one(
         add_to_set__users_skipped=g.user.id)
     User.objects(pk=g.user.id).update_one(inc__skipped=1)
 
@@ -187,7 +187,7 @@ def skip():
 def review():
     page = int(request.args.get('page', 1))
 
-    items = (Taggable
+    items = (Cluster
              .objects(users_processed=g.user.id)
              .paginate(page=page, per_page=20))
 
@@ -211,7 +211,7 @@ def pages():
 
         page.update(add_to_set__shreds=shreds)
 
-        for shred in Taggable.objects(id__in=shreds):
+        for shred in Cluster.objects(id__in=shreds):
             tags = shred.get_user_tags(g.user)
             if tags is not None:
                 tags.pages = list(set(tags.pages + [page]))

@@ -7,7 +7,7 @@ from fn.iters import grouper
 from flask import Blueprint, g, redirect, render_template
 from flask.ext import login
 
-from models import ShredsDistances, User, Taggable
+from models import Cluster, ShredsDistances, User
 
 BULK_INSERT_SIZE = 100000
 SHREDS_CAP = 10000
@@ -41,7 +41,7 @@ def jaccard_distance(tags_a, tags_b):
 
 
 def _jaccard_distances_iterator(shreds_tags):
-    """Iterates over pairwise distances between given taggables.
+    """Iterates over pairwise distances between given clusters.
 
     Args:
         shred_tags: dict {obj_id: [tags]}.
@@ -60,7 +60,7 @@ def _fetch_normalized_shreds_tags(repeats):
     Returns dictionary where keys are shreds ids and values are sets of
     filtered normalized tags.
     """
-    shreds = Taggable.objects().only('id', 'tags.tags')[:SHREDS_CAP]
+    shreds = Cluster.objects().only('id', 'tags.tags')[:SHREDS_CAP]
     shreds_tags = {}
     for s in shreds:
         tags = s.get_repeated_tags(repeats)
@@ -70,7 +70,7 @@ def _fetch_normalized_shreds_tags(repeats):
 
 
 def churn_jaccard(drop=False, repeats=TAGS_REPEATS):
-    """Creates ShredsDistance entries for every pair of Taggables.
+    """Creates ShredsDistance entries for every pair of Clusters.
 
     Args:
         drop: If True, clears the current data before starting.

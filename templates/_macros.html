@@ -24,13 +24,13 @@
 {% macro render_item_snippet(item) %}
     {% with user_tags = item.get_user_tags(user) %}
     {# TODO: render all members. #}
-    {% with shred = item.object.members.0.shred %}
+    {% with shred = item.members.0.shred %}
     <div class="thumbnail clearfix shred" data-img="{{ shred.piece_fname }}"
         data-id="{{ shred.id }}" {% if user_tags %}data-angle="{{ user_tags.angle }}"{% endif %}>
         <a class="add-to-page" href="#"><img src="{{ shred.piece_fname }}" /></a>
         <div class="caption">
             {% if user_tags %}
-            <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", item_id=shred.id) }}" title="Редактировать"></a>
+            <a class="btn edit-link" data-toggle="tooltip" href="{{ url_for("shred", cluster_id=shred.id) }}" title="Редактировать"></a>
             <a class="btn add-to-page" data-toggle="tooltip" href="#" title="Добавить на страницу"></a>
             {% if user_tags.angle %}<span class="label label-success label-angle">{{ user_tags.angle }}&deg;</span>{% endif %}
             <div class="clearfix"></div>

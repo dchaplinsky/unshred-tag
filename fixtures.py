@@ -7,7 +7,7 @@ from flask.ext.login import login_user as ext_login_user
 
 from social.apps.flask_me_app.models import FlaskStorage
 
-from models import Tags, Taggable, TaggingSpeed, User, Pages, Shred
+from models import Cluster, Tags, TaggingSpeed, User, Pages, Shred
 from utils import handle_exception_as_json
 
 mod = Blueprint('fixtures', __name__, url_prefix='/fixtures')
@@ -29,7 +29,7 @@ def _import_from_file(fname, model):
 def reset_db():
     Tags.objects.delete()
     TaggingSpeed.objects.delete()
-    Taggable.objects.delete()
+    Cluster.objects.delete()
     Shred.objects.delete()
     User.objects.delete()
     Pages.objects.delete()
@@ -55,7 +55,7 @@ def create_base_tags():
 @handle_exception_as_json()
 def create_shreds():
     _import_from_file("fixtures/shreds.json", Shred)
-    _import_from_file("fixtures/taggables.json", Taggable)
+    _import_from_file("fixtures/clusters.json", Cluster)
 
 
 @mod.route("/login_user/<string:username>", methods=["POST"])

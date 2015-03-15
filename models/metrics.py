@@ -5,7 +5,7 @@ from mongoengine import (
 from flask.ext.mongoengine import Document
 
 from .user import User
-from .shreds import Taggable
+from .shreds import Cluster
 
 
 class TaggingSpeed(Document):
@@ -18,7 +18,7 @@ class TaggingSpeed(Document):
     msec = FloatField()
     tags_count = IntField()
     user = ReferenceField(User, reverse_delete_rule=CASCADE)
-    taggable = ReferenceField(Taggable, reverse_delete_rule=CASCADE)
+    cluster = ReferenceField(Cluster, reverse_delete_rule=CASCADE)
 
 
 class ShredsDistances(Document):
@@ -29,7 +29,7 @@ class ShredsDistances(Document):
             http://en.wikipedia.org/wiki/Tf-idf
     """
 
-    shreds_pair = ListField(ReferenceField(Taggable))
+    shreds_pair = ListField(ReferenceField(Cluster))
     distance_type = StringField(max_length=10, choices=('jaccard', ))
     distance = FloatField(min_value=0, max_value=1)
 

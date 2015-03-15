@@ -63,36 +63,35 @@ class ClusterMember(EmbeddedDocument):
     angle = FloatField()
 
 
-class Cluster(EmbeddedDocument):
+class Cluster(Document):
     """Cluster of one or more shreds.
-
-    Clusters are immutable once created.
 
     Shred membership described with a ClusterMember embedded document, which
     contains a reference to the shred and its relative position and angle in a
-    cluster."""
-    id = StringField(required=True, max_length=36, primary_key=True)
+    cluster.
+
+    Cluster also contains user-generated tagging results (tags field).
+    """
+    id = StringField(max_length=200, default='', primary_key=True)
+
+    users_count = IntField(default=0, db_field='usersCount')
+    users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
+    users_processed = ListField(ReferenceField(User),
+                                db_field='usersProcessed')
+
+    batch = StringField()
+    tags = ListField(EmbeddedDocumentField(ShredTags))
+
     members = ListField(EmbeddedDocumentField(ClusterMember))
     parents = ListField(ReferenceField('Cluster'))
+
+    def __unicode__(self):
+        return self.id
 
     @property
     def features(self):
         # TODO: persist features on creation.
         return self.members[0].shred.features
-
-
-class Taggable(Document):
-    id = StringField(max_length=200, default='', primary_key=True)
-    object = EmbeddedDocumentField(Cluster)
-    users_count = IntField(default=0, db_field='usersCount')
-    users_skipped = ListField(ReferenceField(User), db_field='usersSkipped')
-    users_processed = ListField(ReferenceField(User),
-                                db_field='usersProcessed')
-    batch = StringField()
-    tags = ListField(EmbeddedDocumentField(ShredTags))
-
-    def __unicode__(self):
-        return self.object.id
 
     def get_user_tags(self, user):
         for shred_tags in self.tags:
@@ -103,7 +102,7 @@ class Taggable(Document):
 
     def get_auto_tags(self):
         return set(sum((member.shred.get_auto_tags()
-                        for member in self.object.members), []))
+                        for member in self.members), []))
 
     def get_tags(self):
         return chain(*[st.tags for st in self.tags])
@@ -115,23 +114,23 @@ class Taggable(Document):
     @staticmethod
     def next_for_user(user, users_per_shred):
         # TODO: add randomisation.
-        shred = Taggable\
+        cluster = Cluster\
             .objects(users_processed__ne=user.id, users_skipped__ne=user.id,
                      users_count__lte=users_per_shred)\
             .order_by("users_count").first()
 
-        if shred:
-            return shred
+        if cluster:
+            return cluster
 
-        shred = Taggable\
+        cluster = Cluster\
             .objects(users_skipped=user.id, users_count__lte=users_per_shred)\
             .order_by("users_count").first()
 
-        if shred:
-            Taggable.objects(id=shred.id).update_one(
+        if cluster:
+            Cluster.objects(id=cluster.id).update_one(
                 pull__users_skipped=user.id)
 
-        return shred
+        return cluster
 
 
 class TagsQS(QuerySet):
@@ -155,7 +154,7 @@ class Tags(Document):
     title = StringField(max_length=200, default='', primary_key=True)
     description = StringField(max_length=200, default='')
     usages = IntField(default=0)
-    shreds = ListField(ReferenceField(Taggable))
+    shreds = ListField(ReferenceField(Cluster))
     synonyms = ListField(StringField(max_length=200))
     is_base = BooleanField(default=True)
     category = StringField(max_length=200, default='')
@@ -172,7 +171,7 @@ class Tags(Document):
 class Pages(Document):
     name = StringField(max_length=200)
     created_by = ReferenceField(User, reverse_delete_rule=CASCADE)
-    shreds = ListField(ReferenceField(Taggable))
+    shreds = ListField(ReferenceField(Cluster))
     created = DateTimeField(default=datetime.datetime.now)
 
     def __unicode__(self):
