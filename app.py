@@ -69,26 +69,26 @@ def index():
         base_tags=Tags.objects.get_base_tags(order_by_category=True))
 
 
-@app.route('/shred/<string:shred_id>', methods=["GET", "POST"])
+@app.route('/shred/<string:item_id>', methods=["GET", "POST"])
 @login.login_required
-def shred(shred_id):
-    shred = Taggable.objects.get(id=shred_id)
-    if not shred:
+def shred(item_id):
+    item = Taggable.objects.get(id=item_id)
+    if not item:
         abort(404)
 
     if request.method == "POST":
         # TODO: helper
         tags = set(map(unicode.lower, request.form.getlist("tags")))
 
-        shred_tag = shred.get_user_tags(g.user)
-        if not shred_tag:
+        user_tags = item.get_user_tags(g.user)
+        if not user_tags:
             abort(404)
 
-        shred_tag.tags = list(tags)
-        shred_tag.recognizable_chars = request.form.get(
+        user_tags.tags = list(tags)
+        user_tags.recognizable_chars = request.form.get(
             "recognizable_chars", "")
-        shred_tag.angle = int(request.form.get("angle", 0))
-        shred.save()
+        user_tags.angle = int(request.form.get("angle", 0))
+        item.save()
 
         User.objects(pk=g.user.id).update_one(
             add_to_set__tags=list(tags))
@@ -102,14 +102,14 @@ def shred(shred_id):
                 add_to_set__shreds=request.form["_id"],
                 upsert=True)
 
-        return render_template("_shred_snippet.html", shred=shred)
+        return render_template("_shred_snippet.html", item=item)
     else:
         return render_template(
             "_shred.html",
-            shred=shred.object,
-            auto_tags=shred.object.get_auto_tags(),
+            item=item,
+            auto_tags=item.get_auto_tags(),
             all_tags=get_tags(),
-            user_data=shred.get_user_tags(g.user),
+            user_data=item.get_user_tags(g.user),
             edit=True
         )
 
@@ -154,14 +154,12 @@ def next():
             tags_count=len(tags),
             msec=(end - start).total_seconds() * 1000)
 
-    shred = Taggable.next_for_user(g.user, app.config['USERS_PER_SHRED'])
-    if shred:
-        shred = shred.object
+    taggable = Taggable.next_for_user(g.user, app.config['USERS_PER_SHRED'])
 
-    auto_tags = shred and shred.get_auto_tags() or []
+    auto_tags = taggable and taggable.get_auto_tags() or []
     return render_template(
         "_shred.html",
-        shred=shred,
+        item=taggable,
         auto_tags=auto_tags,
         all_tags=get_tags(),
         tagging_start=datetime.utcnow(),
@@ -189,12 +187,12 @@ def skip():
 def review():
     page = int(request.args.get('page', 1))
 
-    shreds = (Taggable
-              .objects(users_processed=g.user.id)
-              .paginate(page=page, per_page=20))
+    items = (Taggable
+             .objects(users_processed=g.user.id)
+             .paginate(page=page, per_page=20))
 
     pages = Pages.objects(created_by=g.user.id)
-    return render_template("review.html", shreds=shreds, pages=pages)
+    return render_template("review.html", items=items, pages=pages)
 
 
 @app.route("/pages", methods=["GET", "POST"])

@@ -24,7 +24,7 @@ $(function(){
 
         data = JSON.parse(data);
         return {
-            "_id": form.find("input[name=shred_id]").val(),
+            "_id": form.find("input[name=item_id]").val(),
             "tagging_start": form.find("input[name=tagging_start]").val(),
             "tags": data,
             "edit": form.find("input[name=edit]").val(),

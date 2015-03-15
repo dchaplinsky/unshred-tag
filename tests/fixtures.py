@@ -1,6 +1,6 @@
 from flask import url_for
 
-from models import Taggable, Tags, TaggingSpeed, User, Pages, Shred
+from models import Taggable, Tags, TaggingSpeed, User, Pages
 from . import BasicTestCase
 
 

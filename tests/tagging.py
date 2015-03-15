@@ -66,7 +66,7 @@ class TaggingTest(BasicTestCase):
         self.assert200(res)
         body = res.get_data(as_text=True)
 
-        self.assertTrue("shred_id" in body)
+        self.assertTrue("item_id" in body)
         self.assertTrue(url_for("next") in body)
 
         for tag in Tags.objects(is_base=True):
@@ -145,7 +145,7 @@ class TaggingTest(BasicTestCase):
         self.assertEquals(
             body.count(tag.title.capitalize().encode('unicode-escape')), 1)
 
-        Taggable.objects.update(add_to_set__object__tags=["foobar_synonym"])
+        Shred.objects.update(add_to_set__tags=["foobar_synonym"])
 
         res = self.client.get(url_for("next"))
         self.assert200(res)
@@ -155,7 +155,7 @@ class TaggingTest(BasicTestCase):
             body.count(tag.title.capitalize().encode('unicode-escape')), 2)
 
     def parse_shred_id(self, body):
-        pattern = r'id="shred_id".*?"([^"]*)"'
+        pattern = r'id="item_id".*?"([^"]*)"'
 
         m = re.search(pattern, body)
         return m.group(1)

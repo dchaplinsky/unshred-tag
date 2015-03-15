@@ -1,4 +1,3 @@
-import collections
 import os
 import os.path
 import json
@@ -16,7 +15,7 @@ from unshred.split import SheetIO
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import app
-from models import Tags, Shred, Taggable
+from models import Cluster, ClusterMember, Shred, Taggable, Tags
 
 
 class AbstractStorage(object):
@@ -143,7 +142,12 @@ def load_new_batch(fname_glob, batch):
                     shred[image_path_field] = res
 
             try:
-                taggable['object'] = shred
+                shred_obj = Shred.objects.create(**shred)
+                cluster_member = ClusterMember(shred=shred_obj, position=[0,0],
+                                               angle=0)
+                cluster = Cluster(id=shred['id'],
+                                  members=[cluster_member], parents=[])
+                taggable['object'] = cluster
                 Taggable.objects.create(**taggable)
             except bson.errors.InvalidDocument:
                 echo(shred)
