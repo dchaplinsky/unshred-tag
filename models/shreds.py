@@ -1,6 +1,8 @@
 import datetime
 from collections import Counter
 from itertools import chain
+import random
+
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
@@ -50,7 +52,6 @@ class Shred(Document):
                 for suggestion in self.tags]
 
         return filter(None, set(auto))
-
 
 class ClusterMember(EmbeddedDocument):
     """Describes shred membership within a cluster.
@@ -131,6 +132,18 @@ class Cluster(Document):
                 pull__users_skipped=user.id)
 
         return cluster
+
+    @classmethod
+    def get_some(cls, batch=None):
+        # TODO: Pick appropriate cluster.
+        qs = cls.objects
+        if batch is not None:
+          qs = qs.filter(batch=batch)
+        num = random.randint(0, qs.count()-1)
+        some_clusters = qs.skip(num).limit(1)
+        if some_clusters:
+            return some_clusters[0]
+        return None
 
 
 class TagsQS(QuerySet):

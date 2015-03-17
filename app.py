@@ -6,12 +6,14 @@ from flask import (Flask, g, render_template, request, redirect,
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
+from werkzeug.wsgi import DispatcherMiddleware
 
 from users import init_social_login
 from assets import init as assets_init
 from models import Cluster, Pages, ShredTags, TaggingSpeed, Tags, User
 from admin import admin_init
 from utils import unique
+import webapi
 
 app = Flask(__name__)
 app.config.from_object('settings')
@@ -225,6 +227,7 @@ def pages():
         "_pages.html",
         pages=pages)
 
+app.register_blueprint(webapi.app, url_prefix='/api')
 
 if __name__ == "__main__":
     app.run(debug=True, port=int(os.environ.get("PORT", 5000)))
