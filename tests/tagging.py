@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from flask import url_for
 
-from models import Tags, User, Taggable, TaggingSpeed, Shred
+from models import Cluster, Tags, User, TaggingSpeed, Shred
 from . import BasicTestCase
 
 
@@ -173,6 +173,7 @@ class TaggingTest(BasicTestCase):
         body = res.get_data(as_text=True)
 
         current_shred_id = first_shred_id = self.parse_shred_id(body)
+        seen_shreds = {current_shred_id}
 
         for i in xrange(9):
             res = self.client.post(url_for("skip"),
@@ -183,10 +184,11 @@ class TaggingTest(BasicTestCase):
             self.assert200(res)
 
             current_shred_id = self.parse_shred_id(body)
-            self.assertNotEqual(current_shred_id, first_shred_id)
+            self.assertNotIn(current_shred_id, seen_shreds)
+            seen_shreds.add(current_shred_id)
 
         self.assertEqual(
-            len(Taggable.objects(id=first_shred_id).first().users_skipped), 1)
+            len(Cluster.objects(id=first_shred_id).first().users_skipped), 1)
 
         res = self.client.post(url_for("skip"),
                                data={"_id": current_shred_id},
@@ -196,10 +198,10 @@ class TaggingTest(BasicTestCase):
         self.assert200(res)
 
         current_shred_id = self.parse_shred_id(body)
-        self.assertEqual(current_shred_id, first_shred_id)
+        self.assertIn(current_shred_id, seen_shreds)
 
         self.assertEqual(
-            len(Taggable.objects(id=first_shred_id).first().users_skipped), 0)
+            len(Cluster.objects(id=current_shred_id).first().users_skipped), 0)
 
         user.reload()
         self.assertEqual(user.skipped, 10)
@@ -222,7 +224,7 @@ class TaggingTest(BasicTestCase):
         body = res.get_data(as_text=True)
 
         current_shred_id = self.parse_shred_id(body)
-        current_shred = Taggable.objects.get(id=current_shred_id)
+        current_shred = Cluster.objects.get(id=current_shred_id)
         self.assertEqual(current_shred.get_user_tags(user), None)
 
         res = self.client.post(

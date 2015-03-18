@@ -1,6 +1,6 @@
 from flask import url_for
 
-from models import Taggable, Tags, TaggingSpeed, User, Pages
+from models import Cluster, Tags, TaggingSpeed, User, Pages
 from . import BasicTestCase
 
 
@@ -16,13 +16,13 @@ class FixturesTest(BasicTestCase):
         self.assertEquals(res.json, {"result": True})
 
     def test_reset_db(self):
-        Taggable().save()
+        Cluster().save()
         Tags().save()
         TaggingSpeed().save()
         User().save()
         Pages().save()
 
-        self.assert_count(Taggable, 1)
+        self.assert_count(Cluster, 1)
         self.assert_count(Tags, 1)
         self.assert_count(TaggingSpeed, 1)
         self.assert_count(User, 1)
@@ -31,7 +31,7 @@ class FixturesTest(BasicTestCase):
         res = self.client.post(url_for("fixtures.reset_db"))
         self.assert_success(res)
 
-        self.assert_count(Taggable, 0)
+        self.assert_count(Cluster, 0)
         self.assert_count(Tags, 0)
         self.assert_count(TaggingSpeed, 0)
         self.assert_count(User, 0)
@@ -53,14 +53,14 @@ class FixturesTest(BasicTestCase):
         self.assert_count(User, 3)  # Nobody, User, Admin
 
     def test_import_shreds(self):
-        self.assert_count(Taggable, 0)
+        self.assert_count(Cluster, 0)
         res = self.client.post(url_for("fixtures.create_shreds"))
         self.assert_success(res)
 
-        self.assert_count(Taggable, 10)  # Another magic number
-        self.assert_count(Taggable, 9, batch="fixtures1")
-        self.assert_count(Taggable, 1, batch="fixtures2")
-        self.assert_count(Taggable, 0, batch="foobar")
+        self.assert_count(Cluster, 10)  # Another magic number
+        self.assert_count(Cluster, 9, batch="fixtures1")
+        self.assert_count(Cluster, 1, batch="fixtures2")
+        self.assert_count(Cluster, 0, batch="foobar")
 
     def test_login_user(self):
         self.client.post(url_for("fixtures.create_users"))

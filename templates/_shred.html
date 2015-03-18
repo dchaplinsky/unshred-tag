@@ -1,8 +1,8 @@
-{% if item %}
-<form method="POST" action="{% if edit %}{{ url_for("shred", item_id=item.id) }}{% else %}{{ url_for("next") }}{% endif %}">
+{% if cluster %}
+<form method="POST" action="{% if edit %}{{ url_for("shred", cluster_id=cluster.id) }}{% else %}{{ url_for("next") }}{% endif %}">
     <div class="workspace">
         {# TODO: Render all members intelligently. #}
-        <img class="shred-img zoom-it" src="{{ item.object.members.0.shred.piece_fname }}" />
+        <img class="shred-img zoom-it" src="{{ cluster.members.0.shred.piece_fname }}" />
     </div>
 
     <div class="item-features">
@@ -21,7 +21,7 @@
         <a class="btn btn-lg btn-default" id="save-button" href="#">Сохранить <small>(alt+enter)</small></a>
 
         <input type="hidden" name="edit" value="{{ edit|default(False)|int }}"/>
-        <input type="hidden" name="item_id" id="item_id" value="{{ item.id }}"/>
+        <input type="hidden" name="item_id" id="item_id" value="{{ cluster.id }}"/>
         <input type="hidden" name="tagging_start" id="tagging_start" value="{{ tagging_start }}">
         {% if user_data %}<input type="hidden" name="angle" value="{{ user_data.angle }}">{% endif %}
     </div>
@@ -44,10 +44,10 @@
     </div>
 
     <div class="zoom-anim-dialog mfp-hide small-dialog" id="additional-info">
-        <h4>Порция {{ item.batch }} / Лист #{{ item.sheet }} / фрагмент #{{ item.name }}</h4>
-        <div class="shred-img-ctx"><img src="{{ item.object.members.0.shred.piece_in_context_fname }}" /></div>
+        <h4>Порция {{ cluster.batch }} / Лист #{{ cluster.sheet }} / фрагмент #{{ cluster.name }}</h4>
+        <div class="shred-img-ctx"><img src="{{ cluster.members.0.shred.piece_in_context_fname }}" /></div>
         <table class="sTable">
-            {% with f = item.object.features %}
+            {% with f = cluster.features %}
             <tbody>
                 <tr>
                     <th>Площадь</th>

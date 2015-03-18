@@ -15,7 +15,7 @@ from unshred.split import SheetIO
 from unshred.features import GeometryFeatures, ColourFeatures
 
 from app import app
-from models import Cluster, ClusterMember, Shred, Taggable, Tags
+from models import Cluster, ClusterMember, Shred, Tags
 
 
 class AbstractStorage(object):
@@ -97,7 +97,7 @@ def load_new_batch(fname_glob, batch):
 
     out_dir = os.path.join(app.config["SPLIT_OUT_DIR"], "batch_%s" % batch)
     storage.clear(out_dir)
-    Taggable.objects(batch=batch).delete()
+    Cluster.objects(batch=batch).delete()
 
     for src_key in storage.list(fname_glob):
         fname = storage.get_file(src_key)
@@ -129,10 +129,10 @@ def load_new_batch(fname_glob, batch):
                 "mask_fname": "features_fname",
             }
 
-            taggable = {}
-            taggable["id"] = shred["id"]
-            taggable["usersCount"] = 0
-            taggable["batch"] = shred["batch"]
+            cluster = {}
+            cluster["id"] = shred["id"]
+            cluster["usersCount"] = 0
+            cluster["batch"] = shred["batch"]
 
             for image_path_field in image_path_fields:
                 if image_path_field in shred:
@@ -141,20 +141,19 @@ def load_new_batch(fname_glob, batch):
                     res = storage.put_file(image_path)
                     shred[image_path_field] = res
 
+            cluster["parents"] = []
             try:
                 shred_obj = Shred.objects.create(**shred)
                 cluster_member = ClusterMember(shred=shred_obj, position=[0,0],
                                                angle=0)
-                cluster = Cluster(id=shred['id'],
-                                  members=[cluster_member], parents=[])
-                taggable['object'] = cluster
-                Taggable.objects.create(**taggable)
+                cluster["members"] = [cluster_member]
+                Cluster.objects.create(**cluster)
             except bson.errors.InvalidDocument:
                 echo(shred)
                 raise
 
-    Taggable.ensure_index(["users_processed", "users_count", "batch"])
-    Taggable.ensure_index(["users_skipped", "users_count", "batch"])
+    Cluster.ensure_index(["users_processed", "users_count", "batch"])
+    Cluster.ensure_index(["users_skipped", "users_count", "batch"])
 
 
 def import_tags(drop=False):
@@ -180,7 +179,7 @@ def import_tags(drop=False):
 
 
 def list_batches():
-    batch_counts = Taggable._get_collection().aggregate([
+    batch_counts = Cluster._get_collection().aggregate([
         {
             '$group': {
                 '_id': '$batch',
