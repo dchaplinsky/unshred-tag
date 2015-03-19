@@ -6,7 +6,6 @@ from flask import (Flask, g, render_template, request, redirect,
 
 from flask.ext.mongoengine import MongoEngine
 from flask.ext import login
-from werkzeug.wsgi import DispatcherMiddleware
 
 from users import init_social_login
 from assets import init as assets_init

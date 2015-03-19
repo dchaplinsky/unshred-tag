@@ -1,4 +1,3 @@
-import itertools
 import json
 import uuid
 
@@ -61,7 +60,7 @@ def create_cluster():
 
     req = request.get_json().get('cluster')
 
-    parents = map(lambda pk: Cluster.objects.get_or_404(pk=pk), req['parents'])
+    parents = [Cluster.objects.get_or_404(pk=pk) for pk in req['parents']]
 
     if len(parents) != 2:
         response = jsonify({
@@ -77,6 +76,18 @@ def create_cluster():
                 parents[0].batch, parents[1].batch)})
         response.status_code = 400
         return response
+
+    member_fields = ['shred', 'position', 'angle']
+    for member in req['members']:
+        for field in member_fields:
+            if field not in member:
+                response = jsonify({
+                    "success": False,
+                    "message": "One of the members doesn't have all required "
+                               "fields (%s): %s" % (member_fields, member),
+                })
+                response.status_code = 400
+                return response
 
     cluster = Cluster(
             id=str(uuid.uuid1()),
@@ -115,11 +126,8 @@ def get_clusters_many():
     """
     ids = list(request.get_json().get('ids'))
 
-    mapping = dict((c.id, c) for c in Cluster.objects.filter(id__in=ids))
-
-    json_mapping = dict(
-        (c_id, json.loads(cluster.to_json()))
-            for (c_id, cluster) in mapping.items())
+    json_mapping = {cluster.id: json.loads(cluster.to_json())
+                    for cluster in Cluster.objects.filter(id__in=ids)}
 
     return jsonify({
         "success": True,
