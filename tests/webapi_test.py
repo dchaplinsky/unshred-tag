@@ -68,23 +68,25 @@ class WebApiTest(BasicTestCase):
         Returns:
             2-tuple of Cluster instances.
         """
-        resp = self.client.get(
-            url_for('webapi.get_cluster')).json['data']
-        cluster1_id = resp['cluster']['_id']
-        cluster1_batch = resp['cluster']['batch']
+
+        # We only want to test with the specific batch. The other batch has just
+        # one shred/cluster, so merging is not applicable.
+        test_batch = "fixtures1"
+        cluster1_batch = None
+        while cluster1_batch != test_batch:
+            resp = self.client.get(
+                url_for('webapi.get_cluster')).json['data']
+            cluster1_id = resp['cluster']['_id']
+            cluster1_batch = resp['cluster']['batch']
+
         cluster2_id = cluster1_id
 
         qs = urllib.urlencode({'batch': cluster1_batch})
 
-        panic_counter = 0
         while cluster2_id == cluster1_id:
-            # Sometimes it just won't give another cluster.
-            if panic_counter > 100:
-                return self._get_mergeable_clusters()
             resp = self.client.get(
                 url_for('webapi.get_cluster') + "?" + qs)
             cluster2_id = resp.json['data']['cluster']['_id']
-            panic_counter += 1
 
         cluster1 = Cluster.objects.get(pk=cluster1_id)
         cluster2 = Cluster.objects.get(pk=cluster1_id)
