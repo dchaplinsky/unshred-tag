@@ -163,7 +163,6 @@
   "name": 10, 
   "piece_fname": "/static/fixtures/10.png", 
   "mask_fname": "/static/fixtures/10_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/10_ctx.png", 
   "_id": "fixtures1:6_10", 
   "contour": [
@@ -987,7 +986,6 @@
   "name": 11, 
   "piece_fname": "/static/fixtures/11.png", 
   "mask_fname": "/static/fixtures/11_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/11_ctx.png", 
   "_id": "fixtures1:6_11", 
   "contour": [
@@ -1833,7 +1831,6 @@
   "name": 12, 
   "piece_fname": "/static/fixtures/12.png", 
   "mask_fname": "/static/fixtures/12_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/12_ctx.png", 
   "_id": "fixtures1:6_12", 
   "contour": [
@@ -2781,7 +2778,6 @@
   "name": 13, 
   "piece_fname": "/static/fixtures/13.png", 
   "mask_fname": "/static/fixtures/13_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/13_ctx.png", 
   "_id": "fixtures1:6_13", 
   "contour": [
@@ -3499,7 +3495,6 @@
   "name": 3, 
   "piece_fname": "/static/fixtures/3.png", 
   "mask_fname": "/static/fixtures/3_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/3_ctx.png", 
   "_id": "fixtures1:6_3", 
   "contour": [
@@ -4047,7 +4042,6 @@
   "name": 4, 
   "piece_fname": "/static/fixtures/4.png", 
   "mask_fname": "/static/fixtures/4_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/4_ctx.png", 
   "_id": "fixtures1:6_4", 
   "contour": [
@@ -4535,7 +4529,6 @@
   "name": 6, 
   "piece_fname": "/static/fixtures/6.png", 
   "mask_fname": "/static/fixtures/6_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/6_ctx.png", 
   "_id": "fixtures1:6_6", 
   "contour": [
@@ -5311,7 +5304,6 @@
   "name": 7, 
   "piece_fname": "/static/fixtures/7.png", 
   "mask_fname": "/static/fixtures/7_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/7_ctx.png", 
   "_id": "fixtures1:6_7", 
   "contour": [
@@ -6015,7 +6007,6 @@
   "name": 8, 
   "piece_fname": "/static/fixtures/8.png", 
   "mask_fname": "/static/fixtures/8_mask.png", 
-  "batch": "fixtures1", 
   "piece_in_context_fname": "/static/fixtures/8_ctx.png", 
   "_id": "fixtures1:6_8", 
   "contour": [
@@ -6931,7 +6922,6 @@
   "name": 9, 
   "piece_fname": "/static/fixtures/9.png", 
   "mask_fname": "/static/fixtures/9_mask.png", 
-  "batch": "fixtures2", 
   "piece_in_context_fname": "/static/fixtures/9_ctx.png", 
   "_id": "fixtures2:6_9", 
   "contour": [
