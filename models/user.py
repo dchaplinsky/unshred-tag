@@ -1,5 +1,5 @@
-from mongoengine import StringField, EmailField, BooleanField, \
-    DateTimeField, IntField, SequenceField
+from mongoengine import BooleanField, DateTimeField, EmailField, IntField, \
+        ListField, SequenceField, StringField
 from flask.ext.login import UserMixin, AnonymousUserMixin
 from flask.ext.mongoengine import Document
 import datetime
@@ -15,7 +15,7 @@ class User(Document, UserMixin):
     last_login = DateTimeField(default=datetime.datetime.now)
     skipped = IntField(default=0)
     processed = IntField(default=0)
-    tags = SequenceField(default=[])
+    tags = ListField(StringField(), default=[])
     tags_count = IntField(default=0, db_field='tagsCount')
 
     def is_active(self):

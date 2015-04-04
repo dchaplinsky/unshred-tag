@@ -1,10 +1,10 @@
 [
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -20,10 +20,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -39,10 +39,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -58,10 +58,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -77,10 +77,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -96,10 +96,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -115,10 +115,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -134,10 +134,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -153,10 +153,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures1", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
@@ -172,10 +172,10 @@
  }, 
  {
   "tags": [], 
-  "usersSkipped": [], 
+  "users_skipped": [], 
   "batch": "fixtures2", 
-  "usersCount": 0, 
-  "usersProcessed": [], 
+  "users_count": 0, 
+  "users_processed": [], 
   "parents": [], 
   "members": [
    {
