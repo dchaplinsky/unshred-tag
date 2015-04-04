@@ -164,7 +164,7 @@
   "piece_fname": "/static/fixtures/10.png", 
   "mask_fname": "/static/fixtures/10_mask.png", 
   "piece_in_context_fname": "/static/fixtures/10_ctx.png", 
-  "_id": "fixtures1:6_10", 
+  "id": "fixtures1:6_10", 
   "contour": [
    [
     1104, 
@@ -987,7 +987,7 @@
   "piece_fname": "/static/fixtures/11.png", 
   "mask_fname": "/static/fixtures/11_mask.png", 
   "piece_in_context_fname": "/static/fixtures/11_ctx.png", 
-  "_id": "fixtures1:6_11", 
+  "id": "fixtures1:6_11", 
   "contour": [
    [
     1945, 
@@ -1832,7 +1832,7 @@
   "piece_fname": "/static/fixtures/12.png", 
   "mask_fname": "/static/fixtures/12_mask.png", 
   "piece_in_context_fname": "/static/fixtures/12_ctx.png", 
-  "_id": "fixtures1:6_12", 
+  "id": "fixtures1:6_12", 
   "contour": [
    [
     984, 
@@ -2779,7 +2779,7 @@
   "piece_fname": "/static/fixtures/13.png", 
   "mask_fname": "/static/fixtures/13_mask.png", 
   "piece_in_context_fname": "/static/fixtures/13_ctx.png", 
-  "_id": "fixtures1:6_13", 
+  "id": "fixtures1:6_13", 
   "contour": [
    [
     2432, 
@@ -3496,7 +3496,7 @@
   "piece_fname": "/static/fixtures/3.png", 
   "mask_fname": "/static/fixtures/3_mask.png", 
   "piece_in_context_fname": "/static/fixtures/3_ctx.png", 
-  "_id": "fixtures1:6_3", 
+  "id": "fixtures1:6_3", 
   "contour": [
    [
     600, 
@@ -4043,7 +4043,7 @@
   "piece_fname": "/static/fixtures/4.png", 
   "mask_fname": "/static/fixtures/4_mask.png", 
   "piece_in_context_fname": "/static/fixtures/4_ctx.png", 
-  "_id": "fixtures1:6_4", 
+  "id": "fixtures1:6_4", 
   "contour": [
    [
     344, 
@@ -4530,7 +4530,7 @@
   "piece_fname": "/static/fixtures/6.png", 
   "mask_fname": "/static/fixtures/6_mask.png", 
   "piece_in_context_fname": "/static/fixtures/6_ctx.png", 
-  "_id": "fixtures1:6_6", 
+  "id": "fixtures1:6_6", 
   "contour": [
    [
     1757, 
@@ -5305,7 +5305,7 @@
   "piece_fname": "/static/fixtures/7.png", 
   "mask_fname": "/static/fixtures/7_mask.png", 
   "piece_in_context_fname": "/static/fixtures/7_ctx.png", 
-  "_id": "fixtures1:6_7", 
+  "id": "fixtures1:6_7", 
   "contour": [
    [
     1567, 
@@ -6008,7 +6008,7 @@
   "piece_fname": "/static/fixtures/8.png", 
   "mask_fname": "/static/fixtures/8_mask.png", 
   "piece_in_context_fname": "/static/fixtures/8_ctx.png", 
-  "_id": "fixtures1:6_8", 
+  "id": "fixtures1:6_8", 
   "contour": [
    [
     2304, 
@@ -6923,7 +6923,7 @@
   "piece_fname": "/static/fixtures/9.png", 
   "mask_fname": "/static/fixtures/9_mask.png", 
   "piece_in_context_fname": "/static/fixtures/9_ctx.png", 
-  "_id": "fixtures2:6_9", 
+  "id": "fixtures2:6_9", 
   "contour": [
    [
     2105, 
