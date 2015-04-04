@@ -112,7 +112,6 @@ def load_new_batch(fname_glob, batch):
         for shred in sheet.get_shreds():
             shred = shred._asdict()
             shred["id"] = "%s:%s_%s" % (batch, shred["sheet"], shred["name"])
-            shred["batch"] = batch
             shreds_created += 1
 
             def _convert_opencv_contour(contour):
