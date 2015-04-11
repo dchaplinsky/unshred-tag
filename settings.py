@@ -62,9 +62,15 @@ JS_ASSETS = ['vendor/jquery/jquery.js',
              # https://github.com/pklauzinski/jscroll/issues/39
              'vendor/jquery.jscroll/jquery.jscroll.js',
              'vendor/sceditor/jquery.sceditor.bbcode.js',
+
+             'vendor/jquery.freetrans/Matrix.js',
+
              'scripts/zoomer.js',  # includes customisation
              'scripts/base.js',
-             'scripts/review.js']
+             'scripts/review.js',
+
+             'scripts/unshred_api_client.js',
+]
 JS_ASSETS_OUTPUT = 'scripts/packed.js'
 
 JS_ASSETS_FILTERS = 'yui_js'
