@@ -30,9 +30,8 @@ class TagsView(ModelView, ActionsMixin):
 
 
 class ClusterView(ModelView):
-    column_exclude_list = ('contour', 'piece_in_context_fname',
-                           'mask_fname', 'piece_fname')
-    form_excluded_columns = ('contour', 'features')
+    column_list = ['id', 'users_count', 'users_skipped', 'users_processed',
+                   'batch', 'get_tags', 'num_members']
 
 
 class BaseAdminIndexView(admin.AdminIndexView):
@@ -45,6 +44,9 @@ class BaseAdminIndexView(admin.AdminIndexView):
 
 
 class CustomShredsView(BaseModelView):
+
+    def __unicode__(self):
+        return "Shred: %s" % self.id
 
     @expose('/')
     def index_view(self):

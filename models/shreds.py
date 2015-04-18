@@ -53,6 +53,9 @@ class Shred(Document):
 
         return filter(None, set(auto))
 
+    def __unicode__(self):
+        return "Shred: %s" % self.id
+
 class ClusterMember(EmbeddedDocument):
     """Describes shred membership within a cluster.
 
@@ -62,6 +65,9 @@ class ClusterMember(EmbeddedDocument):
     shred = ReferenceField(Shred)
     position = ListField(FloatField())
     angle = FloatField()
+
+    def __unicode__(self):
+        return self.shred.id
 
 
 class Cluster(Document):
@@ -105,11 +111,12 @@ class Cluster(Document):
         return set(sum((member.shred.get_auto_tags()
                         for member in self.members), []))
 
+    @property
     def get_tags(self):
-        return chain(*[st.tags for st in self.tags])
+        return sum([st.tags for st in self.tags], [])
 
     def get_repeated_tags(self, repeats=2):
-        tags_counts = Counter(self.get_tags())
+        tags_counts = Counter(self.get_tags)
         return [tag for tag, count in tags_counts.items() if count >= repeats]
 
     @staticmethod
@@ -145,6 +152,9 @@ class Cluster(Document):
             return some_clusters[0]
         return None
 
+    @property
+    def num_members(self):
+        return len(self.members)
 
 class TagsQS(QuerySet):
     def get_base_tags(self, order_by_category=False):
