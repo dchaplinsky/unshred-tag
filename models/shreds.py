@@ -1,6 +1,5 @@
 import datetime
 from collections import Counter
-from itertools import chain
 import random
 
 from mongoengine import (
@@ -112,11 +111,11 @@ class Cluster(Document):
                         for member in self.members), []))
 
     @property
-    def get_tags(self):
+    def all_tags(self):
         return sum([st.tags for st in self.tags], [])
 
     def get_repeated_tags(self, repeats=2):
-        tags_counts = Counter(self.get_tags)
+        tags_counts = Counter(self.all_tags)
         return [tag for tag, count in tags_counts.items() if count >= repeats]
 
     @staticmethod
