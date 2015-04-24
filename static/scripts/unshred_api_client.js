@@ -103,6 +103,17 @@ UnshredAPIClient.prototype.GetCluster = function (clusterId, success, error) {
     }, error);
 };
 
+/**
+ * Fetches a pair of clusters from the backend. The pair is expected to be
+ * somewhat related, possibly suitable for stitching.
+ *
+ * TODO: Switch to the actual corresponding backend method, when it's
+ * implemented.
+ *
+ * @param success - Success callback. On success called with two cluster
+ *      objects.
+ * @param error - Failure callback.
+ */
 UnshredAPIClient.prototype.GetClusterPairForStitching = function(success, error) {
     console.log("Getting cluster pair.");
     var pair = [];

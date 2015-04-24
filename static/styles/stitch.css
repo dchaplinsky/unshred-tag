@@ -26,7 +26,7 @@
     /* Reference for contained clusters. */
     position: relative;
     display: inline-block;
-	vertical-align: top;
+    vertical-align: top;
     border: 1px solid #555;
     min-width: 400px;
     min-height: 800px;

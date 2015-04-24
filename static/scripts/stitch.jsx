@@ -16,12 +16,6 @@
  *   Cluster
  *     ClusterMember (every shred's image)
  *
- * The data mostly flows top-down from parent to child components (incl. passing
- * parent's callbacks to children), but also relies on two events not reflected
- * in the hierarchy, thus on the window object:
- *  stitching:setSandboxState: triggered by <Candidate>, listened by <Sandbox>.
- *  stitching:setBaseCluster: triggered by BaseClusterTools and SaveBtn,
- *      listened by: CandidatesTools.
  */
 /*global React $ UnshredAPIClient */
 
@@ -112,6 +106,19 @@ var Cluster = React.createClass({
             });
         }
     },
+    getTransformOptions: function() {
+        if (!this.props.freetrans) {
+            return null;
+        }
+        var options = $(React.findDOMNode(this)).freetrans('getOptions');
+        return {
+            position: {
+                x: options.x,
+                y: options.y
+            },
+            angle: options.angle
+        };
+    },
     render: function() {
         var component = this;
         var members = this.props.clusterObj.members.map(
@@ -151,6 +158,14 @@ var Sandbox = React.createClass({
             clusterObj2: null
         };
     },
+    /** If the clusters are set returns list of their React components. null otherwise */
+    getClusters: function() {
+        if (this.props.clusterObj1 !== null && this.props.clusterObj2 !== null) {
+            return [this.refs.baseCluster, this.refs.candidateCluster];
+        } else {
+            return null;
+        }
+    },
     render: function() {
         var cluster1, cluster2;
         if (this.props.clusterObj1 !== null && this.props.clusterObj2 !== null) {
@@ -158,12 +173,14 @@ var Sandbox = React.createClass({
                 <Cluster clusterObj={this.props.clusterObj1}
                     className="cluster-base"
                     client={this.props.client}
+                    ref="baseCluster"
                     offsetLeft={-100} />
             );
             cluster2 = (
                 <Cluster clusterObj={this.props.clusterObj2}
                     className="cluster-candidate"
                     client={this.props.client}
+                    ref="candidateCluster"
                     offsetLeft={100} />
             );
         }
@@ -173,7 +190,9 @@ var Sandbox = React.createClass({
                     {cluster1}
                     {cluster2}
                 </div>
-                <SaveBtn client={this.props.client} getState={function(){return this.props; }.bind(this)} />
+                <SaveBtn client={this.props.client}
+                         getClusters={this.getClusters}
+                         />
             </div>
         );
     }
@@ -182,29 +201,29 @@ var Sandbox = React.createClass({
 var SaveBtn = React.createClass({
     propTypes: {
         client: React.PropTypes.instanceOf(UnshredAPIClient).isRequired,
-        getState: React.PropTypes.func.isRequired
+        getClusters: React.PropTypes.func.isRequired
     },
     _storeState: function() {
-        var baseShredState = $('.cluster-base').freetrans('getOptions');
-        var candShredState = $('.cluster-candidate').freetrans('getOptions');
+        var clusters = this.props.getClusters();
+        if (clusters === null) {
+            return;
+        }
+        var baseClusterComponent = clusters[0];
+        var candidateClusterComponent = clusters[1];
 
-        var sandboxState = this.props.getState();
-        var baseCluster = sandboxState.clusterObj1;
-        var candidateCluster = sandboxState.clusterObj2;
+        var baseCluster = baseClusterComponent.props.clusterObj;
+        var candidateCluster = candidateClusterComponent.props.clusterObj;
 
-        var basePosition = [baseShredState.x, baseShredState.y];
-        var candidatePosition = [candShredState.x, candShredState.y];
+        var baseClusterState = baseClusterComponent.getTransformOptions();
+        var candidateClusterState = candidateClusterComponent.getTransformOptions();
 
         var data = this.props.client.MergeClusters(
-            baseCluster, basePosition, baseShredState.angle,
-            candidateCluster, candidatePosition, candShredState.angle,
+            baseCluster, baseClusterState.position, baseClusterState.angle,
+            candidateCluster, candidateClusterState.position, candidateClusterState.angle,
             this._clusterCreated, function(err) { console.log(err); });
     },
     _clusterCreated: function(clusterId) {
         this.props.client.GetCluster(clusterId, function(clusterObj) {
-            window.dispatchEvent(new CustomEvent("stitching:setBaseCluster", {
-                detail: clusterObj
-            }));
             console.log(clusterObj);
         }, function(error) { console.log(error); });
         console.log("New cluster id: ", clusterId);
