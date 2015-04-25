@@ -5,6 +5,15 @@
  */
 var UnshredAPIClient = function (baseUrl) {
     this.baseUrl = baseUrl;
+
+    // Attributes handle shred cache;
+    // shredCache is a mapping of shredId -> shredObj;
+    this.shredCache = {};
+    // shredCallbacksPending maps shredId -> [success(), error()] callbacks 
+    // whileshred request is in-flight.
+    this.shredCallbacksPending = {};
+    // Maximum number of shred cache entries.
+    this.shredCacheSize = 100;
 };
 
 
@@ -42,9 +51,36 @@ UnshredAPIClient.prototype.Request = function(type, path, success, error, data) 
  */
 UnshredAPIClient.prototype.GetShred = function (shredId, success, error) {
     console.log("Getting shred " + shredId);
+    if (this.shredCache[shredId] !== undefined) {
+        success(this.shredCache[shredId]);
+        return;
+    }
+    if (this.shredCallbacksPending[shredId] !== undefined) {
+        this.shredCallbacksPending[shredId].push([success, error]);
+        return;
+    }
+    if (Object.keys(this.shredCache).length >= this.shredCacheSize) {
+        this.shredCache = {};
+    }
+    this.shredCallbacksPending[shredId] = [[success, error]];
+
+    var client = this;
     this.Request("GET", "shred/" + shredId, function (response_data) {
-        success(response_data.data.shred);
-    }, error);
+        client.shredCache[shredId] = response_data.data.shred;
+        var callbacks;
+        while ((callbacks = client.shredCallbacksPending[shredId].pop())
+                !== undefined) {
+            callbacks[0](response_data.data.shred);
+        }
+        delete client.shredCallbacksPending[shredId];
+    }, function(error) {
+        var callbacks;
+        while ((callbacks = client.shredCallbacksPending[shredId].pop())
+                !== undefined) {
+            callbacks[1](error);
+        }
+        delete client.shredCallbacksPending[shredId];
+    });
 };
 
 /**
@@ -94,7 +130,7 @@ UnshredAPIClient.prototype.MergeClusters = function (cluster1, position1,
 
     var degreesToRadians = function(angle) { return angle * Math.PI / 180; };
     var radiansToDegrees = function(angle) { return angle / (Math.PI / 180); };
-    var copyMember = function(member) { return { shred: member.shred, position: shred.position, angle: shred.angle }; };
+    var copyMember = function(member) { return { shred: member.shred, position: member.position, angle: member.angle }; };
 
     // Angle is in degrees. Need radians for rotation matrix.
     angle1 = degreesToRadians(angle1);
@@ -107,21 +143,23 @@ UnshredAPIClient.prototype.MergeClusters = function (cluster1, position1,
         members.push(copyMember(cluster1.members[i]));
     }
 
-    // m2 rotates shred origins around cluster2 origin.
+    // m1 rotates clusters' origins around (0,0);
     var m1 = Matrix().rotate(-angle1);
+    // m2 rotates shred origins around cluster2 origin.
     var m2 = Matrix().rotate(angle2);
 
     var cluster2Position = Point(position2[0], position2[1]);
     for (var j = 0; j < cluster2.members.length; j++) {
         var member = copyMember(cluster2.members[j]);
         var p = Point(member.position[0], member.position[1]);
-        // Get from coords relative to unrotated own cluster to absolute
-        // within own cluster after its rotation.
+        
+        // Rotate member base point around it's cluster's origin.
         p = m2.transformPoint(p);
-        // Translate to base origin.
+        // Next rotation is around ose origin - base cluster's base point.
         p = p.add(cluster2Position);
-        // Rotate new shred origin around base cluster origin.
+        // Rotate member origin around base cluster's origin.
         p = m1.transformPoint(p);
+
         member.position = [p.x, p.y];
         // Angle to degrees.
         member.angle = member.angle + radiansToDegrees(angle2-angle1);
