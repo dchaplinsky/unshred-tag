@@ -21,6 +21,7 @@ def transform_shred(shred_dict):
 
     shred_fields_map = {
         'tags_suggestions': 'tags',
+        'features_fname': 'mask_fname',
         'name': 'name',
         'sheet': 'sheet',
         'piece_fname': 'piece_fname',
@@ -55,7 +56,8 @@ def transform_shred(shred_dict):
         shred_fields['features'][dst] = shred_fields['features'].pop(src)
 
     for name in drop_fields:
-        del shred[name]
+        if name in shred:
+            del shred[name]
     for feature in drop_features:
         del shred_fields['features'][feature]
 

@@ -16,7 +16,7 @@ class FixturesTest(BasicTestCase):
         self.assertEquals(res.json, {"result": True})
 
     def test_reset_db(self):
-        Cluster().save()
+        Cluster(batch="a").save()
         Tags().save()
         TaggingSpeed().save()
         User().save()

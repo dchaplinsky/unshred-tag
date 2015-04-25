@@ -107,6 +107,19 @@ def load_new_batch(fname_glob, batch):
         sheet = SheetIO(fname, sheet_name, [GeometryFeatures, ColourFeatures],
                         out_dir, "png")
 
+        image_path_fields = ["piece_fname", "mask_fname",
+                             "piece_in_context_fname"]
+
+        # TODO: Remove when all field names match unshred's.
+        field_name_map = {
+            # Unshred-tag name: unshred name.
+            "mask_fname": "features_fname",
+        }
+        drop_fields = ['simplified_contour', 'img_roi']
+        drop_features = ['on_sheet_height', 'on_sheet_width', 'on_sheet_angle',
+                'bottommost', 'topmost', 'on_sheet_x', 'on_sheet_y']
+
+
         pages_processed += 1
 
         for shred in sheet.get_shreds():
@@ -117,33 +130,31 @@ def load_new_batch(fname_glob, batch):
             def _convert_opencv_contour(contour):
                 """Converts opencv contour to a list of pairs."""
                 return contour.reshape((len(contour), 2)).tolist()
-            shred["contour"] = _convert_opencv_contour(shred["contour"])
+            shred["contour"] = _convert_opencv_contour(
+                shred["simplified_contour"])
+            shred['tags'] = shred.pop('tags_suggestions')
 
-            image_path_fields = ["piece_fname", "features_fname",
-                                 "piece_in_context_fname"]
-
-            # TODO: Remove when all field names match unshred's.
-            field_name_map = {
-                # Unshred-tag name: unshred name.
-                "mask_fname": "features_fname",
-            }
+            for field in drop_fields:
+                del shred[field]
+            for field in drop_features:
+                del shred['features'][field]
 
             cluster = {}
             cluster["id"] = shred["id"]
-            cluster["usersCount"] = 0
-            cluster["batch"] = shred["batch"]
+            cluster["users_count"] = 0
+            cluster["batch"] = batch
 
-            for image_path_field in image_path_fields:
-                if image_path_field in shred:
-                    image_path = shred.pop(field_name_map.get(image_path_field,
-                                                              image_path_field))
-                    res = storage.put_file(image_path)
-                    shred[image_path_field] = res
+            for model_field_name in image_path_fields:
+                import_field_name = field_name_map.get(model_field_name,
+                                                       model_field_name)
+                image_path = shred.pop(import_field_name)
+                res = storage.put_file(image_path)
+                shred[model_field_name] = res
 
             cluster["parents"] = []
             try:
                 shred_obj = Shred.objects.create(**shred)
-                cluster_member = ClusterMember(shred=shred_obj, position=[0,0],
+                cluster_member = ClusterMember(shred=shred_obj, position=[0, 0],
                                                angle=0)
                 cluster["members"] = [cluster_member]
                 Cluster.objects.create(**cluster)

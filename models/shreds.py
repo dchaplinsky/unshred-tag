@@ -13,16 +13,16 @@ from .user import User
 
 class Features(EmbeddedDocument):
     histogram_clean = ListField(IntField())
-    height_mm = FloatField(default=0.0)
+    height_mm = FloatField(required=True)
     histogram_full = ListField(IntField())
-    width_mm = FloatField(default=0.0)
-    area = IntField(default=0)
+    width_mm = FloatField(required=True)
+    area = IntField(required=True)
     dominant_colours = ListField(StringField())
-    solidity = FloatField(default=0.0)
+    solidity = FloatField(required=True)
     colour_names = ListField(StringField())
-    ratio = FloatField(default=0.0)
-    width = IntField(default=0)
-    height = IntField(default=0)
+    ratio = FloatField(required=True)
+    width = IntField(required=True)
+    height = IntField(required=True)
 
 
 class ShredTags(EmbeddedDocument):
@@ -36,14 +36,14 @@ class ShredTags(EmbeddedDocument):
 # Immutable once imported from CV.
 class Shred(Document):
     id = StringField(max_length=200, default='', primary_key=True)
-    name = IntField()
+    name = IntField(required=True)
     features = EmbeddedDocumentField(Features)
     tags = ListField(StringField())
     contour = ListField(ListField(IntField()))
-    sheet = StringField()
-    piece_fname = StringField()
-    piece_in_context_fname = StringField()
-    mask_fname = StringField()
+    sheet = StringField(required=True)
+    piece_fname = StringField(required=True)
+    piece_in_context_fname = StringField(required=True)
+    mask_fname = StringField(required=True)
 
     def get_auto_tags(self):
         mapping = Tags.objects.get_tag_synonyms()
@@ -61,9 +61,9 @@ class ClusterMember(EmbeddedDocument):
     Relative shred position is stored as rotation angle (in radians) and
     (x, y) translation relative to cluster origin.
     """
-    shred = ReferenceField(Shred)
+    shred = ReferenceField(Shred, required=True)
     position = ListField(FloatField())
-    angle = FloatField()
+    angle = FloatField(required=True)
 
     def __unicode__(self):
         return self.shred.id
@@ -85,7 +85,7 @@ class Cluster(Document):
     users_processed = ListField(ReferenceField(User),
                                 db_field='usersProcessed')
 
-    batch = StringField()
+    batch = StringField(required=True)
     tags = ListField(EmbeddedDocumentField(ShredTags))
 
     members = ListField(EmbeddedDocumentField(ClusterMember))
