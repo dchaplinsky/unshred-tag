@@ -1,3 +1,4 @@
+/*global $ Matrix Point */
 /**
  * Represents an instance of UnshredTag API client.
  * @constructor
@@ -103,6 +104,33 @@ UnshredAPIClient.prototype.GetCluster = function (clusterId, success, error) {
 };
 
 /**
+ * Fetches a pair of clusters from the backend. The pair is expected to be
+ * somewhat related, possibly suitable for stitching.
+ *
+ * TODO: Switch to the actual corresponding backend method, when it's
+ * implemented.
+ *
+ * @param success - Success callback. On success called with two cluster
+ *      objects.
+ * @param error - Failure callback.
+ */
+UnshredAPIClient.prototype.GetClusterPairForStitching = function(success, error) {
+    console.log("Getting cluster pair.");
+    var pair = [];
+
+    var receiveCluster = function(clusterObj) {
+        pair.push(clusterObj);
+        if (pair.length === 2) {
+            success(pair[0], pair[1]);
+        }
+    };
+
+    for (var i = 0; i < 2; i++) {
+        this.GetCluster(null, receiveCluster, error);
+    }
+};
+
+/**
  * Merges two clusters, given their relative positions.
  *
  * @param cluster1 - An object with 'members' and '_id' fields. Every member has
@@ -152,10 +180,11 @@ UnshredAPIClient.prototype.MergeClusters = function (cluster1, position1,
     for (var j = 0; j < cluster2.members.length; j++) {
         var member = copyMember(cluster2.members[j]);
         var p = Point(member.position[0], member.position[1]);
-        
+
         // Rotate member base point around it's cluster's origin.
         p = m2.transformPoint(p);
-        // Next rotation is around ose origin - base cluster's base point.
+
+        // Transform to coordinates relative to base cluster's origin.
         p = p.add(cluster2Position);
         // Rotate member origin around base cluster's origin.
         p = m1.transformPoint(p);

@@ -1,0 +1,54 @@
+.stitch-sandbox {
+    padding: 20px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    /* Child divs are absolutely positioned. */
+    /*width: 1%;*/
+    display: inline-block;
+}
+.stitch-middle {
+    display: inline-block;
+    width: 70%;
+    position: relative;
+    text-align: center;
+}
+.candidates-panel {
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+    width: 25%;
+}
+.candidates {
+    zoom: 20%;
+}
+.candidate {
+    /* Reference for contained clusters. */
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    border: 1px solid #555;
+    min-width: 400px;
+    min-height: 800px;
+}
+.candidate:hover {
+    border: 1px solid #aaa;
+}
+.candidate.selected {
+    border: 1px solid #fff;
+}
+.candidate .cluster {
+    position: absolute;
+}
+.stitch-shred {
+    position: absolute;
+}
+.save-cluster {
+    float: right;
+    top: 50%;
+    right: 100px;
+    position: absolute;
+}
+.more-candidates {
+    margin: 5px;
+}
