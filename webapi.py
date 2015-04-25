@@ -3,7 +3,7 @@ import uuid
 
 from flask import Blueprint, jsonify, request
 
-from models import Shred, Cluster, ClusterMember
+from models import Shred, Cluster, ClusterMember, ShredsDistances
 
 
 app = Blueprint("webapi", __name__)
@@ -132,4 +132,26 @@ def get_clusters_many():
     return jsonify({
         "success": True,
         "data": [json_mapping.get(c_id) for c_id in ids],
+    })
+
+@app.route('/cluster/pair', methods=['GET'])
+def get_clusters_pair():
+    """Looks up a pair of clusters suitable for stitching.
+
+    Returns:
+        A JSON response like:
+        { "success": True,
+          "data": [Cluseter1(), Cluster2()],
+        }
+    """
+    distance = ShredsDistances.get_close_pair()
+
+    result = json.loads(distance.to_json())
+    del result['_id']
+    result['shreds_pair'][0] = json.loads(distance.shreds_pair[0].to_json())
+    result['shreds_pair'][1] = json.loads(distance.shreds_pair[1].to_json())
+
+    return jsonify({
+        "success": True,
+        "data": result,
     })

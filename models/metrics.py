@@ -1,4 +1,6 @@
 import datetime
+import random
+
 from mongoengine import (
     FloatField, IntField, DateTimeField, ListField, ReferenceField,
     StringField, CASCADE)
@@ -37,3 +39,15 @@ class ShredsDistances(Document):
         'indexes': ['shreds_pair', 'distance', 'distance_type'],
         'index_background': True,
     }
+
+    @classmethod
+    def get_close_pair(cls):
+        total_num_pairs = cls.objects.count()
+        # Mean = 1/lambd = total_num_pairs / 10, i.e. 50% chance that returned
+        # pair will be within lowest 10% distances.
+        lambd = 10. / total_num_pairs
+        idx = -1
+        while not 0 <= idx <= total_num_pairs:
+            idx = int(random.expovariate(lambd))
+
+        return cls.objects.order_by('-distance')[idx]

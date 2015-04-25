@@ -108,7 +108,7 @@ def shred(cluster_id):
         return render_template(
             "_shred.html",
             cluster=cluster,
-            auto_tags=cluster.get_auto_tags(),
+            auto_tags=cluster.auto_tags,
             all_tags=get_tags(),
             user_data=cluster.get_user_tags(g.user),
             edit=True,
@@ -157,7 +157,7 @@ def next():
 
     cluster = Cluster.next_for_user(g.user, app.config['USERS_PER_SHRED'])
 
-    auto_tags = cluster and cluster.get_auto_tags() or []
+    auto_tags = cluster and cluster.auto_tags or []
     return render_template(
         "_shred.html",
         cluster=cluster,

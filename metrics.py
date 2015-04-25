@@ -50,6 +50,8 @@ def _jaccard_distances_iterator(shreds_tags):
         3-tuples (shred_a_id, shred_b_id, distance).
     """
     for shred_a, shred_b in combinations(shreds_tags.items(), 2):
+        if shred_a == shred_b:
+            continue
         shred_a_id, tags_a = shred_a
         shred_b_id, tags_b = shred_b
         yield shred_a_id, shred_b_id, jaccard_distance(set(tags_a), set(tags_b))
@@ -60,7 +62,7 @@ def _fetch_normalized_shreds_tags(repeats):
     Returns dictionary where keys are shreds ids and values are sets of
     filtered normalized tags.
     """
-    shreds = Cluster.objects().only('id', 'tags.tags')[:SHREDS_CAP]
+    shreds = Cluster.objects().only('id', 'tags.tags', 'members')[:SHREDS_CAP]
     shreds_tags = {}
     for s in shreds:
         tags = s.get_repeated_tags(repeats)

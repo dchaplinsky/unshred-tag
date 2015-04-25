@@ -45,7 +45,8 @@ class Shred(Document):
     piece_in_context_fname = StringField(required=True)
     mask_fname = StringField(required=True)
 
-    def get_auto_tags(self):
+    @property
+    def auto_tags(self):
         mapping = Tags.objects.get_tag_synonyms()
         auto = [mapping.get(suggestion)
                 for suggestion in self.tags]
@@ -106,9 +107,9 @@ class Cluster(Document):
                 return shred_tags
         return None
 
-    def get_auto_tags(self):
-        return set(sum((member.shred.get_auto_tags()
-                        for member in self.members), []))
+    @property
+    def auto_tags(self):
+        return set(sum((member.shred.auto_tags for member in self.members), []))
 
     @property
     def all_tags(self):
@@ -116,7 +117,9 @@ class Cluster(Document):
 
     def get_repeated_tags(self, repeats=2):
         tags_counts = Counter(self.all_tags)
-        return [tag for tag, count in tags_counts.items() if count >= repeats]
+        return (set(
+            [tag for tag, count in tags_counts.items() if count >= repeats]) |
+            self.auto_tags)
 
     @staticmethod
     def next_for_user(user, users_per_shred):
@@ -154,6 +157,7 @@ class Cluster(Document):
     @property
     def num_members(self):
         return len(self.members)
+
 
 class TagsQS(QuerySet):
     def get_base_tags(self, order_by_category=False):

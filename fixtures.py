@@ -7,7 +7,8 @@ from flask.ext.login import login_user as ext_login_user
 
 from social.apps.flask_me_app.models import FlaskStorage
 
-from models import Cluster, Tags, TaggingSpeed, User, Pages, Shred
+from models import (Cluster, Tags, TaggingSpeed, User, Pages, Shred,
+        ShredsDistances)
 from utils import handle_exception_as_json
 
 mod = Blueprint('fixtures', __name__, url_prefix='/fixtures')
@@ -31,6 +32,7 @@ def reset_db():
     TaggingSpeed.objects.delete()
     Cluster.objects.delete()
     Shred.objects.delete()
+    ShredsDistances.objects.delete()
     User.objects.delete()
     Pages.objects.delete()
     FlaskStorage.user.objects.delete()

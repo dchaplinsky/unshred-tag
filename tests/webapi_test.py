@@ -4,8 +4,9 @@ import urllib
 from flask import url_for
 
 from models.shreds import Cluster
-from . import BasicTestCase
+from models.metrics import ShredsDistances
 
+from . import BasicTestCase
 
 
 class WebApiTest(BasicTestCase):
@@ -158,4 +159,20 @@ class WebApiTest(BasicTestCase):
         self.assertEqual(len(resp.json['data']), len(cluster_ids))
         self.assertEqual(resp.json['data'][0]['_id'], cluster_ids[0])
         self.assertEqual(resp.json['data'][1], None)
+
+    def test_get_pair(self):
+
+        cluster1, cluster2 = self._get_mergeable_clusters()
+        pair = ShredsDistances(shreds_pair=[cluster1, cluster2],
+                               distance_type='jaccard', distance=1)
+        pair.save()
+
+        resp = self.client.get(
+                url_for('webapi.get_clusters_pair'),
+                content_type='application/json',
+        )
+        self.assertEqual(cluster1.id,
+                         resp.json['data']['shreds_pair'][0]['_id'])
+        self.assertEqual(cluster1.id,
+                         resp.json['data']['shreds_pair'][1]['_id'])
 
