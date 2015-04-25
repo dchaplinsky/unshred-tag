@@ -42,12 +42,13 @@ class ShredsDistances(Document):
 
     @classmethod
     def get_close_pair(cls):
+        take_closest_percent = .01
         total_num_pairs = cls.objects.count()
         # Mean = 1/lambd = total_num_pairs / 10, i.e. 50% chance that returned
         # pair will be within lowest 10% distances.
-        lambd = 10. / total_num_pairs
+        lambd = 1. / (total_num_pairs * (take_closest_percent / 100.))
         idx = -1
         while not 0 <= idx <= total_num_pairs:
             idx = int(random.expovariate(lambd))
 
-        return cls.objects.order_by('-distance')[idx]
+        return cls.objects.order_by('distance')[idx]
