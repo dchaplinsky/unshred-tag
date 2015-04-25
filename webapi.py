@@ -134,14 +134,20 @@ def get_clusters_many():
         "data": [json_mapping.get(c_id) for c_id in ids],
     })
 
-@app.route('/cluster/pair', methods=['GET'])
+@app.route('/cluster-pair', methods=['GET'])
 def get_clusters_pair():
     """Looks up a pair of clusters suitable for stitching.
 
     Returns:
         A JSON response like:
         { "success": True,
-          "data": [Cluseter1(), Cluster2()],
+          "data": {
+            "distance": 0.5,
+            "distance_type": "jaccard",
+            "shreds_pair": [
+              { .. cluster object .. }, { .. cluster object .. }
+            ]
+          }
         }
     """
     distance = ShredsDistances.get_close_pair()
