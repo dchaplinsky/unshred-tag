@@ -160,6 +160,7 @@ class Cluster(Document):
 
 
 class TagsQS(QuerySet):
+    _synonyms_cache = None
     def get_base_tags(self, order_by_category=False):
         qs = self.filter(is_base=True)
         if order_by_category:
@@ -168,12 +169,13 @@ class TagsQS(QuerySet):
         return qs.order_by("-usages")
 
     def get_tag_synonyms(self):
-        mapping = {}
-        for t in self.filter(synonyms__exists=True):
-            for s in t["synonyms"]:
-                mapping[s] = t["title"]
-
-        return mapping
+        if self._synonyms_cache is None:
+            mapping = {}
+            for t in self.filter(synonyms__exists=True):
+                for s in t["synonyms"]:
+                    mapping[s] = t["title"]
+            self.__class__._synonyms_cache = mapping
+        return self._synonyms_cache
 
 
 class Tags(Document):

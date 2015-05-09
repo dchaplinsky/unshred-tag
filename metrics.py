@@ -64,6 +64,8 @@ def _fetch_normalized_shreds_tags(repeats):
     """
     shreds = Cluster.objects().only('id', 'tags.tags', 'members')[:SHREDS_CAP]
     shreds_tags = {}
+    # TODO: on every iteration queries mongodb for
+    # cluster->member->shred->auto_tags.
     for s in shreds:
         tags = s.get_repeated_tags(repeats)
         if tags:
