@@ -1,6 +1,8 @@
-import datetime
 from collections import Counter
+import datetime
 import random
+
+import jinja2
 
 from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
@@ -113,7 +115,7 @@ class Cluster(Document):
 
     @property
     def all_tags(self):
-        return sum([st.tags for st in self.tags], [])
+        return sorted(set(t for st in self.tags for t in st.tags))
 
     def get_repeated_tags(self, repeats=2):
         tags_counts = Counter(self.all_tags)
@@ -157,6 +159,15 @@ class Cluster(Document):
     @property
     def num_members(self):
         return len(self.members)
+
+    @property
+    def image_html(self):
+        if self.num_members != 1:
+            return ''
+
+        return jinja2.Markup('<img src="%s" />' %
+                             self.members[0].shred.piece_fname)
+
 
 
 class TagsQS(QuerySet):
