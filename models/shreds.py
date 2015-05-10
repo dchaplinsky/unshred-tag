@@ -47,13 +47,17 @@ class Shred(Document):
     piece_in_context_fname = StringField(required=True)
     mask_fname = StringField(required=True)
 
+
+    def _feature_tags(self):
+        return ['color:%s' % c for c in self.features.dominant_colours]
+
     @property
     def auto_tags(self):
         mapping = Tags.objects.get_tag_synonyms()
-        auto = [mapping.get(suggestion)
-                for suggestion in self.tags]
+        auto = [mapping.get(suggestion, suggestion)
+                for suggestion in self.tags] + self._feature_tags()
 
-        return filter(None, set(auto))
+        return auto
 
     def __unicode__(self):
         return "Shred: %s" % self.id
@@ -111,7 +115,24 @@ class Cluster(Document):
 
     @property
     def auto_tags(self):
-        return set(sum((member.shred.auto_tags for member in self.members), []))
+        return sum((member.shred.auto_tags for member in self.members), [])
+
+    @property
+    def render_auto_tags(self):
+        auto_tags = self.auto_tags
+        res = []
+        for t in auto_tags:
+            if not t.startswith('color:'):
+                res.append(jinja2.escape(t))
+                continue
+
+            color_tmpl = (
+                "<span style='height:15px;width:40px;background-color:#%s;display:inline-block'>" +
+                "&nbsp;</span>")
+
+            res.append(color_tmpl % t[len('color:'):])
+
+        return jinja2.Markup(', '.join(res))
 
     @property
     def all_tags(self):
@@ -121,7 +142,7 @@ class Cluster(Document):
         tags_counts = Counter(self.all_tags)
         return (set(
             [tag for tag, count in tags_counts.items() if count >= repeats]) |
-            self.auto_tags)
+            set(self.auto_tags))
 
     @staticmethod
     def next_for_user(user, users_per_shred):

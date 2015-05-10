@@ -31,7 +31,8 @@ class TagsView(ModelView, ActionsMixin):
 
 class ClusterView(ModelView):
     column_list = ['id', 'users_count', 'users_skipped', 'users_processed',
-                   'batch', 'all_tags', 'num_members', 'image_html']
+                   'batch', 'all_tags', 'render_auto_tags', 'num_members',
+                   'image_html']
 
 
 class BaseAdminIndexView(admin.AdminIndexView):
