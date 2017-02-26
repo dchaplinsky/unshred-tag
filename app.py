@@ -4,8 +4,8 @@ from datetime import datetime
 from flask import (Flask, g, render_template, request, redirect,
                    url_for, session, abort)
 
-from flask.ext.mongoengine import MongoEngine
-from flask.ext import login
+from flask_mongoengine import MongoEngine
+import flask_login as login
 
 from users import init_social_login
 from assets import init as assets_init

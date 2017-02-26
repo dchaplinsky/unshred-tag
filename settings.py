@@ -15,6 +15,7 @@ MONGODB_SETTINGS = {
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 SESSION_PROTECTION = 'strong'
 
+SOCIAL_AUTH_STORAGE = 'social_flask_mongoengine.models.FlaskStorage'
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
 SOCIAL_AUTH_LOGIN_URL = '/'
@@ -22,10 +23,10 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_USER_MODEL = 'models.user.User'
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
-    'social.backends.google.GoogleOAuth2',
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.facebook.FacebookOAuth2',
-    'social.backends.vk.VKOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.vk.VKOAuth2',
 )
 
 # Keypairs for social auth backends

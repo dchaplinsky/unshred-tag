@@ -1,6 +1,6 @@
 from flask import request, url_for
-from flask.ext.admin import BaseView, expose
-from flask.ext.admin._backwards import ObsoleteAttr
+from flask_admin import BaseView, expose
+from flask_admin._backwards import ObsoleteAttr
 from jinja2 import contextfunction
 
 

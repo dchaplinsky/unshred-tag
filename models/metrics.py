@@ -4,7 +4,7 @@ import random
 from mongoengine import (
     FloatField, IntField, DateTimeField, ListField, ReferenceField,
     StringField, CASCADE)
-from flask.ext.mongoengine import Document
+from flask_mongoengine import Document
 
 from .user import User
 from .shreds import Cluster

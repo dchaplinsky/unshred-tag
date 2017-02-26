@@ -1,11 +1,11 @@
 import collections
 import multiprocessing
 import logging
+from itertools import combinations
 
 from flask import Blueprint, g, redirect, render_template
-from flask.ext import login
+import flask_login
 from fn.iters import grouper
-from itertools import combinations
 
 from models import User, Cluster, ShredsDistances
 
@@ -27,7 +27,7 @@ mod = Blueprint('metrics', __name__, template_folder='templates/metrics',
 @mod.route('/shred/pairs', defaults={'start': 0, 'end': 100})
 @mod.route('/shred/pairs/<int:end>', defaults={'start': 0})
 @mod.route('/shred/pairs/<int:start>/<int:end>')
-@login.login_required
+@flask_login.login_required
 def dist_pairs(start, end):
     if not User.objects(pk=g.user.id).first()['admin']:
         redirect('/')

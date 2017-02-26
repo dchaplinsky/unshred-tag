@@ -8,7 +8,7 @@ from mongoengine import (
     StringField, IntField, DateTimeField, ListField, BooleanField,
     ReferenceField, EmbeddedDocument, EmbeddedDocumentField, FloatField,
     CASCADE, QuerySet)
-from flask.ext.mongoengine import Document
+from flask_mongoengine import Document
 
 from .user import User
 
@@ -156,12 +156,12 @@ class Cluster(Document):
             return cluster
 
         cluster = Cluster\
-            .objects(users_skipped=user.id, users_count__lte=users_per_shred)\
+            .objects(users_skipped=user.to_dbref(), users_count__lte=users_per_shred)\
             .order_by("users_count").first()
 
         if cluster:
             Cluster.objects(id=cluster.id).update_one(
-                pull__users_skipped=user.id)
+                pull__users_skipped=user.to_dbref())
 
         return cluster
 
@@ -172,7 +172,7 @@ class Cluster(Document):
         if batch is not None:
           qs = qs.filter(batch=batch)
         num = random.randint(0, qs.count()-1)
-        some_clusters = qs.skip(num).limit(1)
+        some_clusters = qs[num:num+1]
         if some_clusters:
             return some_clusters[0]
         return None

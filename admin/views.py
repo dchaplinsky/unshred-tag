@@ -1,8 +1,10 @@
 # coding: utf-8
-from flask.ext.admin.contrib.mongoengine import ModelView
-from flask.ext import admin, login
-from flask.ext.admin import expose
-from flask.ext.admin.actions import ActionsMixin, action
+import flask_admin
+import flask_login
+from flask_admin.contrib.mongoengine import ModelView
+from flask_admin import expose
+from flask_admin.actions import ActionsMixin, action
+
 from models import Cluster, Tags, User
 from base import BaseModelView
 
@@ -35,10 +37,10 @@ class ClusterView(ModelView):
                    'image_html']
 
 
-class BaseAdminIndexView(admin.AdminIndexView):
+class BaseAdminIndexView(flask_admin.AdminIndexView):
     def is_accessible(self):
         try:
-            return login.current_user.is_admin()
+            return flask_login.current_user.is_admin()
         except AttributeError:
             pass
         return False
@@ -80,8 +82,7 @@ class CustomShredsView(BaseModelView):
 
 
 def admin_init(app):
-    from flask.ext import admin
-    admin = admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
+    admin = flask_admin.Admin(app, 'Unshred', index_view=BaseAdminIndexView())
     admin.add_view(UserView(User))
     admin.add_view(TagsView(Tags))
     admin.add_view(ClusterView(Cluster))

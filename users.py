@@ -1,17 +1,18 @@
-from flask import g
-from flask.ext import login
-from social.apps.flask_me_app.routes import social_auth
-from social.apps.flask_me_app.models import init_social
-from social.apps.flask_me_app.template_filters import backends
-from models import User
 import datetime
+
+import flask_login
+from flask import g
+from social_flask.routes import social_auth
+from social_flask_mongoengine.models import init_social
+
+from models import User
 
 
 def init_social_login(app, db):
     app.register_blueprint(social_auth)
     init_social(app, db)
 
-    login_manager = login.LoginManager()
+    login_manager = flask_login.LoginManager()
     login_manager.login_view = 'index'
     login_manager.login_message = ''
     login_manager.init_app(app)
@@ -29,7 +30,7 @@ def init_social_login(app, db):
 
     @app.before_request
     def global_user():
-        g.user = login.current_user
+        g.user = flask_login.current_user
 
     @app.context_processor
     def inject_user():
@@ -37,5 +38,3 @@ def init_social_login(app, db):
             return {'user': g.user}
         except AttributeError:
             return {'user': None}
-
-    app.context_processor(backends)

@@ -1,11 +1,13 @@
+import os
+
 from flask import (
     Blueprint,
     json
 )
 
-from flask.ext.login import login_user as ext_login_user
+from flask_login import login_user as ext_login_user
 
-from social.apps.flask_me_app.models import FlaskStorage
+from social_flask_mongoengine.models import FlaskStorage
 
 from models import (Cluster, Tags, TaggingSpeed, User, Pages, Shred,
         ShredsDistances)
@@ -14,13 +16,19 @@ from utils import handle_exception_as_json
 mod = Blueprint('fixtures', __name__, url_prefix='/fixtures')
 
 
+FIXTURES_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
+
+
 def _import_from_file(fname, model):
     id_fieldname = model.id.name
-    with open(fname, "r") as f:
+    with open(os.path.join(FIXTURES_DIR, fname), "r") as f:
         objs = json.load(f)
         for obj in objs:
             if id_fieldname in obj:
-                model.objects.get_or_create(pk=obj[id_fieldname], defaults=obj)
+                try:
+                    model.objects(pk=obj[id_fieldname]).get()
+                except model.DoesNotExist:
+                    model.objects.create(**obj)
             else:
                 model.objects.create(**obj)
 
@@ -44,20 +52,20 @@ def reset_db():
 @mod.route("/create_users", methods=["POST"])
 @handle_exception_as_json()
 def create_users():
-    _import_from_file("fixtures/users.json", User)
+    _import_from_file("users.json", User)
 
 
 @mod.route("/create_base_tags", methods=["POST"])
 @handle_exception_as_json()
 def create_base_tags():
-    _import_from_file("fixtures/base_tags.json", Tags)
+    _import_from_file("base_tags.json", Tags)
 
 
 @mod.route("/create_shreds", methods=["POST"])
 @handle_exception_as_json()
 def create_shreds():
-    _import_from_file("fixtures/shreds.json", Shred)
-    _import_from_file("fixtures/clusters.json", Cluster)
+    _import_from_file("shreds.json", Shred)
+    _import_from_file("clusters.json", Cluster)
 
 
 @mod.route("/login_user/<string:username>", methods=["POST"])

@@ -1,5 +1,5 @@
 from flask import url_for
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 
 
 class BasicTestCase(TestCase):

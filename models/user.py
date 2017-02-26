@@ -1,7 +1,7 @@
 from mongoengine import BooleanField, DateTimeField, EmailField, IntField, \
         ListField, SequenceField, StringField
-from flask.ext.login import UserMixin, AnonymousUserMixin
-from flask.ext.mongoengine import Document
+from flask_login import UserMixin, AnonymousUserMixin
+from flask_mongoengine import Document
 import datetime
 
 
